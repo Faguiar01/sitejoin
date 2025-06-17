@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mural do Explorador - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        main { flex: 1; }
+        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
+        .page-header h1 { margin: 0; font-size: 2.2em; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: opacity 0.3s ease; }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn:hover { opacity: 0.85; }
+        .mural-grid { display: flex; flex-direction: column; gap: 25px; margin-top: 30px; }
+        .mural-card { background-color: var(--cor-branco); border-left: 5px solid; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; padding: 20px; gap: 20px;}
+        .mural-card .icon { font-size: 2.5em; }
+        /* Cores dinâmicas baseadas no tipo de post */
+        .mural-card.news { border-left-color: #17a2b8; }
+        .mural-card.achievement { border-left-color: #ffc107; }
+        .mural-card.tip { border-left-color: #28a745; }
+        .mural-card-content h3 { margin-top: 0; margin-bottom: 5px; font-size: 1.4em; }
+        .mural-card-content p { color: #555; line-height: 1.6; margin: 0; white-space: pre-wrap; /* Para manter quebras de linha do textarea */ }
+        .mural-card-content .date { font-size: 0.9em; color: #888; margin-top: 10px; }
+        #loading-message { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="#" id="logout-button">Sair</a></nav>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Mural do Explorador</h1>
+            <div>
+                <a href="xperience.html" class="btn btn-primary">Voltar ao Painel</a>
+            </div>
+        </div>
+
+        <div id="mural-container" class="mural-grid">
+            <p id="loading-message">Carregando novidades...</p>
+        </div>
+    </main>
+
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        // NOVO: Importando funções para LER dados do Firestore
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- LÓGICA DE LOGIN E LOGOUT ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Se o usuário está logado, carrega os posts do mural
+                loadMuralPosts();
+            } else {
+                window.location.href = '../login.html';
+            }
+        });
+        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+
+        // --- NOVA LÓGICA PARA CARREGAR E EXIBIR OS POSTS ---
+        async function loadMuralPosts() {
+            const muralContainer = document.getElementById('mural-container');
+            const loadingMessage = document.getElementById('loading-message');
+
+            // Cria uma consulta para buscar os posts, ordenados pelo mais novo primeiro
+            const q = query(collection(db, "mural_posts"), orderBy("criadoEm", "desc"));
+
+            try {
+                const querySnapshot = await getDocs(q);
+
+                // Limpa a mensagem de "carregando"
+                muralContainer.innerHTML = ''; 
+
+                if (querySnapshot.empty) {
+                    muralContainer.innerHTML = '<p id="loading-message">Nenhuma novidade no mural por enquanto.</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const post = doc.data();
+                    const postDate = post.criadoEm ? post.criadoEm.toDate().toLocaleDateString('pt-BR') : 'Data indisponível';
+
+                    let icon = '📰'; // Padrão
+                    if (post.tipo === 'achievement') icon = '🏆';
+                    if (post.tipo === 'tip') icon = '💡';
+
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('mural-card', post.tipo); // Adiciona a classe do tipo para a cor da borda
+                    postElement.innerHTML = `
+                        <div class="icon">${icon}</div>
+                        <div class="mural-card-content">
+                            <h3>${post.titulo}</h3>
+                            <p>${post.conteudo}</p>
+                            <div class="date">Postado em ${postDate}</div>
+                        </div>
+                    `;
+                    muralContainer.appendChild(postElement);
+                });
+
+            } catch (error) {
+                console.error("Erro ao buscar posts: ", error);
+                loadingMessage.textContent = 'Erro ao carregar as novidades. Tente recarregar a página.';
+            }
+        }
+    </script>
+</body>
+</html>

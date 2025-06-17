@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
+        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
@@ -71,7 +71,8 @@
                     if (userData.perfil === 'professor') {
                         window.location.href = 'professor/professor.html';
                     } else {
-                        window.location.href = 'aluno/aluno.html';
+                        // ✅ LINHA CORRIGIDA ✅
+                        window.location.href = 'aluno/xperience.html';
                     }
                 } else {
                     alert('Erro: Não foi possível encontrar dados de perfil.');

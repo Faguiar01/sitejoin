@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Aluno - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-sucesso: #28a745; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        main { flex: 1; }
+        .page-header { padding: 20px; text-align: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
+        .page-header h1 { margin: 0; font-size: 2.2em; }
+        .content-box { background-color: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-top: 30px; padding: 30px; text-align: center; }
+        .content-box h2 { font-size: 1.8em; font-weight: 800; color: #333; margin-bottom: 0.5rem; }
+        .content-box h3 { font-size: 1.5em; font-weight: 600; color: #444; margin-bottom: 1rem; }
+        .content-box p { font-size: 1.1em; color: #555; margin-bottom: 2rem; max-w: 3xl; margin-left: auto; margin-right: auto;}
+        .xperience-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .xperience-card { background-color: #ffffff; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); text-align: left; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid #e5e7eb; }
+        .xperience-card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
+        .xperience-card a { text-decoration: none; color: inherit; display: block; padding: 1.5rem; }
+        .xperience-card h4 { font-size: 1.25rem; font-weight: 600; color: #374151; margin: 0; }
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="#" id="logout-button">Sair</a></nav>
+    </header>
+    <main class="container">
+        <div class="page-header">
+            <h1 id="welcome-title">Bem-Vindo, Aluno!</h1>
+        </div>
+
+        <div class="content-box">
+            <h2>JOIN XPERIENCE</h2>
+            <h3>Sua Jornada Começa Aqui!</h3>
+            <p>Bem-vindo ao seu painel, onde você pode aprofundar seus conhecimentos e explorar recursos para sua jornada no simulador.</p>
+
+            <div class="xperience-grid">
+                <div class="xperience-card"><a href="faq.html"><h4>Perguntas Frequentes (FAQ)</h4></a></div>
+                <div class="xperience-card"><a href="perfil-investidor.html"><h4>Descubra Seu Perfil de Gestor</h4></a></div>
+                <div class="xperience-card"><a href="biblioteca.html"><h4>Biblioteca de Recursos Digitais</h4></a></div>
+                <div class="xperience-card"><a href="mural-explorador.html"><h4>Mural do Explorador</h4></a></div>
+            </div>
+        </div>
+    </main>
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDocRef = doc(db, "usuarios", user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    const welcomeTitle = document.getElementById('welcome-title');
+                    // Corrigindo o título do card para "Perfil de Gestor"
+                    const profileCardTitle = document.querySelector('a[href="perfil-investidor.html"] h4');
+                    if (profileCardTitle) {
+                        profileCardTitle.textContent = 'Descubra Seu Perfil de Gestor';
+                    }
+                    welcomeTitle.textContent = `Bem-Vindo, ${userDoc.data().nome}!`;
+                }
+            } else { 
+                window.location.href = '../login.html'; 
+            }
+        });
+
+        document.getElementById('logout-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => { window.location.href = '../index.html'; });
+        });
+    </script>
+</body>
+</html>

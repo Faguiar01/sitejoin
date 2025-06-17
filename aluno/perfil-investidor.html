@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Gestor - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        main { flex: 1; }
+        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
+        .page-header h1 { margin: 0; font-size: 2.2em; }
+        .btn { padding: 12px 25px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; font-size: 1.1em; cursor: pointer; transition: opacity 0.3s ease; }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn-success { background-color: #28a745; color: var(--cor-branco); }
+        .btn:hover { opacity: 0.85; }
+        .quiz-container { background-color: var(--cor-branco); margin-top: 30px; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .quiz-container > p { font-size: 1.1em; line-height: 1.6; }
+        .question-block { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 25px; }
+        .question-block p { font-size: 1.2em; font-weight: 600; margin-bottom: 15px; }
+        .question-block label { display: block; background-color: #f8f9fa; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; transition: all 0.2s ease; }
+        .question-block label:hover { border-color: var(--cor-primaria); background-color: #e9f2ff; }
+        .question-block input[type="radio"] { margin-right: 10px; }
+        .result-container { margin-top: 30px; padding: 30px; border-radius: 8px; text-align: center; display: none; /* Começa escondido */ animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+        .result-container h2 { margin-top: 0; font-size: 1.8em; }
+        .result-container p { font-size: 1.1em; line-height: 1.6; }
+        .result-cautious { background-color: #e0f0ff; border: 2px solid #99caff; }
+        .result-analytical { background-color: #e8f5e9; border: 2px solid #a5d6a7; }
+        .result-bold { background-color: #fff3e0; border: 2px solid #ffcc80; }
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="#" id="logout-button">Sair</a></nav>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Descubra Seu Perfil de Gestor</h1>
+            <div><a href="xperience.html" class="btn btn-primary">Voltar ao Painel</a></div>
+        </div>
+
+        <div class="quiz-container">
+            <p>Suas decisões moldam o futuro de uma empresa. Responda às perguntas abaixo para entender qual é o seu estilo de gestão financeira.</p>
+            <form id="quiz-form">
+                <div class="question-block">
+                    <p>1. Ao alocar o capital da empresa em um novo projeto, qual seu horizonte de tempo para esperar o retorno?</p>
+                    <label><input type="radio" name="q1" value="1" required> Curto prazo. Prefiro projetos com retorno rápido para manter o caixa da empresa forte.</label>
+                    <label><input type="radio" name="q1" value="3"> Médio prazo. Busco um equilíbrio entre projetos de retorno rápido e outros com maior potencial futuro.</label>
+                    <label><input type="radio" name="q1" value="5"> Longo prazo. Não me importo de esperar mais se o projeto tiver um potencial de crescimento muito grande para o futuro da empresa.</label>
+                </div>
+
+                <div class="question-block">
+                    <p>2. Um investimento importante da empresa perde 20% do valor devido a uma mudança no mercado. O que você, como gestor, faz?</p>
+                    <label><input type="radio" name="q2" value="1" required> Interrompo o projeto e realoco os recursos para áreas mais seguras para minimizar mais perdas.</label>
+                    <label><input type="radio" name="q2" value="3"> Reavalio o cenário. Se os fundamentos do projeto ainda são bons, mantenho a posição, entendendo as variações do mercado.</label>
+                    <label><input type="radio" name="q2" value="5"> Aumento o investimento, vendo como uma oportunidade para fortalecer o projeto enquanto os concorrentes estão receosos.</label>
+                </div>
+
+                <div class="question-block">
+                    <p>3. Com qual destes conceitos de gestão você tem mais familiaridade?</p>
+                    <label><input type="radio" name="q3" value="1" required> Gestão de caixa do dia a dia (contas a pagar e receber).</label>
+                    <label><input type="radio" name="q3" value="3"> Análise de Demonstrativos como DRE e cálculo de margem de lucro.</label>
+                    <label><input type="radio" name="q3" value="5"> Análise de Balanço Patrimonial, cálculo de ROI e endividamento.</label>
+                </div>
+
+                <div class="question-block">
+                    <p>4. Qual é a prioridade máxima para você na gestão financeira da empresa no simulador?</p>
+                    <label><input type="radio" name="q4" value="1" required> Garantir que a empresa nunca fique sem caixa e cumpra todas as suas obrigações, evitando dívidas a todo custo.</label>
+                    <label><input type="radio" name="q4" value="3"> Assegurar um crescimento estável e sustentável, reinvestindo uma parte dos lucros com cuidado e mantendo uma boa reserva.</label>
+                    <label><input type="radio" name="q4" value="5"> Expandir a participação de mercado o mais rápido possível, mesmo que isso signifique pegar empréstimos ou reinvestir todo o lucro.</label>
+                </div>
+
+                <div class="question-block">
+                    <p>5. Um produto da sua empresa se torna um sucesso inesperado, gerando um lucro alto e rápido. O que você faz com esse dinheiro extra?</p>
+                    <label><input type="radio" name="q5" value="1" required> Guardo a maior parte no caixa da empresa como uma reserva de segurança para futuras dificuldades.</label>
+                    <label><input type="radio" name="q5" value="3"> Reinvisto uma parte em melhorias no produto e em marketing, e guardo o resto como reserva.</label>
+                    <label><input type="radio" name="q5" value="5"> Uso todo o lucro para investir massivamente em marketing e produção para tentar dominar o mercado com esse produto.</label>
+                </div>
+
+                <button type="submit" class="btn btn-success">Ver Resultado</button>
+            </form>
+        </div>
+
+        <div id="result-container">
+            <h2 id="result-title"></h2>
+            <p id="result-description"></p>
+        </div>
+    </main>
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = '../login.html'; } });
+        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+
+        // --- LÓGICA DO QUIZ ---
+        const quizForm = document.getElementById('quiz-form');
+        const resultContainer = document.getElementById('result-container');
+        const resultTitle = document.getElementById('result-title');
+        const resultDescription = document.getElementById('result-description');
+
+        quizForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const totalQuestions = 5;
+            const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+            if (answeredQuestions < totalQuestions) {
+                alert('Por favor, responda a todas as perguntas para ver seu perfil.');
+                return;
+            }
+            let score = 0;
+            const formData = new FormData(quizForm);
+            for (const value of formData.values()) {
+                score += parseInt(value);
+            }
+            let profileTitle = '';
+            let profileDescription = '';
+            let profileClass = '';
+            if (score <= 11) {
+                profileTitle = "Perfil: Gestor Cauteloso 🛡️";
+                profileDescription = "Você prioriza a segurança e a estabilidade da empresa. Suas decisões visam preservar o capital e garantir a liquidez, evitando riscos desnecessários. Seu lema é 'passos lentos, mas sempre seguros'.";
+                profileClass = 'result-cautious';
+            } else if (score <= 18) {
+                profileTitle = "Perfil: Gestor Analítico ⚖️";
+                profileDescription = "Você busca o crescimento sustentável através da análise. Suas decisões são um equilíbrio entre risco e retorno, sempre baseadas em dados e projeções para otimizar os resultados da empresa sem expô-la a perigos excessivos.";
+                profileClass = 'result-analytical';
+            } else {
+                profileTitle = "Perfil: Gestor Ousado 🚀";
+                profileDescription = "Você foca na expansão e no domínio do mercado. Não tem medo de tomar decisões de alto risco se o potencial de retorno for grande. Para você, o crescimento acelerado justifica investimentos e estratégias agressivas.";
+                profileClass = 'result-bold';
+            }
+            resultTitle.textContent = profileTitle;
+            resultDescription.textContent = profileDescription;
+            resultContainer.className = 'result-container'; // Limpa classes antigas
+            resultContainer.classList.add(profileClass);
+            resultContainer.style.display = 'block';
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

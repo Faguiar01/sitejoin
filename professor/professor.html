@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel do Professor - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-sucesso: #28a745; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
         header.main-header .logo-container img { height: 50px; margin-right: 15px; }
         header.main-header nav a { color: var(--cor-primaria); text-decoration: none; margin-left: 20px; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; transition: all 0.3s ease; }
-        header.main-header nav a:hover { background-color: var(--cor-primaria); color: var(--cor-branco); }
         main { flex: 1; }
         .dashboard-header { text-align: center; padding: 40px 20px; background-color: var(--cor-branco); border-bottom: 1px solid #ddd; }
         .dashboard-header h1 { margin: 0; font-size: 2.8em; color: var(--cor-cinza-escuro); }
         .dashboard-header p { font-size: 1.2em; color: #666; max-width: 600px; margin: 10px auto 0 auto; }
+        .dashboard-header .actions { margin-top: 20px; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 40px 0; }
         .card { background-color: var(--cor-branco); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding: 25px; text-decoration: none; color: var(--cor-texto); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
@@ -24,73 +24,90 @@
         .card h3 { margin: 0 0 10px 0; font-size: 1.5em; text-align: center; }
         .card p { flex-grow: 1; margin: 0 0 20px 0; color: #555; text-align: center; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
+        .btn:hover { opacity: 0.85; }
+
+        /* Estilos do Modal */
+        .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 0; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
+        @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
+        .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; }
+        .modal-header h2 { margin: 0; }
+        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-body { padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; font-family: inherit; }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .modal-footer { padding: 15px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #dee2e6; background-color: #f8f9fa; gap: 10px; }
     </style>
 </head>
 <body>
     <header class="main-header">
-        <a href="../index.html" class="logo-container">
-            <img src="../JOIN.png" alt="Logo Join Xperience">
-            <span>Join Xperience</span>
-        </a>
-        <nav>
-            <a href="#" id="logout-button">Sair</a>
-        </nav>
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="#" id="logout-button">Sair</a></nav>
     </header>
     <main>
         <div class="dashboard-header">
             <h1 id="welcome-title">Painel do Professor</h1>
             <p id="welcome-message">Carregando informações...</p>
+            <div class="actions">
+                <button id="open-post-modal-btn" class="btn btn-success">📰 Nova Postagem no Mural</button>
+            </div>
         </div>
         <div class="container">
             <div class="dashboard-grid">
-
-                <a href="cenarios.html" class="card">
-                    <div class="icon">🚀</div>
-                    <h3>Cenários</h3>
-                    <p>Crie, edite e gerencie os cenários de simulação para suas turmas.</p>
-                </a>
-
-                <a href="bussola.html" class="card">
-                    <div class="icon">🧭</div>
-                    <h3>Bussola</h3>
-                    <p>Acesse a ferramenta Bússola para guiar as decisões estratégicas.</p>
-                </a>
-
-                <a href="#" class="card">
-                    <div class="icon">💡</div>
-                    <h3>XPERIENCE</h3>
-                    <p>Explore a base de conhecimento e materiais de apoio do projeto.</p>
-                </a>
-
-                <a href="#" class="card">
-                    <div class="icon">👥</div>
-                    <h3>Gerenciar Turmas</h3>
-                    <p>Acompanhe o desempenho e o progresso de cada aluno e equipe.</p>
-                </a>
-
-                <a href="#" class="card">
-                    <div class="icon">📊</div>
-                    <h3>Relatórios</h3>
-                    <p>Visualize relatórios detalhados e insights sobre as rodadas.</p>
-                </a>
-
-                <a href="#" class="card">
-                    <div class="icon">⚙️</div>
-                    <h3>Minha Conta</h3>
-                    <p>Edite suas informações de perfil e configurações da conta.</p>
-                </a>
-
+                <a href="cenarios.html" class="card"><div class="icon">🚀</div><h3>Cenários</h3><p>Sugira novos cenários de simulação para a plataforma.</p></a>
+                <a href="bussola.html" class="card"><div class="icon">🧭</div><h3>Bússola</h3><p>Acesse o glossário de termos e conceitos do jogo.</p></a>
+                <a href="#" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Acompanhe o desempenho e o progresso de cada aluno e equipe.</p></a>
+                <a href="#" class="card"><div class="icon">📊</div><h3>Relatórios</h3><p>Visualize relatórios detalhados e insights sobre as rodadas.</p></a>
             </div>
         </div>
     </main>
-    <footer class="main-footer">
-        <p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p>
-    </footer>
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <div id="post-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Postagem no Mural</h2>
+                <span class="close-button">&times;</span>
+            </div>
+            <form id="post-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="post-title">Título</label>
+                        <input type="text" id="post-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-content">Conteúdo</label>
+                        <textarea id="post-content" rows="5" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="post-type">Tipo de Postagem</label>
+                        <select id="post-type">
+                            <option value="news">Notícia 📰</option>
+                            <option value="achievement">Destaque 🏆</option>
+                            <option value="tip">Dica 💡</option>
+                        </select>
+                    </div>
+                    <div id="form-status" style="font-weight: bold; margin-top: 10px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-post-btn">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        // NOVO: Importando funções do Firestore para salvar dados
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -102,29 +119,88 @@
         };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
-        const logoutButton = document.getElementById('logout-button');
-        logoutButton.addEventListener('click', (e) => {
+        const db = getFirestore(app); // Inicializa o Firestore
+
+        // --- LÓGICA DE LOGIN E LOGOUT ---
+        onAuthStateChanged(auth, async (user) => { /* ...código existente sem alterações... */ });
+        document.getElementById('logout-button').addEventListener('click', (e) => { /* ...código existente sem alterações... */ });
+
+        // --- NOVA LÓGICA PARA O MODAL DE POSTAGEM ---
+        const postModal = document.getElementById('post-modal');
+        const openModalBtn = document.getElementById('open-post-modal-btn');
+        const closeModalBtn = postModal.querySelector('.close-button');
+        const cancelPostBtn = document.getElementById('cancel-post-btn');
+        const postForm = document.getElementById('post-form');
+        const formStatus = document.getElementById('form-status');
+
+        const openModal = () => {
+            postForm.reset();
+            formStatus.textContent = '';
+            postModal.style.display = 'block';
+        };
+        const closeModal = () => {
+            postModal.style.display = 'none';
+        };
+        openModalBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelPostBtn.addEventListener('click', closeModal);
+
+        // LÓGICA PARA SALVAR O POST NO FIREBASE
+        postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            signOut(auth).then(() => {
-                window.location.href = '../index.html';
-            });
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const type = document.getElementById('post-type').value;
+
+            if (!title || !content) {
+                formStatus.textContent = 'Título e conteúdo são obrigatórios.';
+                formStatus.style.color = 'red';
+                return;
+            }
+
+            try {
+                // 'mural_posts' é o nome da nossa nova coleção no banco
+                await addDoc(collection(db, "mural_posts"), {
+                    titulo: title,
+                    conteudo: content,
+                    tipo: type,
+                    criadoEm: serverTimestamp() // Adiciona data e hora do servidor
+                });
+
+                formStatus.textContent = 'Post publicado com sucesso!';
+                formStatus.style.color = 'green';
+
+                setTimeout(() => {
+                    closeModal();
+                }, 1500); // Fecha o modal após 1.5 segundos
+
+            } catch (error) {
+                console.error("Erro ao adicionar documento: ", error);
+                formStatus.textContent = 'Erro ao publicar. Tente novamente.';
+                formStatus.style.color = 'red';
+            }
         });
+
+        // (O código de personalização da mensagem de boas-vindas continua aqui)
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDocRef = doc(db, "usuarios", user.uid);
                 const userDoc = await getDoc(userDocRef);
                 const welcomeMessage = document.getElementById('welcome-message');
                 if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    const userName = userData.nome || 'Professor(a)';
-                    welcomeMessage.textContent = `Bem-vindo(a) de volta, ${userName}! Gerencie seus recursos e turmas.`;
+                    welcomeMessage.textContent = `Bem-vindo(a) de volta, ${userDoc.data().nome}! Gerencie seus recursos e turmas.`;
                 } else {
                     welcomeMessage.textContent = "Bem-vindo(a)! Gerencie seus recursos e turmas.";
                 }
             } else {
                 window.location.href = '../login.html';
             }
+        });
+        document.getElementById('logout-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => {
+                window.location.href = '../index.html';
+            });
         });
     </script>
 </body>

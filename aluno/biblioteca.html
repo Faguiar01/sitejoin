@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Recursos - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-sucesso: #28a745; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        main { flex: 1; }
+        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
+        .page-header h1 { margin: 0; font-size: 2.2em; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: opacity 0.3s ease; display: inline-block; }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn:hover { opacity: 0.85; }
+
+        /* --- NOVO: Estilos do Filtro --- */
+        .filter-container {
+            background-color: #fff;
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .filter-container label { font-weight: 600; font-size: 1.1em; }
+        .filter-container select {
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+
+        .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 20px; }
+        .resource-card { 
+            background-color: var(--cor-branco); 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+            display: flex; /* Alterado para flex para funcionar com o filtro */
+            flex-direction: column; 
+            overflow: hidden; 
+            transition: transform 0.3s ease, opacity 0.4s ease; /* Adicionada transição de opacidade */
+        }
+        .resource-card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .resource-card .icon { font-size: 2.5em; margin-bottom: 15px; }
+        .resource-card h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.4em; }
+        .resource-card p { color: #555; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
+        .resource-card-footer { background-color: #f8f9fa; padding: 15px 25px; text-align: right; border-top: 1px solid #eee;}
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="#" id="logout-button">Sair</a></nav>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Biblioteca de Recursos</h1>
+            <div>
+                <a href="xperience.html" class="btn btn-primary">Voltar ao Painel</a>
+            </div>
+        </div>
+
+        <div class="filter-container">
+            <label for="category-filter">Filtrar por Categoria:</label>
+            <select id="category-filter">
+                <option value="todos">Todos</option>
+                <option value="manual">Manuais e Apostilas</option>
+                <option value="video">Vídeos</option>
+                <option value="podcast">Podcasts</option>
+            </select>
+        </div>
+
+        <div class="resource-grid">
+            <div class="resource-card" data-category="manual">
+                <div class="resource-card-content">
+                    <div class="icon">📄</div>
+                    <h3>Livro: Educação Financeira nas Escolas</h3>
+                    <p>Material oficial do Governo Federal para o Ensino Médio. Aborda temas como vida familiar, trabalho e empreendedorismo.</p>
+                </div>
+                <div class="resource-card-footer">
+                    <a href="https://gmw.investidor.gov.br/wp-content/uploads/2021/03/EM-Livro2-VoceSeuFuturoFazendoAcontecer.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Acessar PDF</a>
+                </div>
+            </div>
+            <div class="resource-card" data-category="manual">
+                <div class="resource-card-content">
+                    <div class="icon">📄</div>
+                    <h3>Apostila: Assistente de Contabilidade</h3>
+                    <p>Material de apoio do curso do SENAI, abordando temas como classificação de contas, ativos, passivos e capital próprio.</p>
+                </div>
+                <div class="resource-card-footer">
+                    <a href="https://pt.scribd.com/document/567334837/Assistente-contabilidade" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Acessar Material</a>
+                </div>
+            </div>
+            <div class="resource-card" data-category="manual">
+                <div class="resource-card-content">
+                    <div class="icon">📄</div>
+                    <h3>Caderno: Educação Financeira para Jovens</h3>
+                    <p>Um caderno prático da CAPES com uma sequência didática que contextualiza a matemática financeira e o orçamento.</p>
+                </div>
+                <div class="resource-card-footer">
+                    <a href="https://educapes.capes.gov.br/bitstream/capes/598168/2/caderno%20pedag%C3%B3gico%2013_04_2021%20final.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Acessar Caderno</a>
+                </div>
+            </div>
+
+            <div class="resource-card" data-category="video">
+                <div class="resource-card-content">
+                    <div class="icon">🎬</div>
+                    <h3>Vídeo: 5 Passos para uma Gestão de Custos</h3>
+                    <p>Dicas práticas do SENAI Play para controlar custos, negociar com fornecedores e entender custos fixos e variáveis.</p>
+                </div>
+                <div class="resource-card-footer">
+                    <a href="https://www.youtube.com/watch?v=XVC1_KYgGxI" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Assistir Vídeo</a>
+                </div>
+            </div>
+             <div class="resource-card" data-category="video">
+                <div class="resource-card-content">
+                    <div class="icon">🎬</div>
+                    <h3>Vídeo: Educação Financeira (Turma da Mônica)</h3>
+                    <p>De forma lúdica, a Turma da Mônica apresenta conceitos básicos e importantes sobre como lidar com o dinheiro.</p>
+                </div>
+                <div class="resource-card-footer">
+                    <a href="https://www.youtube.com/watch?v=2eL4wpyLxnQ" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Assistir Vídeo</a>
+                </div>
+            </div>
+            <div class="resource-card" data-category="video">
+                <div class="resource-card-content">
+                    <div class="icon">🎬</div>
+                    <h3>Vídeo: Gestão Financeira na Prática</h3>
+                    <p>Os conceitos de fluxo de caixa, orçamento e capital de giro ensinados pelo SENAI Play de forma universal e aplicável.</p>
+                </div>
+                <div class="resource-card-footer">
+                    <a href="https://www.youtube.com/watch?v=fibSbSi4ims" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Assistir Vídeo</a>
+                </div>
+            </div>
+
+             <div class="resource-card" data-category="podcast">
+                <div class="resource-card-content">
+                    <div class="icon">🎙️</div>
+                    <h3>Podcast: Conexão Indústria</h3>
+                    <p>O podcast oficial do SENAI que aborda inovação, empreendedorismo e o perfil do profissional do futuro.</p>
+                </div>
+                <div class="resource-card-footer">
+                    <a href="https://senaimt.ind.br/midias/podcasts" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Ouvir Podcast</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = '../login.html'; } });
+        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+
+        // --- NOVO: LÓGICA DO FILTRO DE CATEGORIAS ---
+        const categoryFilter = document.getElementById('category-filter');
+        const resourceCards = document.querySelectorAll('.resource-card');
+
+        categoryFilter.addEventListener('change', (event) => {
+            const selectedCategory = event.target.value;
+
+            resourceCards.forEach(card => {
+                const cardCategory = card.dataset.category;
+
+                // Se a categoria selecionada for "todos" OU a categoria do card for a mesma da selecionada
+                if (selectedCategory === 'todos' || cardCategory === selectedCategory) {
+                    card.style.display = 'flex'; // Mostra o card
+                } else {
+                    card.style.display = 'none'; // Esconde o card
+                }
+            });
+        });
+    </script>
+</body>
+</html>
