@@ -9,25 +9,20 @@
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); line-height: 1.6; }
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); }
-        header.main-header .logo-container img { height: 50px; margin-right: 10px; }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
         header.main-header nav a { color: var(--cor-texto); text-decoration: none; margin: 0 15px; font-weight: 500; }
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 40px 2rem; }
-        footer.main-footer .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; max-width: 1200px; margin: 0 auto; padding-bottom: 30px; border-bottom: 1px solid #495057; }
-        footer.main-footer .footer-column h4 { font-size: 1.2em; font-weight: 600; margin-bottom: 15px; }
-        footer.main-footer .footer-column a, footer.main-footer .footer-column p { color: var(--cor-cinza-claro); text-decoration: none; display: block; margin-bottom: 10px; }
-        footer.main-footer .footer-bottom { text-align: center; padding-top: 20px; color: var(--cor-cinza-claro); }
-        .btn { display: inline-block; padding: 10px 24px; border-radius: 8px; border: none; text-decoration: none; font-weight: bold; text-align: center; cursor: pointer; }
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 40px 2rem; text-align: center; }
+        .btn { display: inline-block; padding: 10px 24px; border-radius: 8px; border: none; text-decoration: none; font-weight: bold; text-align: center; cursor: pointer; transition: transform 0.2s ease; }
+        .btn:hover { transform: scale(1.05); }
         .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
         .btn-secondary { background-color: var(--cor-secundaria); color: var(--cor-branco); }
         .hero { text-align: center; padding: 40px 20px 20px 20px; }
         .hero h1 { font-size: 3.2em; margin-bottom: 10px; }
         .hero .hero-subtitle { font-size: 1.4em; color: #444; margin: 0 auto 40px auto; max-width: 600px; }
-        .hero .video-container { max-width: 800px; margin: 40px auto; aspect-ratio: 16 / 9; box-shadow: 0 8px 30px rgba(0,0,0,0.12); border-radius: 10px; overflow: hidden; }
-        .hero .video-container iframe { width: 100%; height: 100%; border: none; }
-        .cta-section { padding: 40px 20px 60px 20px; background-color: var(--cor-branco); }
+        .cta-section { padding: 40px 20px 60px 20px; }
         .cta-grid { display: flex; justify-content: center; align-items: stretch; gap: 30px; flex-wrap: wrap; }
-        .cta-card { background-color: var(--cor-fundo); border: 1px solid #e0e0e0; border-radius: 10px; padding: 30px; text-align: center; flex: 1; min-width: 300px; max-width: 450px; display: flex; flex-direction: column; }
+        .cta-card { background-color: var(--cor-branco); border-radius: 10px; padding: 30px; text-align: center; flex: 1; min-width: 300px; max-width: 450px; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         .cta-card .icon { font-size: 3em; color: var(--cor-primaria); margin-bottom: 15px; }
         .cta-card h3 { font-size: 1.8em; margin-top: 0; margin-bottom: 15px; }
         .cta-card p { color: #555; flex-grow: 1; }
@@ -36,17 +31,17 @@
 </head>
 <body>
     <header class="main-header">
-        <a href="index.html" class="logo-container"><img src="JOIN.png" alt="Logo Join Xperience"><h1>Join Xperience</h1></a>
+        <a href="index.html" class="logo-container"><img src="JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
         <nav>
-            <a href="xperience.html">Xperience</a><a href="bussula.html">Bússola</a><a href="login.html" class="btn btn-primary">Login</a><a href="cadastro.html" class="btn btn-secondary">Cadastro</a>
+            <a href="login.html" class="btn btn-primary">Login</a>
+            <a href="cadastro.html" class="btn btn-secondary">Cadastro</a>
         </nav>
     </header>
     <main>
         <section class="hero">
             <div class="container">
-                <h1>Bem Vindo ao JOIN XPERIENCE!!!</h1>
-                <p class="hero-subtitle">Sua Aventura Financeira Começa Agora!</p>
-                <div class="video-container"><iframe src="https://www.youtube.com/embed/W1cooQvjs20?si=tDAOfFIDKt84F3Nz" title="YouTube video player" allowfullscreen></iframe></div>
+                <h1>Sua Aventura Financeira Começa Agora!</h1>
+                <p class="hero-subtitle">Uma plataforma de simulação empresarial gamificada para desenvolver habilidades de gestão e tomada de decisão.</p>
             </div>
         </section>
         <section class="cta-section">
@@ -54,25 +49,20 @@
                 <div class="cta-card">
                     <div class="icon">🚀</div>
                     <h3>Para Alunos e Equipes</h3>
-                    <p>Aqui, a educação financeira encontra a diversão da gamificação. Prepare-se para uma jornada interativa que transformará a forma como você lida com suas finanças e toma decisões estratégicas.</p>
+                    <p>Encare desafios do mercado, tome decisões estratégicas e veja sua empresa crescer em uma simulação divertida e realista.</p>
                     <a href="cadastro.html" class="btn btn-secondary">Mergulhe no Desafio</a>
                 </div>
                 <div class="cta-card">
                     <div class="icon">🎓</div>
                     <h3>Para Professores</h3>
-                    <p>Conduza seus estudantes por uma simulação de mercado realista e inovadora. Utilize nossa plataforma para engajar suas turmas e aplicar conceitos financeiros e contábeis de forma prática.</p>
+                    <p>Conduza seus estudantes por uma jornada prática de aprendizado, aplicando conceitos de finanças e gestão de forma dinâmica e engajadora.</p>
                     <a href="cadastro.html" class="btn btn-primary">Conduza essa Jornada</a>
                 </div>
             </div>
         </section>
     </main>
     <footer class="main-footer">
-        <div class="footer-content">
-            <div class="footer-column"><h4>JOIN XPERIENCE</h4><p>Jogo Empresarial para Jovens Aprendizes</p><p>SENAI</p></div>
-            <div class="footer-column"><h4>Links Úteis</h4><a href="faq.html">Perguntas Frequentes</a><a href="#">Termos de Uso</a><a href="#">Política de Privacidade</a></div>
-            <div class="footer-column"><h4>Contato</h4><a href="pagina_contato.html">Fale Conosco</a></div>
-        </div>
-        <div class="footer-bottom"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></div>
+        <p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p>
     </footer>
 </body>
 </html>

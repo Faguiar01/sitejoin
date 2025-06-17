@@ -1,28 +1,107 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><title>Cadastro - Join Xperience</title>
-    <style>:root{--cor-primaria:#0052CC;--cor-secundaria:#FF4400;--cor-texto:#333;--cor-fundo:#f4f7f6;--cor-branco:#fff;--cor-cinza-escuro:#343a40;--cor-cinza-claro:#adb5bd}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background-color:var(--cor-fundo);color:var(--cor-texto);line-height:1.6;display:flex;flex-direction:column;min-height:100vh}header.main-header{background-color:var(--cor-branco);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.1)}header.main-header .logo-container{display:flex;align-items:center;text-decoration:none;color:var(--cor-texto)}header.main-header .logo-container img{height:50px;margin-right:10px}header.main-header nav a{color:var(--cor-texto);text-decoration:none;margin:0 15px;font-weight:500}.main-container{flex:1;display:flex;justify-content:center;align-items:center;padding:50px 20px}.form-card{background-color:var(--cor-branco);padding:40px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,.1);width:100%;max-width:500px}.form-card h2{text-align:center;font-size:2em;margin-top:0;margin-bottom:25px}.form-group{margin-bottom:20px;position:relative;text-align:left}.form-group label{display:block;margin-bottom:8px;font-weight:700}.form-group input,.form-group textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;box-sizing:border-box}.form-group textarea{resize:vertical;min-height:80px}.password-rules{font-size:.8em;color:#6c757d;margin-top:-12px}.profile-selection{display:flex;gap:20px;margin-bottom:25px;justify-content:center;flex-wrap:wrap}.login-link{text-align:center;margin-top:20px}.login-link a{color:var(--cor-primaria);text-decoration:none}#equipe-fields{display:none}.btn{display:inline-block;padding:10px 24px;border-radius:8px;border:none;text-decoration:none;font-weight:700;text-align:center;cursor:pointer}.btn-primary{background-color:var(--cor-primaria);color:var(--cor-branco)}.btn-secondary{background-color:var(--cor-secundaria);color:var(--cor-branco)}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-texto); text-decoration: none; font-weight: 500; }
+        .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 50px 20px; }
+        .form-card { background-color: var(--cor-branco); padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        .form-card h2 { text-align: center; font-size: 2em; margin-top: 0; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
+        .profile-selection { display: flex; gap: 20px; margin-bottom: 25px; justify-content: center; flex-wrap: wrap; }
+        .login-link { text-align: center; margin-top: 20px; }
+        .login-link a { color: var(--cor-primaria); text-decoration: none; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; }
+        .btn-secondary { background-color: var(--cor-secundaria); color: var(--cor-branco); }
+    </style>
 </head>
 <body>
-    <header class="main-header"><a href="index.html" class="logo-container"><img src="JOIN.png" alt="Logo Join Xperience"><h1>Join Xperience</h1></a><nav><a href="index.html">Início</a><a href="pagina_contato.html">Contato</a><a href="login.html">Login</a></nav></header>
+    <header class="main-header">
+        <a href="index.html" class="logo-container"><img src="JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="login.html">Já tenho uma conta</a></nav>
+    </header>
     <main class="main-container">
         <div class="form-card">
             <h2>Crie sua Conta</h2>
             <form id="cadastro-form">
-                <div class="form-group profile-selection"><label><input type="radio" name="perfil" value="aluno" checked> Sou Aluno</label><label><input type="radio" name="perfil" value="professor"> Sou Professor</label><label><input type="radio" name="perfil" value="equipe"> Sou Líder de Equipe</label></div>
-                <div id="individual-fields"><div class="form-group"><label for="nome">Seu Nome Completo</label><input type="text" id="nome" required></div><div class="form-group"><label for="turma">Sua Turma</label><input type="text" id="turma" required></div></div>
-                <div id="equipe-fields"><div class="form-group"><label for="nome-equipe">Nome da Equipe</label><input type="text" id="nome-equipe"></div><div class="form-group"><label for="emails-membros">E-mails dos Membros (um por linha)</label><textarea id="emails-membros" placeholder="membro1@email.com&#10;membro2@email.com"></textarea></div></div>
+                <div class="form-group profile-selection">
+                    <label><input type="radio" name="perfil" value="aluno" checked> Sou Aluno</label>
+                    <label><input type="radio" name="perfil" value="professor"> Sou Professor</label>
+                </div>
+                <div class="form-group"><label for="nome">Seu Nome Completo</label><input type="text" id="nome" required></div>
+                <div class="form-group"><label for="turma">Sua Turma</label><input type="text" id="turma" required></div>
                 <div class="form-group"><label for="email">Seu E-mail (será seu login)</label><input type="email" id="email" required></div>
                 <div class="form-group"><label for="senha">Crie uma Senha</label><input type="password" id="senha" required></div>
-                <div class="password-rules">Mínimo 8 caracteres, com maiúscula, número e caractere especial (!@#$%*).</div>
-                <button type="submit" class="btn btn-secondary" style="width:100%;margin-top:20px">Cadastrar</button>
+                <button type="submit" class="btn btn-secondary">Cadastrar</button>
                 <p class="login-link">Já tem uma conta? <a href="login.html">Faça login</a></p>
             </form>
         </div>
     </main>
     <script type="module">
-        import{initializeApp}from"https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";import{getAuth,createUserWithEmailAndPassword}from"https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";import{getFirestore,doc,setDoc}from"https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";const firebaseConfig={apiKey:"AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",authDomain:"joinxperience-site.firebaseapp.com",projectId:"joinxperience-site",storageBucket:"joinxperience-site.firebasestorage.app",messagingSenderId:"140037739806",appId:"1:140037739806:web:322493d72ca6149abce50f",measurementId:"G-V4SRK0FNBN"};const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);auth.languageCode="pt-br";const perfilRadios=document.querySelectorAll('input[name="perfil"]');const individualFields=document.getElementById("individual-fields");const equipeFields=document.getElementById("equipe-fields");const nomeInput=document.getElementById("nome");const turmaInput=document.getElementById("turma");const nomeEquipeInput=document.getElementById("nome-equipe");function toggleFields(){const e="equipe"===document.querySelector('input[name="perfil"]:checked').value;individualFields.style.display=e?"none":"block",equipeFields.style.display=e?"block":"none",nomeInput.required=!e,turmaInput.required=!e,nomeEquipeInput.required=e}perfilRadios.forEach(e=>{e.addEventListener("change",toggleFields)});const cadastroForm=document.getElementById("cadastro-form");cadastroForm.addEventListener("submit",async e=>{e.preventDefault();const t=document.getElementById("email").value,o=document.getElementById("senha").value,l=document.querySelector('input[name="perfil"]:checked').value;if(o.length<8||!/[A-Z]/.test(o)||!/[0-9]/.test(o)||!/[!@#$%*]/.test(o))return void alert("Erro: A senha não atende aos requisitos de segurança.");try{const e=await createUserWithEmailAndPassword(auth,t,o),r=e.user;let a={email:r.email,uid:r.uid,perfil:l,criadoEm:new Date};"equipe"===l?(a.nome=document.getElementById("nome-equipe").value,a.membros=[r.email,...document.getElementById("emails-membros").value.split("\n").filter(e=>""!==e.trim())]):(a.nome=document.getElementById("nome").value,a.turma=document.getElementById("turma").value),await setDoc(doc(db,"usuarios",r.uid),a),alert("Cadastro realizado com sucesso! Você será redirecionado."),"professor"===l?window.location.href="professor/painel_professor.html":window.location.href="aluno/painel_aluno.html"}catch(e){let t;switch(e.code){case"auth/email-already-in-use":t="Este endereço de e-mail já está em uso por outra conta.";break;case"auth/invalid-email":t="O formato do e-mail fornecido é inválido.";break;default:t="Ocorreu um erro inesperado: "+e.message}alert("Erro ao cadastrar: "+t)}});
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const cadastroForm = document.getElementById("cadastro-form");
+        cadastroForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById("nome").value;
+            const turma = document.getElementById("turma").value;
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
+            const perfil = document.querySelector('input[name="perfil"]:checked').value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+                const user = userCredential.user;
+
+                await setDoc(doc(db, "usuarios", user.uid), {
+                    nome: nome,
+                    turma: turma,
+                    email: email,
+                    perfil: perfil,
+                    uid: user.uid
+                });
+
+                alert("Cadastro realizado com sucesso! Você será redirecionado.");
+
+                if (perfil === 'professor') {
+                    window.location.href = 'professor/professor.html';
+                } else {
+                    window.location.href = 'aluno/aluno.html';
+                }
+            } catch (error) {
+                let errorMessage = "Ocorreu um erro desconhecido.";
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = "Este e-mail já está cadastrado.";
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = "A senha é muito fraca. Use pelo menos 6 caracteres.";
+                }
+                alert(`Erro ao cadastrar: ${errorMessage}`);
+                console.error(error);
+            }
+        });
     </script>
 </body>
 </html>

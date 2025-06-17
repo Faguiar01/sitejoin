@@ -1,27 +1,86 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><title>Login - Join Xperience</title>
-    <style>:root{--cor-primaria:#0052CC;--cor-secundaria:#FF4400;--cor-texto:#333;--cor-fundo:#f4f7f6;--cor-branco:#fff;--cor-cinza-escuro:#343a40;--cor-cinza-claro:#adb5bd}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background-color:var(--cor-fundo);color:var(--cor-texto);line-height:1.6;display:flex;flex-direction:column;min-height:100vh}header.main-header{background-color:var(--cor-branco);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.1)}header.main-header .logo-container{display:flex;align-items:center;text-decoration:none;color:var(--cor-texto)}header.main-header .logo-container img{height:50px;margin-right:10px}header.main-header nav a{color:var(--cor-texto);text-decoration:none;margin:0 15px;font-weight:500}.main-container{flex:1;display:flex;justify-content:center;align-items:center;padding:50px 20px}.form-card{background-color:var(--cor-branco);padding:40px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,.1);width:100%;max-width:450px}.form-card h2{text-align:center;font-size:2em;margin-top:0;margin-bottom:25px}.form-group{margin-bottom:20px;position:relative;text-align:left}.form-group label{display:block;margin-bottom:8px;font-weight:700}.form-group input{width:100%;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;box-sizing:border-box}input[type=password]{padding-right:45px}.extra-links{text-align:center;margin-top:20px}.extra-links a{color:var(--cor-primaria);text-decoration:none;display:block;margin-top:10px}.password-toggle-icon{position:absolute;top:50%;right:15px;transform:translateY(-50%);cursor:pointer;color:#777;width:20px}.btn{display:inline-block;padding:10px 24px;border-radius:8px;border:none;text-decoration:none;font-weight:700;text-align:center;cursor:pointer}.btn-primary{background-color:var(--cor-primaria);color:var(--cor-branco)}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-texto); text-decoration: none; font-weight: 500; }
+        .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 50px 20px; }
+        .form-card { background-color: var(--cor-branco); padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        .form-card h2 { text-align: center; font-size: 2em; margin-top: 0; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
+        .extra-links { text-align: center; margin-top: 20px; }
+        .extra-links a { color: var(--cor-primaria); text-decoration: none; display: block; margin-top: 10px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+    </style>
 </head>
 <body>
-    <header class="main-header"><a href="index.html" class="logo-container"><img src="JOIN.png" alt="Logo Join Xperience"><h1>Join Xperience</h1></a><nav><a href="index.html">Início</a><a href="pagina_contato.html">Contato</a><a href="cadastro.html">Cadastro</a></nav></header>
+    <header class="main-header">
+        <a href="index.html" class="logo-container"><img src="JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="cadastro.html">Criar uma conta</a></nav>
+    </header>
     <main class="main-container">
         <div class="form-card">
             <h2>Acesse sua Conta</h2>
             <form id="login-form">
                 <div class="form-group"><label for="email">E-mail</label><input type="email" id="email" required></div>
-                <div class="form-group">
-                    <label for="senha">Senha</label>
-                    <div style="position:relative"><input type="password" id="senha" required><svg id="toggle-password" class="password-toggle-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" style="top:50%;transform:translateY(-50%)"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg></div>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width:100%">Entrar</button>
-                <div class="extra-links"><a href="#" id="forgot-password-link">Esqueceu a senha?</a><a href="cadastro.html">Não tem uma conta? Cadastre-se</a></div>
+                <div class="form-group"><label for="senha">Senha</label><input type="password" id="senha" required></div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+                <div class="extra-links"><a href="cadastro.html">Não tem uma conta? Cadastre-se</a></div>
             </form>
         </div>
     </main>
     <script type="module">
-        import{initializeApp}from"https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";import{getAuth,signInWithEmailAndPassword,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";import{getFirestore,doc,getDoc}from"https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";const firebaseConfig={apiKey:"AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",authDomain:"joinxperience-site.firebaseapp.com",projectId:"joinxperience-site",storageBucket:"joinxperience-site.firebasestorage.app",messagingSenderId:"140037739806",appId:"1:140037739806:web:322493d72ca6149abce50f",measurementId:"G-V4SRK0FNBN"};const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);auth.languageCode="pt-br";const loginForm=document.getElementById("login-form");loginForm.addEventListener("submit",async e=>{e.preventDefault();const t=document.getElementById("email").value,o=document.getElementById("senha").value;try{const e=await signInWithEmailAndPassword(auth,t,o),r=e.user,a=doc(db,"usuarios",r.uid),s=await getDoc(a);if(s.exists()){const e=s.data();alert("Login bem-sucedido! Bem-vindo(a) de volta, "+e.nome),"professor"===e.perfil?window.location.href="professor/painel_professor.html":window.location.href="aluno/painel_aluno.html"}else alert("Login bem-sucedido, mas não encontramos seus dados de perfil."),window.location.href="aluno/painel_aluno.html"}catch(e){let t;switch(e.code){case"auth/invalid-login-credentials":case"auth/user-not-found":case"auth/wrong-password":t="E-mail ou senha inválidos. Por favor, verifique seus dados e tente novamente.";break;default:t="Ocorreu um erro inesperado. Tente novamente mais tarde."}alert("Erro ao fazer login: "+t)}});const forgotPasswordLink=document.getElementById("forgot-password-link");forgotPasswordLink.addEventListener("click",e=>{e.preventDefault();const t=prompt("Por favor, digite seu e-mail para enviarmos o link de redefinição de senha:");t&&sendPasswordResetEmail(auth,t).then(()=>{alert("E-mail de redefinição enviado para "+t+". Verifique sua caixa de entrada (e a pasta de spam).")}).catch(e=>{alert("Erro ao enviar e-mail de redefinição: "+e.message)})});const togglePassword=document.getElementById("toggle-password"),passwordInput=document.getElementById("senha");togglePassword.addEventListener("click",()=>{const e="password"===passwordInput.getAttribute("type")?"text":"password";passwordInput.setAttribute("type",e)});
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('senha').value;
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                const userDocRef = doc(db, 'usuarios', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData.perfil === 'professor') {
+                        window.location.href = 'professor/professor.html';
+                    } else {
+                        window.location.href = 'aluno/aluno.html';
+                    }
+                } else {
+                    alert('Erro: Não foi possível encontrar dados de perfil.');
+                }
+            } catch (error) {
+                alert("Erro ao fazer login: E-mail ou senha inválidos.");
+                console.error(error);
+            }
+        });
     </script>
 </body>
 </html>

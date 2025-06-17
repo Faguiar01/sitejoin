@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Aluno - Join Xperience</title>
+    <title>Painel do Professor - Join Xperience</title>
     <style>
         :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
         header.main-header .logo-container img { height: 50px; margin-right: 15px; }
         header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        .dashboard-header { text-align: center; padding: 40px 20px; }
+        .dashboard-header { text-align: center; padding: 40px 20px; background-color: var(--cor-branco); border-bottom: 1px solid #ddd; }
         .dashboard-header h1 { margin: 0; font-size: 2.8em; color: var(--cor-cinza-escuro); }
         .dashboard-header p { font-size: 1.2em; color: #666; margin-top: 10px; }
-        main { flex: 1; display: flex; justify-content: center; align-items: center; }
+        main { flex: 1; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 40px 0; }
+        .card { background-color: var(--cor-branco); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding: 25px; text-decoration: none; color: var(--cor-texto); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+        .card .icon { font-size: 3em; margin-bottom: 15px; color: var(--cor-primaria); text-align: center; }
+        .card h3 { margin: 0 0 10px 0; font-size: 1.5em; text-align: center; }
+        .card p { flex-grow: 1; margin: 0; color: #555; text-align: center; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
     </style>
 </head>
@@ -25,8 +32,15 @@
     </header>
     <main>
         <div class="dashboard-header">
-            <h1 id="welcome-title">Painel do Aluno</h1>
+            <h1 id="welcome-title">Painel do Professor</h1>
             <p id="welcome-message">Carregando...</p>
+        </div>
+        <div class="container">
+            <div class="dashboard-grid">
+                <a href="#" class="card"><div class="icon">🚀</div><h3>Cenários</h3><p>Crie e gerencie os cenários de simulação.</p></a>
+                <a href="#" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Acompanhe o progresso de alunos e equipes.</p></a>
+                <a href="#" class="card"><div class="icon">📊</div><h3>Relatórios</h3><p>Visualize relatórios e insights das rodadas.</p></a>
+            </div>
         </div>
     </main>
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
@@ -57,7 +71,7 @@
                 const userDocRef = doc(db, "usuarios", user.uid);
                 const userDoc = await getDoc(userDocRef);
                 if (userDoc.exists()) {
-                    document.getElementById('welcome-message').textContent = `Bem-vindo(a), ${userDoc.data().nome}! Sua jornada começa agora.`;
+                    document.getElementById('welcome-message').textContent = `Bem-vindo(a) de volta, ${userDoc.data().nome}!`;
                 }
             } else {
                 window.location.href = '../login.html';
