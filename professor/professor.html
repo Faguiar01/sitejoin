@@ -5,49 +5,225 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel do Professor - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        .dashboard-header { text-align: center; padding: 40px 20px; background-color: var(--cor-branco); border-bottom: 1px solid #ddd; }
-        .dashboard-header h1 { margin: 0; font-size: 2.8em; color: var(--cor-cinza-escuro); }
-        .dashboard-header p { font-size: 1.2em; color: #666; margin-top: 10px; }
-        main { flex: 1; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 40px 0; }
-        .card { background-color: var(--cor-branco); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding: 25px; text-decoration: none; color: var(--cor-texto); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
-        .card .icon { font-size: 3em; margin-bottom: 15px; color: var(--cor-primaria); text-align: center; }
-        .card h3 { margin: 0 0 10px 0; font-size: 1.5em; text-align: center; }
-        .card p { flex-grow: 1; margin: 0; color: #555; text-align: center; }
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+        /* Estilos Globais e Variáveis */
+        :root {
+            --cor-primaria: #0052CC;
+            --cor-secundaria: #FF4400;
+            --cor-texto: #333;
+            --cor-fundo: #f4f7f6;
+            --cor-branco: #fff;
+            --cor-cinza-escuro: #343a40;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Cabeçalho */
+        header.main-header {
+            background-color: var(--cor-branco);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        header.main-header .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--cor-texto);
+            font-weight: 600;
+        }
+
+        header.main-header .logo-container img {
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        header.main-header nav a {
+            color: var(--cor-primaria);
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border: 1px solid var(--cor-primaria);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        header.main-header nav a:hover {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+        }
+
+        /* Conteúdo Principal do Painel */
+        main {
+            flex: 1; /* Faz o main ocupar o espaço restante */
+        }
+
+        .dashboard-header {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--cor-branco);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 2.8em;
+            color: var(--cor-cinza-escuro);
+        }
+
+        .dashboard-header p {
+            font-size: 1.2em;
+            color: #666;
+            max-width: 600px;
+            margin: 10px auto 0 auto;
+        }
+
+        /* Grade de Opções */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px 0;
+        }
+
+        .card {
+            background-color: var(--cor-branco);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 25px;
+            text-decoration: none;
+            color: var(--cor-texto);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .card .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: var(--cor-primaria);
+            text-align: center;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .card p {
+            flex-grow: 1;
+            margin: 0 0 20px 0;
+            color: #555;
+            text-align: center;
+        }
+
+        /* Rodapé */
+        footer.main-footer {
+            background-color: var(--cor-cinza-escuro);
+            color: var(--cor-branco);
+            padding: 20px;
+            text-align: center;
+            margin-top: auto; /* Empurra o rodapé para baixo */
+        }
+
     </style>
 </head>
 <body>
+
     <header class="main-header">
-        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
-        <nav><a href="#" id="logout-button">Sair</a></nav>
+        <a href="../index.html" class="logo-container">
+            <img src="../JOIN.png" alt="Logo Join Xperience">
+            <span>Join Xperience</span>
+        </a>
+        <nav>
+            <a href="#" id="logout-button">Sair</a>
+        </nav>
     </header>
+
     <main>
         <div class="dashboard-header">
             <h1 id="welcome-title">Painel do Professor</h1>
-            <p id="welcome-message">Carregando...</p>
+            <p id="welcome-message">Carregando informações...</p>
         </div>
+
         <div class="container">
             <div class="dashboard-grid">
-                <a href="#" class="card"><div class="icon">🚀</div><h3>Cenários</h3><p>Crie e gerencie os cenários de simulação.</p></a>
-                <a href="#" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Acompanhe o progresso de alunos e equipes.</p></a>
-                <a href="#" class="card"><div class="icon">📊</div><h3>Relatórios</h3><p>Visualize relatórios e insights das rodadas.</p></a>
+
+                <a href="cenarios.html" class="card">
+                    <div class="icon">🚀</div>
+                    <h3>Cenários</h3>
+                    <p>Crie, edite e gerencie os cenários de simulação para suas turmas.</p>
+                </a>
+
+                <a href="#" class="card">
+                    <div class="icon">🧭</div>
+                    <h3>Bússola</h3>
+                    <p>Acesse a ferramenta Bússola para guiar as decisões estratégicas.</p>
+                </a>
+
+                <a href="#" class="card">
+                    <div class="icon">💡</div>
+                    <h3>XPERIENCE</h3>
+                    <p>Explore a base de conhecimento e materiais de apoio do projeto.</p>
+                </a>
+
+                <a href="#" class="card">
+                    <div class="icon">👥</div>
+                    <h3>Gerenciar Turmas</h3>
+                    <p>Acompanhe o desempenho e o progresso de cada aluno e equipe.</p>
+                </a>
+
+                <a href="#" class="card">
+                    <div class="icon">📊</div>
+                    <h3>Relatórios</h3>
+                    <p>Visualize relatórios detalhados e insights sobre as rodadas.</p>
+                </a>
+
+                <a href="#" class="card">
+                    <div class="icon">⚙️</div>
+                    <h3>Minha Conta</h3>
+                    <p>Edite suas informações de perfil e configurações da conta.</p>
+                </a>
+
             </div>
         </div>
     </main>
-    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <footer class="main-footer">
+        <p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p>
+    </footer>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -57,23 +233,39 @@
             appId: "1:140037739806:web:322493d72ca6149abce50f",
             measurementId: "G-V4SRK0FNBN"
         };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        document.getElementById('logout-button').addEventListener('click', (e) => {
+        // --- LÓGICA DE LOGOUT ---
+        const logoutButton = document.getElementById('logout-button');
+        logoutButton.addEventListener('click', (e) => {
             e.preventDefault();
-            signOut(auth).then(() => { window.location.href = '../index.html'; });
+            signOut(auth).then(() => {
+                window.location.href = '../index.html'; // Volta para a página inicial
+            });
         });
 
+        // --- LÓGICA PARA PERSONALIZAR A PÁGINA ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                // Usuário está logado, buscar nome no Firestore
                 const userDocRef = doc(db, "usuarios", user.uid);
                 const userDoc = await getDoc(userDocRef);
+
+                const welcomeMessage = document.getElementById('welcome-message');
+
                 if (userDoc.exists()) {
-                    document.getElementById('welcome-message').textContent = `Bem-vindo(a) de volta, ${userDoc.data().nome}!`;
+                    const userData = userDoc.data();
+                    const userName = userData.nome || 'Professor(a)';
+                    welcomeMessage.textContent = `Bem-vindo(a) de volta, ${userName}! Gerencie seus recursos e turmas.`;
+                } else {
+                    welcomeMessage.textContent = "Bem-vindo(a)! Gerencie seus recursos e turmas.";
                 }
+
             } else {
+                // Usuário não está logado, redirecionar para a página de login
                 window.location.href = '../login.html';
             }
         });
