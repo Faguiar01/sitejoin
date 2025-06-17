@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bússola Estratégica - Join Xperience</title>
     <style>
+        /* Estilos Globais e do Template (Versão 2) */
         :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-sucesso: #28a745; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
@@ -18,10 +19,21 @@
         .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: opacity 0.3s ease; }
         .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
         .btn:hover { opacity: 0.85; }
-        .content-section { background-color: var(--cor-branco); margin-top: 30px; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .content-section h2 { border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; margin-top: 0; }
-        .content-section p { line-height: 1.7; color: #555; }
+        .content-box { background-color: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-top: 30px; padding: 30px; text-align: center; }
+        .content-box h2 { font-size: 1.8em; font-weight: 800; color: #333; margin-bottom: 1rem; }
+        .content-box p { font-size: 1.1em; color: #555; margin-bottom: 2rem; max-w-3xl; margin-left: auto; margin-right: auto;}
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+
+        /* Estilos do Acordeão (Importados da Versão 1) */
+        .accordion-item { border: 1px solid #e5e7eb; border-radius: 0.75rem; margin-bottom: 0.75rem; overflow: hidden; }
+        .accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; font-size: 1.25rem; font-weight: 600; color: #374151; cursor: pointer; background-color: #ffffff; }
+        .accordion-header:hover { background-color: #f3f4f6; }
+        .accordion-content { padding: 1rem 1.5rem; background-color: #f9fafb; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; text-align: left;}
+        .accordion-content.active { max-height: 500px; transition: max-height 0.5s ease-in; }
+        .accordion-icon { transition: transform 0.3s ease; }
+        .accordion-icon.rotate { transform: rotate(180deg); }
+        .accordion-content ul { list-style-type: disc; list-style-position: inside; color: #4b5563; }
+        .accordion-content ul li { margin-bottom: 0.5rem; }
     </style>
 </head>
 <body>
@@ -29,6 +41,7 @@
         <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
         <nav><a href="#" id="logout-button">Sair</a></nav>
     </header>
+
     <main class="container">
         <div class="page-header">
             <h1>Bússola Estratégica</h1>
@@ -37,22 +50,68 @@
             </div>
         </div>
 
-        <div class="content-section">
-            <h2>O que é a Bússola?</h2>
-            <p>A Bússola Estratégica é a sua principal ferramenta para guiar os alunos através das complexidades do mercado simulado. Ela fornece uma visão geral dos indicadores chave de desempenho, tendências de mercado e o posicionamento competitivo de cada equipe.</p>
-            <p>Use esta ferramenta para ajudar os alunos a tomar decisões mais informadas a cada rodada, analisando os resultados de suas ações e planejando os próximos passos.</p>
-        </div>
+        <div class="content-box">
+            <h2>Guia de Termos Financeiros Essenciais</h2>
+            <p>Use este glossário como bússola para tomar decisões mais conscientes dentro do simulador.</p>
 
-        <div class="content-section">
-            <h2>Como Utilizar</h2>
-            <p><strong>1. Análise de Desempenho:</strong> No início de cada rodada, acesse a Bússola com seus alunos para visualizar os relatórios financeiros, participação de mercado e níveis de satisfação do cliente de todas as equipes.</p>
-            <p><strong>2. Identificação de Oportunidades:</strong> Analise os gráficos de tendências para identificar oportunidades de crescimento, nichos de mercado inexplorados ou áreas onde os concorrentes estão falhando.</p>
-            <p><strong>3. Planejamento Estratégico:</strong> Com base nos dados, auxilie as equipes a definirem suas estratégias para a rodada atual: investir em marketing, desenvolver novos produtos, ajustar preços ou otimizar a produção.</p>
+            <div class="space-y-4 text-left">
+                <div class="accordion-item">
+                    <div class="accordion-header" data-target="content-1">
+                        <span>1. Termos Financeiros Essenciais</span>
+                        <span class="accordion-icon">&#9660;</span> </div>
+                    <div id="content-1" class="accordion-content">
+                        <ul>
+                            <li><strong>Ativo:</strong> Recursos controlados pela empresa, que geram benefícios econômicos futuros. Ex: dinheiro em caixa, estoques, imóveis.</li>
+                            <li><strong>Passivo:</strong> Obrigações presentes da empresa, resultantes de eventos passados. Ex: contas a pagar, empréstimos.</li>
+                            <li><strong>Patrimônio Líquido:</strong> Valor residual dos ativos da empresa após a dedução de todos os seus passivos. Representa o capital próprio da empresa.</li>
+                            <li><strong>Receita:</strong> Valores obtidos pela empresa pela venda de bens ou serviços.</li>
+                            <li><strong>Despesa:</strong> Gastos necessários para gerar a receita. Ex: salários, aluguel, luz.</li>
+                            <li><strong>Lucro Bruto:</strong> Receita de vendas menos o custo dos produtos vendidos (CPV).</li>
+                            <li><strong>Lucro Líquido:</strong> Lucro bruto menos as despesas operacionais, financeiras e impostos.</li>
+                            <li><strong>Fluxo de Caixa:</strong> Movimentação de dinheiro (entradas e saídas) na empresa em um determinado período.</li>
+                            <li><strong>DRE:</strong> Relatório que resume as operações da empresa em um período, mostrando se houve lucro ou prejuízo.</li>
+                            <li><strong>Balanço Patrimonial:</strong> Relatório que mostra a posição financeira da empresa em um determinado momento.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" data-target="content-2">
+                        <span>2. Procedimentos com as Planilhas</span>
+                        <span class="accordion-icon">&#9660;</span>
+                    </div>
+                    <div id="content-2" class="accordion-content">
+                        <ul>
+                            <li><strong>Registro de Transações:</strong> Cada operação (compra, venda, etc.) deve ser registrada nas planilhas de forma organizada.</li>
+                            <li><strong>Atualização do Fluxo de Caixa:</strong> Monitore as entradas e saídas de dinheiro, garantindo saldo suficiente.</li>
+                            <li><strong>Elaboração da DRE e Balanço:</strong> Utilize os dados das transações para preencher os demonstrativos.</li>
+                            <li><strong>Análise de Desempenho:</strong> Compare os resultados reais com os projetados e identifique melhorias.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" data-target="content-3">
+                        <span>3. Conceitos do Jogo</span>
+                        <span class="accordion-icon">&#9660;</span>
+                    </div>
+                    <div id="content-3" class="accordion-content">
+                        <ul>
+                            <li><strong>Rodadas:</strong> Cada rodada representa um mês de operação. Decisões tomadas em uma rodada afetam as seguintes.</li>
+                            <li>**Cenários:** Eventos inesperados que influenciam as condições de mercado.</li>
+                            <li>**Decisões Estratégicas:** Escolhas sobre produção, precificação, marketing e investimentos.</li>
+                            <li>**Indicadores de Desempenho:** Métricas como lucro, fluxo de caixa, participação de mercado.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
+
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
 
     <script type="module">
+        // Lógica de Segurança e Navegação (Versão 2)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
         const firebaseConfig = {
@@ -66,18 +125,40 @@
         };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        // Proteção da página
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = '../login.html';
-            }
+            if (!user) { window.location.href = '../login.html'; }
         });
-
-        // Lógica de logout
         document.getElementById('logout-button').addEventListener('click', (e) => {
             e.preventDefault();
             signOut(auth).then(() => { window.location.href = '../index.html'; });
+        });
+
+        // Lógica do Acordeão (Importada da Versão 1)
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const targetId = header.dataset.target;
+                const content = document.getElementById(targetId);
+                const icon = header.querySelector('.accordion-icon');
+
+                const isActive = content.classList.contains('active');
+
+                // Primeiro, fecha todos os outros que estiverem abertos
+                document.querySelectorAll('.accordion-content.active').forEach(item => {
+                    if (item.id !== targetId) {
+                        item.classList.remove('active');
+                        item.previousElementSibling.querySelector('.accordion-icon').classList.remove('rotate');
+                    }
+                });
+
+                // Então, abre ou fecha o item clicado
+                if (isActive) {
+                    content.classList.remove('active');
+                    icon.classList.remove('rotate');
+                } else {
+                    content.classList.add('active');
+                    icon.classList.add('rotate');
+                }
+            });
         });
     </script>
 </body>
