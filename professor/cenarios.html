@@ -15,28 +15,26 @@
         main { flex: 1; }
         .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
         .page-header h1 { margin: 0; font-size: 2.2em; }
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: opacity 0.3s ease; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
         .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
         .btn-secondary { background-color: #6c757d; color: var(--cor-branco); }
         .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
         .btn:hover { opacity: 0.85; }
         .placeholder-text { text-align: center; padding: 50px; color: #6c757d; border: 2px dashed #ddd; margin-top: 30px; border-radius: 10px; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
-
-        /* --- ESTILOS DO MODAL --- */
         .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 0; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
         @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
-        .modal-header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; }
+        .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; }
         .modal-header h2 { margin: 0; }
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close-button:hover, .close-button:focus { color: black; }
-        .modal-body { padding: 20px 15px; }
+        .modal-body { padding: 20px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
         .form-group input, .form-group textarea { width: 100%; padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; font-family: inherit; }
         .form-group textarea { resize: vertical; min-height: 120px; }
-        .modal-footer { padding: 15px; display: flex; justify-content: flex-end; border-top: 1px solid #dee2e6; gap: 10px; }
+        .modal-footer { padding: 15px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #dee2e6; background-color: #f8f9fa; gap: 10px; }
+        #form-status { margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -44,7 +42,6 @@
         <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
         <nav><a href="#" id="logout-button">Sair</a></nav>
     </header>
-
     <main class="container">
         <div class="page-header">
             <h1>Sugestão de Cenários</h1>
@@ -53,12 +50,10 @@
                 <a href="#" id="suggest-scenario-button" class="btn btn-success">Sugerir Novo Cenário</a>
             </div>
         </div>
-
         <div class="placeholder-text">
             <p>Tem uma ideia para um novo cenário de simulação? <br>Clique em "Sugerir Novo Cenário" e compartilhe sua ideia conosco!</p>
         </div>
     </main>
-
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
 
     <div id="scenario-modal" class="modal-backdrop">
@@ -68,15 +63,16 @@
                 <span class="close-button">&times;</span>
             </div>
             <div class="modal-body">
-                <form id="suggest-scenario-form">
+                <form id="suggest-scenario-form" method="POST">
                     <div class="form-group">
                         <label for="scenario-name">Nome da Ideia / Cenário</label>
-                        <input type="text" id="scenario-name" required placeholder="Ex: Simulação de Crise na Bolsa">
+                        <input type="text" id="scenario-name" name="nome_cenario" required>
                     </div>
                     <div class="form-group">
                         <label for="scenario-description">Descrição da Sugestão</label>
-                        <textarea id="scenario-description" required placeholder="Descreva sua ideia de cenário aqui. Quais seriam os desafios? Que decisões os alunos teriam que tomar?"></textarea>
+                        <textarea id="scenario-description" name="descricao" required rows="6"></textarea>
                     </div>
+                    <div id="form-status"></div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -99,64 +95,66 @@
             appId: "1:140037739806:web:322493d72ca6149abce50f",
             measurementId: "G-V4SRK0FNBN"
         };
-
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-
-        // --- LÓGICA DE AUTENTICAÇÃO E LOGOUT ---
-        onAuthStateChanged(auth, (user) => {
-            if (!user) { window.location.href = '../login.html'; }
-        });
-        document.getElementById('logout-button').addEventListener('click', (e) => {
-            e.preventDefault();
-            signOut(auth).then(() => { window.location.href = '../index.html'; });
-        });
+        onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = '../login.html'; } });
+        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
 
         // --- LÓGICA DO MODAL ---
         const modal = document.getElementById('scenario-modal');
         const openModalButton = document.getElementById('suggest-scenario-button');
-        const closeModalButton = document.querySelector('.close-button');
-        const cancelButton = document.getElementById('cancel-button');
-        const scenarioForm = document.getElementById('suggest-scenario-form');
-
-        openModalButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            modal.style.display = 'block';
+        const statusDiv = document.getElementById('form-status');
+        document.querySelector('.close-button').addEventListener('click', closeModal);
+        document.getElementById('cancel-button').addEventListener('click', closeModal);
+        openModalButton.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            document.getElementById('suggest-scenario-form').reset();
+            statusDiv.innerHTML = "";
+            modal.style.display = 'block'; 
         });
+        function closeModal() { modal.style.display = 'none'; }
+        window.addEventListener('click', (event) => { if (event.target == modal) { closeModal(); } });
 
-        const closeModal = () => {
-            modal.style.display = 'none';
+        // --- LÓGICA DE ENVIO COM FORMSPREE ---
+        const form = document.getElementById('suggest-scenario-form');
+
+        // URL REAL DO SEU FORMULÁRIO FORMSPREE
+        const formspreeURL = "https://formspree.io/f/xblyklbk";
+
+        form.setAttribute('action', formspreeURL);
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const status = document.getElementById("form-status");
+            const data = new FormData(event.target);
+            fetch(event.target.action, {
+                method: form.method,
+                body: data,
+                headers: { 'Accept': 'application/json' }
+            }).then(response => {
+                if (response.ok) {
+                    status.innerHTML = "Obrigado pela sua sugestão!";
+                    status.style.color = "green";
+                    form.reset();
+                    setTimeout(() => {
+                        closeModal();
+                    }, 2000); // Fecha o modal após 2 segundos
+                } else {
+                    response.json().then(data => {
+                        status.style.color = "red";
+                        if (Object.hasOwn(data, 'errors')) {
+                            status.innerHTML = data["errors"].map(error => error["message"]).join(", ");
+                        } else {
+                            status.innerHTML = "Oops! Houve um problema ao enviar seu formulário.";
+                        }
+                    })
+                }
+            }).catch(error => {
+                status.style.color = "red";
+                status.innerHTML = "Oops! Houve um problema ao enviar seu formulário.";
+            });
         }
-        closeModalButton.addEventListener('click', closeModal);
-        cancelButton.addEventListener('click', closeModal);
-        window.addEventListener('click', (event) => {
-            if (event.target == modal) {
-                closeModal();
-            }
-        });
-
-        // --- LÓGICA DO FORMULÁRIO COM 'MAILTO:' ---
-        scenarioForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const recipientEmail = "fabio.aguiar@edu.sc.senai.br";
-            const scenarioName = document.getElementById('scenario-name').value;
-            const scenarioDescription = document.getElementById('scenario-description').value;
-
-            // Prepara o assunto e o corpo do e-mail
-            const subject = encodeURIComponent(`Sugestão de Cenário: ${scenarioName}`);
-            const body = encodeURIComponent(`Nome do Cenário Sugerido:\n${scenarioName}\n\nDescrição:\n${scenarioDescription}`);
-
-            // Cria o link mailto:
-            const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
-
-            // Abre o cliente de e-mail do usuário
-            window.location.href = mailtoLink;
-
-            // Limpa o formulário e fecha o modal após tentar abrir o e-mail
-            scenarioForm.reset();
-            closeModal();
-        });
+        form.addEventListener("submit", handleSubmit);
     </script>
 </body>
 </html>
