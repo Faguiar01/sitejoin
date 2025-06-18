@@ -15,6 +15,42 @@
         main { flex: 1; }
         .page-header { padding: 20px; text-align: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
         .page-header h1 { margin: 0; font-size: 2.2em; }
+
+        /* NOVO: Estilos para o container de entrar na turma */
+        .join-turma-container {
+            padding: 25px;
+            margin-top: 30px;
+            background-color: #e0f0ff;
+            border: 1px solid #99caff;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .join-turma-container p {
+            margin: 0 0 15px 0;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--cor-texto);
+        }
+        #join-turma-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        #join-turma-form input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1.1em;
+            width: 250px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; font-size: 1.1em; }
+        .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
+        .btn:hover { opacity: 0.9; }
+
         .content-box { background-color: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-top: 30px; padding: 30px; text-align: center; }
         .content-box h2 { font-size: 1.8em; font-weight: 800; color: #333; margin-bottom: 0.5rem; }
         .content-box h3 { font-size: 1.5em; font-weight: 600; color: #444; margin-bottom: 1rem; }
@@ -37,10 +73,17 @@
             <h1 id="welcome-title">Bem-Vindo, Aluno!</h1>
         </div>
 
+        <div class="join-turma-container">
+            <p>Ainda não faz parte de uma turma? Insira o código aqui!</p>
+            <form id="join-turma-form">
+                <input type="text" id="turma-code" placeholder="Digite o código da turma" required>
+                <button type="submit" class="btn btn-success">Entrar na Turma</button>
+            </form>
+        </div>
+
         <div class="content-box">
-            <h2>JOIN XPERIENCE</h2>
-            <h3>Sua Jornada Começa Aqui!</h3>
-            <p>Bem-vindo ao seu painel, onde você pode aprofundar seus conhecimentos e explorar recursos para sua jornada no simulador.</p>
+            <h2>Recursos e Ferramentas</h2>
+            <p>Explore os recursos abaixo para aprofundar seus conhecimentos e se preparar para os desafios do simulador.</p>
 
             <div class="xperience-grid">
                 <div class="xperience-card"><a href="faq.html"><h4>Perguntas Frequentes (FAQ)</h4></a></div>
@@ -76,11 +119,6 @@
                 const userDoc = await getDoc(userDocRef);
                 if (userDoc.exists()) {
                     const welcomeTitle = document.getElementById('welcome-title');
-                    // Corrigindo o título do card para "Perfil de Gestor"
-                    const profileCardTitle = document.querySelector('a[href="perfil-investidor.html"] h4');
-                    if (profileCardTitle) {
-                        profileCardTitle.textContent = 'Descubra Seu Perfil de Gestor';
-                    }
                     welcomeTitle.textContent = `Bem-Vindo, ${userDoc.data().nome}!`;
                 }
             } else { 
@@ -91,6 +129,19 @@
         document.getElementById('logout-button').addEventListener('click', (e) => {
             e.preventDefault();
             signOut(auth).then(() => { window.location.href = '../index.html'; });
+        });
+
+        // NOVO: Lógica do formulário para entrar na turma
+        const joinTurmaForm = document.getElementById('join-turma-form');
+        joinTurmaForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const turmaCode = document.getElementById('turma-code').value;
+            if (!turmaCode.trim()) {
+                alert('Por favor, digite um código.');
+                return;
+            }
+            // Lógica futura para validar o código e adicionar o aluno à turma no Firestore
+            alert(`Funcionalidade a ser implementada!\nVocê tentou entrar na turma com o código: ${turmaCode.toUpperCase()}`);
         });
     </script>
 </body>

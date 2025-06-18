@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Turmas - Join Xperience</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        main { flex: 1; }
+        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
+        .page-header h1 { margin: 0; font-size: 2.2em; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn-secondary { background-color: #6c757d; color: var(--cor-branco); }
+        .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
+        .btn:hover { opacity: 0.85; }
+        .turmas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 30px; }
+        .turma-card { background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
+        .turma-card-header { padding: 20px; border-bottom: 1px solid #eee; }
+        .turma-card-header h3 { margin: 0; }
+        .turma-card-body { padding: 20px; flex-grow: 1; }
+        .turma-card-body p { margin: 0 0 15px 0; color: #666; }
+        .turma-card-body .turma-code { background-color: #e9ecef; padding: 10px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 1.4em; text-align: center; letter-spacing: 2px; }
+        .turma-card-footer { padding: 20px; background-color: #f8f9fa; border-top: 1px solid #eee; text-align: right; }
+        #loading-message { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
+        .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 0; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
+        @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
+        .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; }
+        .modal-header h2 { margin: 0; }
+        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-body { padding: 20px; text-align: center; }
+        #qr-code-display { width: 256px; height: 256px; margin: 0 auto; padding: 3px; background: white; }
+        #qr-code-text { font-size: 2.5em; font-weight: bold; font-family: monospace; letter-spacing: 3px; margin: 20px 0 0 0;}
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-group input { width: 100%; padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        .modal-footer { padding: 15px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #dee2e6; background-color: #f8f9fa; gap: 10px; }
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="#" id="logout-button">Sair</a></nav>
+    </header>
+    <main class="container">
+        <div class="page-header">
+            <h1>Gerenciamento de Turmas</h1>
+            <div><button id="open-create-turma-modal" class="btn btn-success">Criar Nova Turma</button></div>
+        </div>
+        <div id="turmas-grid" class="turmas-grid">
+            <p id="loading-message">Carregando turmas...</p>
+        </div>
+    </main>
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <div id="create-turma-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Criar Nova Turma</h2><span class="close-button" id="close-create-modal">&times;</span></div>
+            <form id="create-turma-form">
+                <div class="modal-body"><div class="form-group"><label for="turma-name">Nome da Turma / Equipe</label><input type="text" id="turma-name" required></div></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" id="cancel-turma-btn">Cancelar</button><button type="submit" class="btn btn-success">Salvar Turma</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="qr-code-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="qr-modal-title">Código da Turma</h2><span class="close-button" id="close-qr-modal">&times;</span></div>
+            <div class="modal-body">
+                <p>Projete esta tela para seus alunos escanearem.</p>
+                <div id="qr-code-display"></div>
+                <p id="qr-code-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser;
+        onAuthStateChanged(auth, (user) => { if (user) { currentUser = user; loadTurmas(); } else { window.location.href = '../login.html'; } });
+        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+
+        const createModal = document.getElementById('create-turma-modal');
+        document.getElementById('open-create-turma-modal').addEventListener('click', () => createModal.style.display = 'block');
+        document.getElementById('close-create-modal').addEventListener('click', () => createModal.style.display = 'none');
+        document.getElementById('cancel-turma-btn').addEventListener('click', () => createModal.style.display = 'none');
+
+        const qrModal = document.getElementById('qr-code-modal');
+        document.getElementById('close-qr-modal').addEventListener('click', () => qrModal.style.display = 'none');
+
+        function generateJoinCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = '';
+            for (let i = 0; i < 6; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); }
+            return result;
+        }
+
+        document.getElementById('create-turma-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const turmaName = document.getElementById('turma-name').value;
+            if (!turmaName.trim()) return;
+            const newCode = generateJoinCode();
+            try {
+                await addDoc(collection(db, "turmas"), { nome: turmaName, professorId: currentUser.uid, codigo: newCode, criadoEm: serverTimestamp(), alunos: [] });
+                createModal.style.display = 'none';
+                document.getElementById('create-turma-form').reset();
+                loadTurmas();
+            } catch (error) { console.error("Erro ao criar turma: ", error); alert("Não foi possível criar a turma. Tente novamente."); }
+        });
+
+        async function loadTurmas() {
+            if (!currentUser) return;
+            const grid = document.getElementById('turmas-grid');
+            grid.innerHTML = '<p id="loading-message">Carregando turmas...</p>';
+            const q = query(collection(db, "turmas"), where("professorId", "==", currentUser.uid));
+            try {
+                const querySnapshot = await getDocs(q);
+                grid.innerHTML = '';
+                if (querySnapshot.empty) {
+                    grid.innerHTML = '<p id="loading-message">Nenhuma turma criada ainda.</p>';
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const turma = doc.data();
+                        const card = document.createElement('div');
+                        card.className = 'turma-card';
+                        card.innerHTML = `<div class="turma-card-header"><h3>${turma.nome}</h3></div><div class="turma-card-body"><p>Alunos inscritos: ${turma.alunos.length}</p><p>Código da Turma:</p><div class="turma-code">${turma.codigo}</div></div><div class="turma-card-footer"><button class="btn btn-primary qr-code-btn" data-code="${turma.codigo}" data-name="${turma.nome}">Ver QR Code</button></div>`;
+                        grid.appendChild(card);
+                    });
+                    document.querySelectorAll('.qr-code-btn').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const code = button.dataset.code;
+                            const name = button.dataset.name;
+                            document.getElementById('qr-modal-title').textContent = `Código da Turma: ${name}`;
+                            document.getElementById('qr-code-text').textContent = code;
+
+                            // --- LÓGICA ATUALIZADA DO QR CODE ---
+                            const qrCodeContainer = document.getElementById('qr-code-display');
+                            qrCodeContainer.innerHTML = ''; // Limpa o QR Code anterior
+                            new QRCode(qrCodeContainer, {
+                                text: code,
+                                width: 250,
+                                height: 250,
+                                colorDark : "#000000",
+                                colorLight : "#ffffff",
+                                correctLevel : QRCode.CorrectLevel.H
+                            });
+
+                            qrModal.style.display = 'block';
+                        });
+                    });
+                }
+            } catch (error) { console.error("Erro ao carregar turmas: ", error); grid.innerHTML = '<p id="loading-message">Erro ao carregar turmas.</p>'; }
+        }
+    </script>
+</body>
+</html>

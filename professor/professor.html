@@ -26,10 +26,9 @@
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
         .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
         .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn-secondary { background-color: #6c757d; color: var(--cor-branco); }
         .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
         .btn:hover { opacity: 0.85; }
-
-        /* Estilos do Modal */
         .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
         .modal-content { background-color: #fefefe; margin: 10% auto; padding: 0; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
         @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
@@ -61,7 +60,7 @@
             <div class="dashboard-grid">
                 <a href="cenarios.html" class="card"><div class="icon">🚀</div><h3>Cenários</h3><p>Sugira novos cenários de simulação para a plataforma.</p></a>
                 <a href="bussola.html" class="card"><div class="icon">🧭</div><h3>Bússola</h3><p>Acesse o glossário de termos e conceitos do jogo.</p></a>
-                <a href="#" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Acompanhe o desempenho e o progresso de cada aluno e equipe.</p></a>
+                <a href="gerenciar-turmas.html" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Crie e organize suas turmas e equipes de alunos.</p></a>
                 <a href="#" class="card"><div class="icon">📊</div><h3>Relatórios</h3><p>Visualize relatórios detalhados e insights sobre as rodadas.</p></a>
             </div>
         </div>
@@ -105,8 +104,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        // NOVO: Importando funções do Firestore para salvar dados
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
@@ -119,13 +117,8 @@
         };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app); // Inicializa o Firestore
+        const db = getFirestore(app);
 
-        // --- LÓGICA DE LOGIN E LOGOUT ---
-        onAuthStateChanged(auth, async (user) => { /* ...código existente sem alterações... */ });
-        document.getElementById('logout-button').addEventListener('click', (e) => { /* ...código existente sem alterações... */ });
-
-        // --- NOVA LÓGICA PARA O MODAL DE POSTAGEM ---
         const postModal = document.getElementById('post-modal');
         const openModalBtn = document.getElementById('open-post-modal-btn');
         const closeModalBtn = postModal.querySelector('.close-button');
@@ -133,47 +126,32 @@
         const postForm = document.getElementById('post-form');
         const formStatus = document.getElementById('form-status');
 
-        const openModal = () => {
-            postForm.reset();
-            formStatus.textContent = '';
-            postModal.style.display = 'block';
-        };
-        const closeModal = () => {
-            postModal.style.display = 'none';
-        };
+        const openModal = () => { postForm.reset(); formStatus.textContent = ''; postModal.style.display = 'block'; };
+        const closeModal = () => { postModal.style.display = 'none'; };
         openModalBtn.addEventListener('click', openModal);
         closeModalBtn.addEventListener('click', closeModal);
         cancelPostBtn.addEventListener('click', closeModal);
 
-        // LÓGICA PARA SALVAR O POST NO FIREBASE
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const title = document.getElementById('post-title').value;
             const content = document.getElementById('post-content').value;
             const type = document.getElementById('post-type').value;
-
             if (!title || !content) {
                 formStatus.textContent = 'Título e conteúdo são obrigatórios.';
                 formStatus.style.color = 'red';
                 return;
             }
-
             try {
-                // 'mural_posts' é o nome da nossa nova coleção no banco
                 await addDoc(collection(db, "mural_posts"), {
                     titulo: title,
                     conteudo: content,
                     tipo: type,
-                    criadoEm: serverTimestamp() // Adiciona data e hora do servidor
+                    criadoEm: serverTimestamp()
                 });
-
                 formStatus.textContent = 'Post publicado com sucesso!';
                 formStatus.style.color = 'green';
-
-                setTimeout(() => {
-                    closeModal();
-                }, 1500); // Fecha o modal após 1.5 segundos
-
+                setTimeout(() => { closeModal(); }, 1500);
             } catch (error) {
                 console.error("Erro ao adicionar documento: ", error);
                 formStatus.textContent = 'Erro ao publicar. Tente novamente.';
@@ -181,7 +159,6 @@
             }
         });
 
-        // (O código de personalização da mensagem de boas-vindas continua aqui)
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDocRef = doc(db, "usuarios", user.uid);

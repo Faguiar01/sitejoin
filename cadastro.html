@@ -38,7 +38,6 @@
                     <label><input type="radio" name="perfil" value="professor"> Sou Professor</label>
                 </div>
                 <div class="form-group"><label for="nome">Seu Nome Completo</label><input type="text" id="nome" required></div>
-                <div class="form-group"><label for="turma">Sua Turma</label><input type="text" id="turma" required></div>
                 <div class="form-group"><label for="email">Seu E-mail (será seu login)</label><input type="email" id="email" required></div>
                 <div class="form-group"><label for="senha">Crie uma Senha</label><input type="password" id="senha" required></div>
                 <button type="submit" class="btn btn-secondary">Cadastrar</button>
@@ -67,7 +66,6 @@
         cadastroForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const nome = document.getElementById("nome").value;
-            const turma = document.getElementById("turma").value;
             const email = document.getElementById("email").value;
             const senha = document.getElementById("senha").value;
             const perfil = document.querySelector('input[name="perfil"]:checked').value;
@@ -76,9 +74,9 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
                 const user = userCredential.user;
 
+                // Objeto salvo no banco, agora sem a turma
                 await setDoc(doc(db, "usuarios", user.uid), {
                     nome: nome,
-                    turma: turma,
                     email: email,
                     perfil: perfil,
                     uid: user.uid
@@ -89,7 +87,7 @@
                 if (perfil === 'professor') {
                     window.location.href = 'professor/professor.html';
                 } else {
-                    window.location.href = 'aluno/aluno.html';
+                    window.location.href = 'aluno/xperience.html';
                 }
             } catch (error) {
                 let errorMessage = "Ocorreu um erro desconhecido.";
