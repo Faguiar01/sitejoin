@@ -15,45 +15,15 @@
         main { flex: 1; }
         .page-header { padding: 20px; text-align: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
         .page-header h1 { margin: 0; font-size: 2.2em; }
-
-        /* NOVO: Estilos para o container de entrar na turma */
-        .join-turma-container {
-            padding: 25px;
-            margin-top: 30px;
-            background-color: #e0f0ff;
-            border: 1px solid #99caff;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .join-turma-container p {
-            margin: 0 0 15px 0;
-            font-size: 1.2em;
-            font-weight: 600;
-            color: var(--cor-texto);
-        }
-        #join-turma-form {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        #join-turma-form input {
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 1.1em;
-            width: 250px;
-            text-align: center;
-            text-transform: uppercase;
-        }
+        .join-turma-container { padding: 25px; margin-top: 30px; background-color: #e0f0ff; border: 1px solid #99caff; border-radius: 8px; text-align: center; }
+        .join-turma-container p { margin: 0 0 15px 0; font-size: 1.2em; font-weight: 600; color: var(--cor-texto); }
+        #join-turma-form { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; }
+        #join-turma-form input { padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1.1em; width: 250px; text-align: center; text-transform: uppercase; }
         .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; font-size: 1.1em; }
         .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
         .btn:hover { opacity: 0.9; }
-
         .content-box { background-color: #ffffff; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-top: 30px; padding: 30px; text-align: center; }
         .content-box h2 { font-size: 1.8em; font-weight: 800; color: #333; margin-bottom: 0.5rem; }
-        .content-box h3 { font-size: 1.5em; font-weight: 600; color: #444; margin-bottom: 1rem; }
         .content-box p { font-size: 1.1em; color: #555; margin-bottom: 2rem; max-w: 3xl; margin-left: auto; margin-right: auto;}
         .xperience-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 2rem; }
         .xperience-card { background-color: #ffffff; border-radius: 1rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); text-align: left; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid #e5e7eb; }
@@ -72,19 +42,16 @@
         <div class="page-header">
             <h1 id="welcome-title">Bem-Vindo, Aluno!</h1>
         </div>
-
-        <div class="join-turma-container">
+        <div id="join-turma-container" class="join-turma-container">
             <p>Ainda não faz parte de uma turma? Insira o código aqui!</p>
             <form id="join-turma-form">
                 <input type="text" id="turma-code" placeholder="Digite o código da turma" required>
                 <button type="submit" class="btn btn-success">Entrar na Turma</button>
             </form>
         </div>
-
         <div class="content-box">
             <h2>Recursos e Ferramentas</h2>
             <p>Explore os recursos abaixo para aprofundar seus conhecimentos e se preparar para os desafios do simulador.</p>
-
             <div class="xperience-grid">
                 <div class="xperience-card"><a href="faq.html"><h4>Perguntas Frequentes (FAQ)</h4></a></div>
                 <div class="xperience-card"><a href="perfil-investidor.html"><h4>Descubra Seu Perfil de Gestor</h4></a></div>
@@ -98,7 +65,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        // NOVO: Importando funções para atualizar e consultar dados
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
@@ -113,13 +81,14 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        let currentUser;
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                currentUser = user;
                 const userDocRef = doc(db, "usuarios", user.uid);
                 const userDoc = await getDoc(userDocRef);
                 if (userDoc.exists()) {
-                    const welcomeTitle = document.getElementById('welcome-title');
-                    welcomeTitle.textContent = `Bem-Vindo, ${userDoc.data().nome}!`;
+                    document.getElementById('welcome-title').textContent = `Bem-Vindo, ${userDoc.data().nome}!`;
                 }
             } else { 
                 window.location.href = '../login.html'; 
@@ -131,17 +100,50 @@
             signOut(auth).then(() => { window.location.href = '../index.html'; });
         });
 
-        // NOVO: Lógica do formulário para entrar na turma
+        // --- LÓGICA ATUALIZADA PARA ENTRAR NA TURMA ---
         const joinTurmaForm = document.getElementById('join-turma-form');
-        joinTurmaForm.addEventListener('submit', (e) => {
+        joinTurmaForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const turmaCode = document.getElementById('turma-code').value;
-            if (!turmaCode.trim()) {
+            const turmaCode = document.getElementById('turma-code').value.trim().toUpperCase();
+            if (!turmaCode) {
                 alert('Por favor, digite um código.');
                 return;
             }
-            // Lógica futura para validar o código e adicionar o aluno à turma no Firestore
-            alert(`Funcionalidade a ser implementada!\nVocê tentou entrar na turma com o código: ${turmaCode.toUpperCase()}`);
+
+            // 1. Encontrar a turma com o código fornecido
+            const turmasRef = collection(db, "turmas");
+            const q = query(turmasRef, where("codigo", "==", turmaCode));
+
+            try {
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    alert("Código da turma inválido ou não encontrado. Verifique o código com seu professor.");
+                    return;
+                }
+
+                // 2. Pegar a primeira turma encontrada com esse código
+                const turmaDoc = querySnapshot.docs[0];
+                const turmaData = turmaDoc.data();
+
+                // 3. Verificar se o aluno já está na turma
+                if (turmaData.alunos && turmaData.alunos.includes(currentUser.uid)) {
+                    alert(`Você já faz parte da turma "${turmaData.nome}"!`);
+                    return;
+                }
+
+                // 4. Adicionar o aluno à lista da turma
+                await updateDoc(turmaDoc.ref, {
+                    alunos: arrayUnion(currentUser.uid)
+                });
+
+                alert(`Inscrição na turma "${turmaData.nome}" realizada com sucesso!`);
+                document.getElementById('join-turma-container').style.display = 'none'; // Esconde o formulário
+
+            } catch (error) {
+                console.error("Erro ao entrar na turma: ", error);
+                alert("Ocorreu um erro ao tentar entrar na turma. Tente novamente.");
+            }
         });
     </script>
 </body>

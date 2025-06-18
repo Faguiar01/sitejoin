@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        main { flex: 1; }
+        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
+        .page-header h1 { margin: 0; font-size: 2.2em; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: opacity 0.3s ease; }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn:hover { opacity: 0.85; }
+        .reports-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-top: 30px; }
+        .report-card { background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .report-card-header { padding: 20px; border-bottom: 1px solid #eee; }
+        .report-card-header h3 { margin: 0; }
+        .report-card-body { padding: 25px; color: #666; font-style: italic; text-align: center; }
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="#" id="logout-button">Sair</a></nav>
+    </header>
+    <main class="container">
+        <div class="page-header">
+            <h1>Relatórios de Desempenho</h1>
+            <div>
+                <a href="professor.html" class="btn btn-primary">Voltar ao Painel</a>
+            </div>
+        </div>
+
+        <div class="reports-grid">
+            <div class="report-card">
+                <div class="report-card-header"><h3>Resultados da Rodada Atual</h3></div>
+                <div class="report-card-body"><p>Os dados desta seção estarão disponíveis após o fechamento da rodada atual.</p></div>
+            </div>
+            <div class="report-card">
+                <div class="report-card-header"><h3>Ranking Geral de Equipes</h3></div>
+                <div class="report-card-body"><p>Um ranking de rentabilidade e valor de mercado será exibido aqui.</p></div>
+            </div>
+            <div class="report-card">
+                <div class="report-card-header"><h3>Histórico de Desempenho</h3></div>
+                <div class="report-card-body"><p>Gráficos mostrando a evolução das equipes ao longo das rodadas aparecerão nesta área.</p></div>
+            </div>
+             <div class="report-card">
+                <div class="report-card-header"><h3>Análise Individual por Aluno</h3></div>
+                <div class="report-card-body"><p>Uma visão detalhada das decisões e resultados de cada aluno será implementada futuramente.</p></div>
+            </div>
+        </div>
+    </main>
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = '../login.html'; } });
+        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+    </script>
+</body>
+</html>
