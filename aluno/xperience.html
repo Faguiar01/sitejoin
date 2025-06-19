@@ -84,50 +84,54 @@
 
         async function updateDashboardStatus(user) {
             const statusContainer = document.getElementById('turma-status-container');
-            const turmasRef = collection(db, "turmas");
-            const q = query(turmasRef, where("alunos", "array-contains", user.uid), limit(1));
-            const querySnapshot = await getDocs(q);
+            // Adicionado try/catch para capturar erros na consulta
+            try {
+                const turmasRef = collection(db, "turmas");
+                const q = query(turmasRef, where("alunos", "array-contains", user.uid), limit(1));
+                const querySnapshot = await getDocs(q);
 
-            if (querySnapshot.empty) {
-                // ... (código para mostrar formulário de entrar na turma)
-            } else {
-                const turmaData = querySnapshot.docs[0].data();
-                if (turmaData.statusRodada1 === 'iniciada') {
-
-                    // --- NOSSA PARTE DE DEPURAÇÃO ---
-                    const docIdParaVerificar = `rodada1_${user.uid}`;
-                    console.log("--- INÍCIO DA DEPURAÇÃO ---");
-                    console.log("ID do usuário logado:", user.uid);
-                    console.log("Documento que estou procurando em 'respostas_rodadas':", docIdParaVerificar);
-
-                    const respostaRef = doc(db, "respostas_rodadas", docIdParaVerificar);
+                if (querySnapshot.empty) {
+                    statusContainer.className = 'turma-status-container status-join';
+                    statusContainer.innerHTML = `<p>Você ainda não faz parte de uma turma. Insira o código aqui!</p><form id="join-turma-form"><input type="text" id="turma-code" placeholder="Digite o código" required><button type="submit" class="btn btn-success">Entrar na Turma</button></form>`;
+                    document.getElementById('join-turma-form').addEventListener('submit', handleJoinTurma);
+                } else {
+                    const turmaData = querySnapshot.docs[0].data();
+                    const respostaRef = doc(db, "respostas_rodadas", `rodada1_${user.uid}`);
                     const respostaSnap = await getDoc(respostaRef);
 
-                    console.log("Resultado da busca: O documento existe?", respostaSnap.exists());
-                    if (respostaSnap.exists()) {
-                        console.log("Dados encontrados:", respostaSnap.data());
-                    }
-                    console.log("--- FIM DA DEPURAÇÃO ---");
-                    // --- FIM DA DEPURAÇÃO ---
-
-
-                    if (respostaSnap.exists()) {
+                    if (turmaData.statusRodada1 === 'iniciada' && !respostaSnap.exists()) {
+                        statusContainer.className = 'turma-status-container status-ready';
+                        statusContainer.innerHTML = `<p><strong>A Rodada 1 da sua turma "${turmaData.nome}" começou!</strong></p><a href="rodada.html" class="btn btn-success">Jogar Agora!</a>`;
+                    } else if (respostaSnap.exists()) {
                         const pontuacao = respostaSnap.data().pontuacao;
                         statusContainer.className = 'turma-status-container status-completed';
                         statusContainer.innerHTML = `<p><strong>Você finalizou a Rodada 1!</strong></p><p style="font-size: 1em; font-weight: normal;">Sua pontuação de referência foi: ${pontuacao.acertos} de ${pontuacao.total}.</p><a href="rodada.html" class="btn btn-secondary">Ver Meus Resultados</a>`;
                     } else {
-                        statusContainer.className = 'turma-status-container status-ready';
-                        statusContainer.innerHTML = `<p><strong>A Rodada 1 da sua turma "${turmaData.nome}" começou!</strong></p><a href="rodada.html" class="btn btn-success">Jogar Agora!</a>`;
+                        statusContainer.className = 'turma-status-container status-waiting';
+                        statusContainer.innerHTML = `<p>Você está na turma "<strong>${turmaData.nome}</strong>". Aguardando seu professor iniciar a Rodada 1.</p>`;
                     }
-                } else {
-                    statusContainer.className = 'turma-status-container status-waiting';
-                    statusContainer.innerHTML = `<p>Você está na turma "<strong>${turmaData.nome}</strong>". Aguardando seu professor iniciar a Rodada 1.</p>`;
                 }
+            } catch (error) {
+                console.error("Erro ao verificar status da turma:", error);
+                statusContainer.innerHTML = `<p style="color:red;">Ocorreu um erro ao carregar os dados da sua turma. Verifique o console para mais detalhes.</p>`;
             }
         }
 
         async function handleJoinTurma(e) {
-            // ... (código para entrar na turma, sem alterações)
+            e.preventDefault();
+            const turmaCode = document.getElementById('turma-code').value.trim().toUpperCase();
+            if (!turmaCode) { alert('Por favor, digite um código.'); return; }
+            const turmasRef = collection(db, "turmas");
+            const q = query(turmasRef, where("codigo", "==", turmaCode));
+            try {
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) { alert("Código da turma inválido."); return; }
+                const turmaDoc = querySnapshot.docs[0];
+                if (turmaDoc.data().alunos && turmaDoc.data().alunos.includes(currentUser.uid)) { alert(`Você já faz parte desta turma!`); return; }
+                await updateDoc(turmaDoc.ref, { alunos: arrayUnion(currentUser.uid) });
+                alert(`Inscrição na turma "${turmaDoc.data().nome}" realizada com sucesso!`);
+                updateDashboardStatus(currentUser);
+            } catch (error) { console.error("Erro ao entrar na turma: ", error); alert("Ocorreu um erro ao tentar entrar na turma."); }
         }
     </script>
 </body>
