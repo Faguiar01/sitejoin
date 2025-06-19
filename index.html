@@ -5,32 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bem-vindo ao Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); line-height: 1.6; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav { display: flex; align-items: center; gap: 15px; }
-        header.main-header nav a { text-decoration: none; font-weight: 500; }
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 40px 2rem; text-align: center; }
-        .btn { display: inline-block; padding: 10px 24px; border-radius: 8px; border: none; text-decoration: none; font-weight: bold; text-align: center; cursor: pointer; transition: transform 0.2s ease; }
-        .btn:hover { transform: scale(1.05); }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn-secondary { background-color: var(--cor-secundaria); color: var(--cor-branco); }
-        .hero { text-align: center; padding: 40px 20px 20px 20px; }
-        .hero h1 { font-size: 3.2em; margin-bottom: 10px; }
-        .hero .hero-subtitle { font-size: 1.4em; color: #444; margin: 0 auto 40px auto; max-width: 600px; }
-        .video-container { 
+        :root {
+            --cor-primaria: #0052CC;
+            --cor-secundaria: #FF4400;
+            --cor-texto: #333;
+            --cor-fundo: #f4f7f6;
+            --cor-branco: #fff;
+            --cor-cinza-escuro: #343a40;
+        }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header.main-header {
+            background-color: var(--cor-branco);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        header.main-header .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--cor-texto);
+            font-weight: 600;
+        }
+        header.main-header .logo-container img {
+            height: 50px;
+            margin-right: 15px;
+        }
+        header.main-header nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .btn-primary {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+        }
+        .btn-secondary {
+            background-color: var(--cor-secundaria);
+            color: var(--cor-branco);
+        }
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .hero h1 {
+            font-size: 3.2em;
+            margin-bottom: 10px;
+        }
+        .hero .hero-subtitle {
+            font-size: 1.4em;
+            color: #444;
+            margin: 0 auto 40px auto;
+            max-width: 700px;
+        }
+        .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* Proporção 16:9 */
-            height: 0;
-            overflow: hidden;
-            max-width: 800px; 
-            background: #000;
-            margin: 40px auto; 
-            border-radius: 10px;
+            width: 100%;
+            max-width: 854px; /* Largura um pouco maior para vídeos HD */
+            margin: 40px auto;
             box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border-radius: 10px;
+            overflow: hidden; /* Garante que o iframe não ultrapasse a borda arredondada */
+            /* A mágica para a responsividade */
+            padding-top: 56.25%; /* Proporção 16:9 (9 / 16 = 0.5625) */
         }
         .video-container iframe {
             position: absolute;
@@ -38,15 +102,53 @@
             left: 0;
             width: 100%;
             height: 100%;
-            border: none;
+            border: 0;
         }
-        .cta-section { padding: 40px 20px 60px 20px; }
-        .cta-grid { display: flex; justify-content: center; align-items: stretch; gap: 30px; flex-wrap: wrap; }
-        .cta-card { background-color: var(--cor-branco); border-radius: 10px; padding: 30px; text-align: center; flex: 1; min-width: 300px; max-width: 450px; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .cta-card .icon { font-size: 3em; color: var(--cor-primaria); margin-bottom: 15px; }
-        .cta-card h3 { font-size: 1.8em; margin-top: 0; margin-bottom: 15px; }
-        .cta-card p { color: #555; flex-grow: 1; }
-        .cta-card .btn { margin-top: 20px; }
+        .cta-section {
+            padding: 40px 20px 60px 20px;
+        }
+        .cta-grid {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .cta-card {
+            background-color: var(--cor-branco);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            flex: 1;
+            min-width: 300px;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .cta-card .icon {
+            font-size: 3em;
+            color: var(--cor-primaria);
+            margin-bottom: 15px;
+        }
+        .cta-card h3 {
+            font-size: 1.8em;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .cta-card p {
+            color: #555;
+            flex-grow: 1;
+        }
+        .cta-card .btn {
+            margin-top: 20px;
+        }
+        footer.main-footer {
+            background-color: var(--cor-cinza-escuro);
+            color: var(--cor-branco);
+            padding: 40px 2rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -62,11 +164,9 @@
             <div class="container">
                 <h1>Sua Aventura Financeira Começa Agora!</h1>
                 <p class="hero-subtitle">Uma plataforma de simulação empresarial gamificada para desenvolver habilidades de gestão e tomada de decisão.</p>
-
                 <div class="video-container">
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/W1cooQvjs20?si=sRve9XrRZrNZSN-u" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/W1cooQvjs20?si=sRve9XrRZrNZSN-u" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                 </div>
-
             </div>
         </section>
         <section class="cta-section">
@@ -87,7 +187,7 @@
         </section>
     </main>
     <footer class="main-footer">
-        <p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p>
+        <p>© 2025 JOIN XPERIENCE - Todos os direitos reservados.</p>
     </footer>
 </body>
 </html>
