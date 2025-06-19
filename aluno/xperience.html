@@ -93,42 +93,40 @@
                     statusContainer.className = 'turma-status-container status-join';
                     statusContainer.innerHTML = `<p>Você ainda não faz parte de uma turma. Insira o código aqui!</p><form id="join-turma-form"><input type="text" id="turma-code" placeholder="Digite o código" required><button type="submit" class="btn btn-success">Entrar na Turma</button></form>`;
                     document.getElementById('join-turma-form').addEventListener('submit', handleJoinTurma);
-                    return;
-                }
+                } else {
+                    const turmaDoc = querySnapshot.docs[0];
+                    const turmaData = turmaDoc.data();
+                    const rodadaAtual = turmaData.rodadaAtual || 1;
 
-                const turmaDoc = querySnapshot.docs[0];
-                const turmaData = turmaDoc.data();
-                const rodadaAtual = turmaData.rodadaAtual || 1;
-
-                if (rodadaAtual === 1) {
-                    const respostaRef = doc(db, "respostas_rodadas", `rodada1_${user.uid}`);
-                    const respostaSnap = await getDoc(respostaRef);
-                    if (respostaSnap.exists()) {
-                        const pontuacao = respostaSnap.data().pontuacao;
-                        statusContainer.className = 'turma-status-container status-completed';
-                        statusContainer.innerHTML = `<p><strong>Você finalizou a Rodada 1!</strong></p><p style="font-size: 1em; font-weight: normal;">Sua pontuação de referência foi: ${pontuacao.acertos} de ${pontuacao.total}.</p><a href="rodada.html" class="btn btn-secondary">Ver Meus Resultados</a>`;
-                    } else if (turmaData.statusRodada1 === 'iniciada') {
-                        statusContainer.className = 'turma-status-container status-ready';
-                        statusContainer.innerHTML = `<p><strong>A Rodada 1 da sua turma "${turmaData.nome}" começou!</strong></p><a href="rodada.html" class="btn btn-success">Jogar Agora!</a>`;
-                    } else {
-                        statusContainer.className = 'turma-status-container status-waiting';
-                        statusContainer.innerHTML = `<p>Você está na turma "<strong>${turmaData.nome}</strong>". Aguardando seu professor iniciar a Rodada 1.</p>`;
+                    if (rodadaAtual === 1) {
+                         const respostaRef = doc(db, "respostas_rodadas", `rodada1_${user.uid}`);
+                        const respostaSnap = await getDoc(respostaRef);
+                        if (respostaSnap.exists()) {
+                            const pontuacao = respostaSnap.data().pontuacao;
+                            statusContainer.className = 'turma-status-container status-completed';
+                            statusContainer.innerHTML = `<p><strong>Você finalizou a Rodada 1!</strong></p><p style="font-size: 1em; font-weight: normal;">Sua pontuação de referência foi: ${pontuacao.acertos} de ${pontuacao.total}.</p><a href="rodada.html" class="btn btn-secondary">Ver Meus Resultados</a>`;
+                        } else if (turmaData.statusRodada1 === 'iniciada') {
+                            statusContainer.className = 'turma-status-container status-ready';
+                            statusContainer.innerHTML = `<p><strong>A Rodada 1 da sua turma "${turmaData.nome}" começou!</strong></p><a href="rodada.html" class="btn btn-success">Jogar Agora!</a>`;
+                        } else {
+                            statusContainer.className = 'turma-status-container status-waiting';
+                            statusContainer.innerHTML = `<p>Você está na turma "<strong>${turmaData.nome}</strong>". Aguardando seu professor iniciar a Rodada 1.</p>`;
+                        }
+                    } else if (rodadaAtual >= 2) {
+                        const respostaRef = doc(db, "respostas_rodadas", `rodada2_${turmaDoc.id}`);
+                        const respostaSnap = await getDoc(respostaRef);
+                        if (respostaSnap.exists()) {
+                             statusContainer.className = 'turma-status-container status-completed';
+                             statusContainer.innerHTML = `<p><strong>Sua equipe finalizou a Estruturação da Empresa (Rodada 2).</strong></p><p style="font-size: 1em; font-weight: normal;">Aguarde o professor iniciar a próxima rodada.</p>`;
+                        } else if (turmaData.statusRodada2 === 'iniciada') {
+                            statusContainer.className = 'turma-status-container status-ready';
+                            statusContainer.innerHTML = `<p><strong>A Rodada 2 (${turmaData.nome}) começou!</strong></p><p style="font-size: 1em; font-weight: normal;">É hora de estruturar sua empresa.</p><a href="rodada.html" class="btn btn-success">Iniciar Balanço</a>`;
+                        } else {
+                             statusContainer.className = 'turma-status-container status-waiting';
+                             statusContainer.innerHTML = `<p>Você está na turma "<strong>${turmaData.nome}</strong>". Aguardando seu professor iniciar a Rodada 2.</p>`;
+                        }
                     }
-                } else if (rodadaAtual === 2) {
-                    const respostaRef = doc(db, "respostas_rodadas", `rodada2_${turmaDoc.id}`);
-                    const respostaSnap = await getDoc(respostaRef);
-                    if (respostaSnap.exists()) {
-                        statusContainer.className = 'turma-status-container status-completed';
-                        statusContainer.innerHTML = `<p><strong>Sua equipe finalizou a Estruturação da Empresa (Rodada 2).</strong></p><p style="font-size: 1em; font-weight: normal;">Aguarde o professor iniciar a próxima rodada.</p>`;
-                    } else if (turmaData.statusRodada2 === 'iniciada') {
-                         statusContainer.className = 'turma-status-container status-ready';
-                        statusContainer.innerHTML = `<p><strong>A Rodada 2 da sua turma "${turmaData.nome}" começou!</strong></p><p style="font-size: 1em; font-weight: normal;">É hora de estruturar sua empresa.</p><a href="rodada.html" class="btn btn-success">Iniciar Balanço</a>`;
-                    } else {
-                        statusContainer.className = 'turma-status-container status-waiting';
-                        statusContainer.innerHTML = `<p>Você está na turma "<strong>${turmaData.nome}</strong>". Aguardando seu professor iniciar a Rodada 2.</p>`;
-                    }
                 }
-
             } catch (error) {
                 console.error("Erro ao verificar status da turma:", error);
                 statusContainer.innerHTML = `<p style="color:red;">Ocorreu um erro ao carregar os dados da sua turma. Tente recarregar a página.</p>`;

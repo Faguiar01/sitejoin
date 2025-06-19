@@ -25,6 +25,7 @@
         .card p { flex-grow: 1; margin: 0 0 20px 0; color: #555; text-align: center; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
         .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
+        .btn-secondary { background-color: #6c757d; color: var(--cor-branco); }
         .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
         .btn:hover:not(:disabled) { opacity: 0.85; }
         .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
@@ -55,13 +56,12 @@
             <div class="dashboard-grid">
                 <a href="cenarios.html" class="card"><div class="icon">🚀</div><h3>Cenários</h3><p>Sugira novos cenários de simulação para a plataforma.</p></a>
                 <a href="bussola.html" class="card"><div class="icon">🧭</div><h3>Bússola</h3><p>Acesse o glossário de termos e conceitos do jogo.</p></a>
-                <a href="gerenciar-turmas.html" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Crie e organize suas turmas e equipes de alunos.</p></a>
+                <a href="gerenciar-turmas.html" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Crie, organize e acompanhe o progresso de suas turmas.</p></a>
                 <a href="relatorios.html" class="card"><div class="icon">📊</div><h3>Relatórios</h3><p>Visualize relatórios detalhados e insights sobre as rodadas.</p></a>
             </div>
         </div>
     </main>
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
-
     <div id="post-modal" class="modal-backdrop">
         <div class="modal-content">
             <div class="modal-header"><h2>Nova Postagem no Mural</h2><span class="close-button" id="close-post-modal">&times;</span></div>
@@ -76,31 +76,25 @@
             </form>
         </div>
     </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-
         const firebaseConfig = { apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk", authDomain: "joinxperience-site.firebaseapp.com", projectId: "joinxperience-site", storageBucket: "joinxperience-site.appspot.com", messagingSenderId: "140037739806", appId: "1:140037739806:web:322493d72ca6149abce50f", measurementId: "G-V4SRK0FNBN" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
         const postModal = document.getElementById('post-modal');
         const openModalBtn = document.getElementById('open-post-modal-btn');
         const closeModalBtn = document.getElementById('close-post-modal');
         const cancelPostBtn = document.getElementById('cancel-post-btn');
         const postForm = document.getElementById('post-form');
         const formStatus = document.getElementById('form-status');
-
         const openModal = () => { postForm.reset(); formStatus.textContent = ''; postModal.style.display = 'block'; };
         const closeModal = () => { postModal.style.display = 'none'; };
-
         openModalBtn.addEventListener('click', openModal);
         closeModalBtn.addEventListener('click', closeModal);
         cancelPostBtn.addEventListener('click', closeModal);
-
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const title = document.getElementById('post-title').value;
@@ -114,7 +108,6 @@
                 setTimeout(() => { closeModal(); }, 1500);
             } catch (error) { console.error("Erro ao adicionar documento: ", error); formStatus.textContent = 'Erro ao publicar. Tente novamente.'; formStatus.style.color = 'red'; }
         });
-
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const welcomeTitle = document.getElementById('welcome-title');
@@ -127,12 +120,11 @@
                 } else {
                     welcomeTitle.textContent = 'Painel do Professor';
                 }
-                welcomeMessage.textContent = 'Gerencie suas turmas, crie postagens no mural e acompanhe o progresso do jogo.';
+                welcomeMessage.textContent = 'Use as ferramentas abaixo para gerenciar o jogo, sugerir cenários, acompanhar suas turmas e ver relatórios.';
             } else {
                 window.location.href = '../login.html';
             }
         });
-
         document.getElementById('logout-button').addEventListener('click', (e) => {
             e.preventDefault();
             signOut(auth).then(() => { window.location.href = '../index.html'; });
