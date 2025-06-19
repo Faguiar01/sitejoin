@@ -9,10 +9,6 @@
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
         .container { max-width: 900px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        main { flex: 1; }
         .page-header { padding: 20px; text-align: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
         .page-header h1 { margin: 0; font-size: 2.2em; }
         .page-header p { margin: 10px 0 0 0; font-size: 1.1em; color: #555; }
@@ -62,7 +58,12 @@
         <div id="status-view"><div class="status-message"><h2>Verificando status da rodada...</h2></div></div>
         <div id="round-1-view" class="round-view">
             <div class="page-header"><h1>Rodada 1: Nivelamento de Conhecimento</h1><p id="progress-text">Etapa 1 de 5</p><div class="progress-bar-container"><div id="progress-bar" class="progress-bar"></div></div></div>
-            <form id="round1-form"><div id="step-1" class="activity-step active"><div class="activity-block"><h3>Atividade 1: Múltipla Escolha</h3><p class="question-text">1. Qual destes itens NÃO faz parte da estrutura de um Demonstrativo de Resultado do Exercício (DRE)?</p><label><input type="radio" name="q1" value="a" required> Receita de Vendas</label><label><input type="radio" name="q1" value="b" required> Custo da Mercadoria Vendida (CMV)</label><label><input type="radio" name="q1" value="c" required> Dinheiro em Caixa</label><label><input type="radio" name="q1" value="d" required> Despesas Operacionais</label><p class="question-text" style="margin-top:25px;">2. Uma empresa pegou um empréstimo de R$1.000,00 com juros de 10% ao mês. No regime de **Juros Compostos**, qual o valor total a ser pago (principal + juros) após 2 meses?</p><label><input type="radio" name="q2" value="a"> R$ 1.200,00</label><label><input type="radio" name="q2" value="b"> R$ 1.210,00</label><label><input type="radio" name="q2" value="c"> R$ 1.100,00</label><p class="question-text" style="margin-top:25px;">3. O Imposto sobre Serviços (ISS) é de competência:</p><label><input type="radio" name="q3" value="a"> Federal</label><label><input type="radio" name="q3" value="b"> Estadual</label><label><input type="radio" name="q3" value="c"> Municipal</label></div></div><div id="step-2" class="activity-step"><div class="activity-block"><h3>Atividade 2: Relacione as Colunas</h3><div class="column-matching"><div class="column"><p><strong>Coluna A (Itens)</strong></p><ol><li>Fornecedores a Pagar</li><li>Estoque de Produtos</li><li>Máquinas e Equipamentos</li><li>Capital Social</li><li>Contas a Receber</li></ol></div><div class="column"><p><strong>Coluna B (Classificação)</strong></p><label>1.</label> <select name="q_match_1" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select><label>2.</label> <select name="q_match_2" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select><label>3.</label> <select name="q_match_3" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select><label>4.</label> <select name="q_match_4" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select><label>5.</label> <select name="q_match_5" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select></div></div></div></div><div id="step-3" class="activity-step"><div class="activity-block"><h3>Atividade 3: Verdadeiro ou Falso</h3><p class="question-text">1. Afirmação: "Lucro e Caixa são sinônimos. Se uma empresa teve lucro, significa que seu dinheiro em caixa aumentou na mesma proporção."</p><label><input type="radio" name="q_vf_1" value="true" required> Verdadeiro</label><label><input type="radio" name="q_vf_1" value="false" required> Falso</label><p class="question-text" style="margin-top:25px;">2. Afirmação: "Depreciação de uma máquina é uma despesa que não representa uma saída de dinheiro do caixa no período em que ocorre."</p><label><input type="radio" name="q_vf_2" value="true" required> Verdadeiro</label><label><input type="radio" name="q_vf_2" value="false" required> Falso</label></div></div><div id="step-4" class="activity-step"><div class="activity-block"><h3>Atividade 4: Ordene as Etapas</h3><p>Ordene as etapas do processo de Contas a Pagar de uma empresa.</p><label>Etapa 1: <select name="q_order_1" required><option value="">Selecione...</option><option value="pagar">Pagar o boleto no vencimento</option><option value="receber">Receber a nota fiscal do fornecedor</option><option value="lancar">Lançar a conta a pagar no sistema</option><option value="conferir">Conferir a mercadoria recebida</option></select></label><label>Etapa 2: <select name="q_order_2" required><option value="">Selecione...</option><option value="pagar">Pagar o boleto no vencimento</option><option value="receber">Receber a nota fiscal do fornecedor</option><option value="lancar">Lançar a conta a pagar no sistema</option><option value="conferir">Conferir a mercadoria recebida</option></select></label><label>Etapa 3: <select name="q_order_3" required><option value="">Selecione...</option><option value="pagar">Pagar o boleto no vencimento</option><option value="receber">Receber a nota fiscal do fornecedor</option><option value="lancar">Lançar a conta a pagar no sistema</option><option value="conferir">Conferir a mercadoria recebida</option></select></label><label>Etapa 4: <select name="q_order_4" required><option value="">Selecione...</option><option value="pagar">Pagar o boleto no vencimento</option><option value="receber">Receber a nota fiscal do fornecedor</option><option value="lancar">Lançar a conta a pagar no sistema</option><option value="conferir">Conferir a mercadoria recebida</option></select></label></div></div><div id="step-5" class="activity-step"><div class="activity-block"><h3>Atividade 5: Estudo de Caso</h3><div class="case-study-box"><p><strong>O Pedido Urgente da "TecnoCorp"</strong></p><p>A "InovaPlas" fechou um pedido de R$ 80.000,00, mas o prazo de entrega é curtíssimo. Para cumprir, será preciso comprar matéria-prima de um fornecedor alternativo que cobra 20% mais caro e exige pagamento à vista.</p></div><p class="question-text">1. Qual seria o impacto imediato no Fluxo de Caixa da InovaPlas? Justifique.</p><textarea name="q_case_1" rows="4" required></textarea><p class="question-text" style="margin-top:20px;">2. Qual o impacto que a compra deste material mais caro terá sobre a margem de lucro deste pedido?</p><textarea name="q_case_2" rows="4" required></textarea></div></div>
+            <form id="round1-form">
+                <div id="step-1" class="activity-step active"><div class="activity-block"><h3>Atividade 1: Múltipla Escolha</h3><p class="question-text">1. Qual destes itens NÃO faz parte da estrutura de um Demonstrativo de Resultado do Exercício (DRE)?</p><label><input type="radio" name="q1" value="a" required> Receita de Vendas</label><label><input type="radio" name="q1" value="b" required> Custo da Mercadoria Vendida (CMV)</label><label><input type="radio" name="q1" value="c" required> Dinheiro em Caixa</label><label><input type="radio" name="q1" value="d" required> Despesas Operacionais</label><p class="question-text" style="margin-top:25px;">2. Uma empresa pegou um empréstimo de R$1.000,00 com juros de 10% ao mês. No regime de **Juros Compostos**, qual o valor total a ser pago (principal + juros) após 2 meses?</p><label><input type="radio" name="q2" value="a"> R$ 1.200,00</label><label><input type="radio" name="q2" value="b"> R$ 1.210,00</label><label><input type="radio" name="q2" value="c"> R$ 1.100,00</label><p class="question-text" style="margin-top:25px;">3. O Imposto sobre Serviços (ISS) é de competência:</p><label><input type="radio" name="q3" value="a"> Federal</label><label><input type="radio" name="q3" value="b"> Estadual</label><label><input type="radio" name="q3" value="c"> Municipal</label></div></div>
+                <div id="step-2" class="activity-step"><div class="activity-block"><h3>Atividade 2: Relacione as Colunas</h3><div class="column-matching"><div class="column"><p><strong>Coluna A (Itens)</strong></p><ol><li>Fornecedores a Pagar</li><li>Estoque de Produtos</li><li>Máquinas e Equipamentos</li><li>Capital Social</li><li>Contas a Receber</li></ol></div><div class="column"><p><strong>Coluna B (Classificação)</strong></p><label>1.</label> <select name="q_match_1" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select><label>2.</label> <select name="q_match_2" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select><label>3.</label> <select name="q_match_3" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select><label>4.</label> <select name="q_match_4" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select><label>5.</label> <select name="q_match_5" required><option value="">Selecione...</option><option value="passivo">Passivo</option><option value="ativo">Ativo</option><option value="pl">Patrimônio Líquido</option></select></div></div></div></div>
+                <div id="step-3" class="activity-step"><div class="activity-block"><h3>Atividade 3: Verdadeiro ou Falso</h3><p class="question-text">1. Afirmação: "Lucro e Caixa são sinônimos. Se uma empresa teve lucro, significa que seu dinheiro em caixa aumentou na mesma proporção."</p><label><input type="radio" name="q_vf_1" value="true" required> Verdadeiro</label><label><input type="radio" name="q_vf_1" value="false" required> Falso</label><p class="question-text" style="margin-top:25px;">2. Afirmação: "Depreciação de uma máquina é uma despesa que não representa uma saída de dinheiro do caixa no período em que ocorre."</p><label><input type="radio" name="q_vf_2" value="true" required> Verdadeiro</label><label><input type="radio" name="q_vf_2" value="false" required> Falso</label></div></div>
+                <div id="step-4" class="activity-step"><div class="activity-block"><h3>Atividade 4: Ordene as Etapas</h3><p>Ordene as etapas do processo de Contas a Pagar de uma empresa.</p><label>Etapa 1: <select name="q_order_1" required><option value="">Selecione...</option><option value="pagar">Pagar o boleto no vencimento</option><option value="receber">Receber a nota fiscal do fornecedor</option><option value="lancar">Lançar a conta a pagar no sistema</option><option value="conferir">Conferir a mercadoria recebida</option></select></label><label>Etapa 2: <select name="q_order_2" required><option value="">Selecione...</option><option value="pagar">Pagar o boleto no vencimento</option><option value="receber">Receber a nota fiscal do fornecedor</option><option value="lancar">Lançar a conta a pagar no sistema</option><option value="conferir">Conferir a mercadoria recebida</option></select></label><label>Etapa 3: <select name="q_order_3" required><option value="">Selecione...</option><option value="pagar">Pagar o boleto no vencimento</option><option value="receber">Receber a nota fiscal do fornecedor</option><option value="lancar">Lançar a conta a pagar no sistema</option><option value="conferir">Conferir a mercadoria recebida</option></select></label><label>Etapa 4: <select name="q_order_4" required><option value="">Selecione...</option><option value="pagar">Pagar o boleto no vencimento</option><option value="receber">Receber a nota fiscal do fornecedor</option><option value="lancar">Lançar a conta a pagar no sistema</option><option value="conferir">Conferir a mercadoria recebida</option></select></label></div></div>
+                <div id="step-5" class="activity-step"><div class="activity-block"><h3>Atividade 5: Estudo de Caso</h3><div class="case-study-box"><p><strong>O Pedido Urgente da "TecnoCorp"</strong></p><p>A "InovaPlas" fechou um pedido de R$ 80.000,00, mas o prazo de entrega é curtíssimo. Para cumprir, será preciso comprar matéria-prima de um fornecedor alternativo que cobra 20% mais caro e exige pagamento à vista.</p></div><p class="question-text">1. Qual seria o impacto imediato no Fluxo de Caixa da InovaPlas? Justifique.</p><textarea name="q_case_1" rows="4" required></textarea><p class="question-text" style="margin-top:20px;">2. Qual o impacto que a compra deste material mais caro terá sobre a margem de lucro deste pedido?</p><textarea name="q_case_2" rows="4" required></textarea></div></div>
                 <div class="navigation-buttons"><button type="button" id="prev-btn" class="btn btn-secondary">Anterior</button><button type="button" id="next-btn" class="btn btn-primary">Próxima Atividade</button><button type="submit" id="submit-btn" class="btn btn-success" style="display: none;">Finalizar e Enviar Rodada 1</button></div>
             </form>
         </div>
@@ -99,15 +100,15 @@
                 const q = query(turmasRef, where("alunos", "array-contains", user.uid), limit(1));
                 const querySnapshot = await getDocs(q);
                 if (querySnapshot.empty) { statusView.innerHTML = `<div class="status-message"><h2>Você não está em uma turma.</h2><p>Volte ao painel e insira o código.</p><br/><a href="xperience.html" class="btn btn-primary">Voltar</a></div>`; return; }
-
                 const turmaData = querySnapshot.docs[0].data();
+                const rodadaAtual = turmaData.rodadaAtual || 1;
 
-                if (turmaData.rodadaAtual === 1) {
+                if (rodadaAtual === 1) {
                     const respostaRef = doc(db, "respostas_rodadas", `rodada1_${user.uid}`);
                     const respostaSnap = await getDoc(respostaRef);
                     if (respostaSnap.exists()) {
                         statusView.style.display = 'none';
-                        displayResults(respostaSnap.data().respostas, respostaSnap.data().pontuacao);
+                        displayResultsR1(respostaSnap.data().respostas, respostaSnap.data().pontuacao);
                     } else if (turmaData.statusRodada1 === 'iniciada') {
                         statusView.style.display = 'none';
                         round1View.style.display = 'block';
@@ -115,26 +116,33 @@
                     } else {
                         statusView.innerHTML = `<div class="status-message"><h2>Rodada 1: Aguardando Início</h2><p>Seu professor ainda não iniciou esta rodada.</p><br/><a href="xperience.html" class="btn btn-primary">Voltar</a></div>`;
                     }
-                } else if (turmaData.rodadaAtual === 2) {
-                    // Lógica para rodada 2
-                    statusView.style.display = 'none';
-                    round2View.style.display = 'block';
-                    initializeRound2();
+                } else if (rodadaAtual === 2) {
+                    const respostaRef = doc(db, "respostas_rodadas", `rodada2_${querySnapshot.docs[0].id}`);
+                    const respostaSnap = await getDoc(respostaRef);
+                    if (respostaSnap.exists()) {
+                        statusView.innerHTML = `<div class="status-message"><h2>Empresa Estruturada</h2><p>Sua equipe já definiu o balanço inicial. Aguarde o início da Rodada 3.</p><br/><a href="xperience.html" class="btn btn-primary">Voltar</a></div>`;
+                    } else if (turmaData.statusRodada2 === 'iniciada') {
+                        statusView.style.display = 'none';
+                        round2View.style.display = 'block';
+                        initializeRound2(querySnapshot.docs[0].id);
+                    } else {
+                         statusView.innerHTML = `<div class="status-message"><h2>Rodada 2: Aguardando Início</h2><p>Seu professor ainda não iniciou esta rodada.</p><br/><a href="xperience.html" class="btn btn-primary">Voltar</a></div>`;
+                    }
                 }
-
             } catch (error) { console.error("Erro: ", error); statusView.innerHTML = `<div class="status-message"><h2>Ocorreu um Erro</h2><p>Não foi possível verificar o status da rodada.</p></div>`; }
         }
 
         function initializeQuizR1() {
             const steps = round1View.querySelectorAll('.activity-step');
-            const prevBtn = round1View.querySelector('#prev-btn');
-            const nextBtn = round1View.querySelector('#next-btn');
-            const submitBtn = round1View.querySelector('#submit-btn');
-            const progressBar = round1View.querySelector('#progress-bar');
-            const progressText = round1View.querySelector('#progress-text');
+            // ✅ CORREÇÃO APLICADA AQUI
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
             let currentStep = 1; const totalSteps = steps.length;
             function updateButtons() { prevBtn.disabled = currentStep === 1; nextBtn.style.display = currentStep === totalSteps ? 'none' : 'inline-block'; submitBtn.style.display = currentStep === totalSteps ? 'inline-block' : 'none'; }
-            function showStep(stepNumber) { steps.forEach(step => step.classList.remove('active')); document.getElementById(`step-${stepNumber}`).classList.add('active'); progressBar.style.width = `${(stepNumber / totalSteps) * 100}%`; progressText.textContent = `Etapa ${stepNumber} de ${totalSteps}`; updateButtons(); }
+            function showStep(stepNumber) { steps.forEach(step => step.classList.remove('active')); round1View.querySelector(`#step-${stepNumber}`).classList.add('active'); progressBar.style.width = `${(stepNumber / totalSteps) * 100}%`; progressText.textContent = `Etapa ${stepNumber} de ${totalSteps}`; updateButtons(); }
             nextBtn.addEventListener('click', () => { if (currentStep < totalSteps) { currentStep++; showStep(currentStep); } });
             prevBtn.addEventListener('click', () => { if (currentStep > 1) { currentStep--; showStep(currentStep); } });
             showStep(currentStep);
@@ -148,21 +156,26 @@
             for (const [key, value] of formData.entries()) { userAnswers[key] = value; }
             let score = 0; const totalObjective = 10;
             if(userAnswers.q1 === answerKeyR1.q1) score++; if(userAnswers.q2 === answerKeyR1.q2) score++; if(userAnswers.q3 === answerKeyR1.q3) score++;
-            let matchScore = 0; for(let i=1; i<=5; i++){ if(userAnswers[`q_match_${i}`] === answerKeyR1[`q_match_${i}`]) matchScore++; } if(matchScore === 5) score++;
+            let matchScore = 0; for(let i=1; i<=5; i++){ if(userAnswers[`q_match_${i}`] === answerKeyR1[`q_match_${i}`]) matchScore++; } if(matchScore === 5) score+=5;
             let vfScore = 0; if(userAnswers.q_vf_1 === answerKeyR1.q_vf_1) vfScore++; if(userAnswers.q_vf_2 === answerKeyR1.q_vf_2) vfScore++; score += vfScore;
             const pontuacao = { acertos: score, total: totalObjective };
             round1View.style.display = 'none';
-            displayResults(userAnswers, pontuacao);
+            displayResultsR1(userAnswers, pontuacao);
             try { await setDoc(doc(db, "respostas_rodadas", `rodada1_${user.uid}`), { alunoId: user.uid, rodada: 1, respostas: userAnswers, pontuacao: pontuacao, enviadoEm: serverTimestamp() }); }
             catch (error) { console.error("Erro ao salvar respostas: ", error); }
         }
 
-        function displayResults(userAnswers, pontuacao) {
-            // Lógica para formatar e exibir os resultados...
+        function displayResultsR1(userAnswers, pontuacao) {
+            let feedbackHTML = '<h4>Resultados das Questões Objetivas:</h4>';
+            feedbackHTML += `<div class="feedback-item ${userAnswers.q1 === answerKeyR1.q1 ? 'correct' : 'incorrect'}"><p><strong>M. Escolha 1:</strong> Sua resposta: ${userAnswers.q1}. Correta: ${answerKeyR1.q1}</p></div>`;
+            feedbackHTML += `<div class="feedback-item ${userAnswers.q2 === answerKeyR1.q2 ? 'correct' : 'incorrect'}"><p><strong>M. Escolha 2:</strong> Sua resposta: ${userAnswers.q2}. Correta: ${answerKeyR1.q2}</p></div>`;
+            feedbackHTML += `<div class="feedback-item ${userAnswers.q3 === answerKeyR1.q3 ? 'correct' : 'incorrect'}"><p><strong>M. Escolha 3:</strong> Sua resposta: ${userAnswers.q3}. Correta: ${answerKeyR1.q3}</p></div>`;
             resultsView.style.display = 'block';
+            document.getElementById('score-summary').textContent = `Sua pontuação de referência: ${pontuacao.acertos} de ${pontuacao.total}.`;
+            document.getElementById('detailed-feedback').innerHTML = feedbackHTML;
         }
 
-        function initializeRound2() {
+        function initializeRound2(turmaId) {
             const form = document.getElementById('round-2-form');
             const inputs = form.querySelectorAll('input[type="number"]');
             const totalRecursosEl = document.getElementById('total-recursos');
@@ -180,15 +193,23 @@
                 totalRecursosEl.textContent = formatCurrency(totalRecursos);
                 totalAlocadoEl.textContent = formatCurrency(totalAlocado);
                 saldoAlocarEl.textContent = formatCurrency(saldo);
-                if (saldo === 0 && totalAlocado > 0) { saldoAlocarEl.className = 'balanced'; submitBtn.disabled = false; }
+                if (Math.abs(saldo) < 0.01 && totalAlocado > 0) { saldoAlocarEl.className = 'balanced'; submitBtn.disabled = false; }
                 else { saldoAlocarEl.className = 'unbalanced'; submitBtn.disabled = true; }
             }
             inputs.forEach(input => input.addEventListener('input', calculateBalance));
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                alert('Funcionalidade de salvar Rodada 2 a ser implementada.');
+                const user = auth.currentUser; if (!user) return;
+                const balanco = {};
+                new FormData(form).forEach((value, key) => balanco[key] = parseFloat(value) || 0);
+                try {
+                    const docRef = doc(db, "respostas_rodadas", `rodada2_${turmaId}`);
+                    await setDoc(docRef, { turmaId: turmaId, balancoInicial: balanco, enviadoEm: serverTimestamp(), jogadores: [user.uid] });
+                    alert('Balanço de abertura salvo com sucesso!');
+                    form.querySelectorAll('input, button').forEach(el => el.disabled = true);
+                } catch(error) { console.error("Erro ao salvar balanço: ", error); alert("Ocorreu um erro ao salvar."); }
             });
-            calculateBalance(); // Calcula uma vez no início
+            calculateBalance();
         }
     </script>
 </body>
