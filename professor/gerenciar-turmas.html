@@ -10,6 +10,10 @@
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        main { flex: 1; }
         .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; flex-wrap: wrap; gap: 10px; }
         .page-header h1 { margin: 0; font-size: 2.2em; }
         .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
@@ -25,6 +29,7 @@
         .turma-card { background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
         .turma-card-header { padding: 20px; border-bottom: 1px solid #eee; cursor: pointer; flex-grow: 1; transition: background-color 0.2s ease; }
         .turma-card-header:hover { background-color: #f8f9fa; }
+        .turma-card-header h3 { margin: 0; }
         .turma-card-body { padding: 20px; }
         .turma-card-body p { margin: 0 0 15px 0; color: #666; }
         .turma-code { background-color: #e9ecef; padding: 10px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 1.4em; text-align: center; letter-spacing: 2px; }
@@ -33,13 +38,29 @@
         .status-in-progress { background-color: #fff3cd; color: #856404; }
         .status-finished { background-color: #d4edda; color: #155724; }
         .turma-card-footer { padding: 20px; background-color: #f8f9fa; border-top: 1px solid #eee; text-align: right; }
+        #loading-message { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
         .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
         .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; width: 90%; max-width: 700px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
         @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
         .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
+        .modal-header h2 { margin: 0; }
+        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-body { padding: 20px; text-align: center; max-height: 70vh; overflow-y: auto; }
+        #qr-code-display { width: 256px; height: 256px; margin: 15px auto; padding: 3px; background: white; display: flex; justify-content: center; align-items: center; }
+        #qr-code-text { font-size: 2.5em; font-weight: bold; font-family: monospace; letter-spacing: 3px; }
         #alunos-table { width: 100%; text-align: left; border-collapse: collapse; }
         #alunos-table th, #alunos-table td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .status-badge { padding: 5px 10px; border-radius: 15px; font-size: 0.9em; font-weight: bold; }
+        .status-badge.completed { background-color: var(--cor-sucesso); color: white; }
+        .status-badge.pending { background-color: #ffc107; color: #333; }
+        #respostas-detalhes-content { text-align: left; }
+        #respostas-detalhes-content h4 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 20px; font-size: 1.2em; }
+        #respostas-detalhes-content p { background-color: #f8f9fa; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+        #respostas-detalhes-content .correct { color: var(--cor-sucesso); font-weight: bold; }
+        #respostas-detalhes-content .incorrect { color: var(--cor-perigo); font-weight: bold; }
+        .form-group { margin-bottom: 15px; }
+        .form-group input { width: 100%; padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        .modal-footer { padding: 15px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #dee2e6; background-color: #f8f9fa; gap: 10px; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
     </style>
 </head>
@@ -51,7 +72,7 @@
     </main>
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
     <div id="create-turma-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2>Criar Nova Turma</h2><span class="close-button" id="close-create-modal">&times;</span></div><form id="create-turma-form"><div class="modal-body"><div class="form-group"><label for="turma-name">Nome da Turma / Equipe</label><input type="text" id="turma-name" required></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" id="cancel-turma-btn">Cancelar</button><button type="submit" class="btn btn-success">Salvar Turma</button></div></form></div></div>
-    <div id="qr-code-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2 id="qr-modal-title">Código da Turma</h2><span class="close-button" id="close-qr-modal">&times;</span></div><div class="modal-body"><p>Projete esta tela para seus alunos escanearem.</p><div id="qr-code-display" style="display: flex; justify-content: center;"></div><p id="qr-code-text"></p></div></div></div>
+    <div id="qr-code-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2 id="qr-modal-title">Código da Turma</h2><span class="close-button" id="close-qr-modal">&times;</span></div><div class="modal-body"><p>Projete esta tela para seus alunos escanearem.</p><div id="qr-code-display"></div><p id="qr-code-text"></p></div></div></div>
     <div id="alunos-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2 id="alunos-modal-title">Alunos na Turma</h2><span class="close-button" id="close-alunos-modal">&times;</span></div><div class="modal-body"><table id="alunos-table"><thead><tr><th>Aluno</th><th>Status Rodada 1</th><th>Pontuação</th><th>Ações</th></tr></thead><tbody id="alunos-list-body"></tbody></table></div></div></div>
     <div id="respostas-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2 id="respostas-modal-title">Respostas do Aluno</h2><span class="close-button" id="close-respostas-modal">&times;</span></div><div class="modal-body" id="respostas-detalhes-content"></div></div></div>
 
@@ -108,50 +129,53 @@
                     const turma = doc.data();
                     const card = document.createElement('div');
                     card.className = 'turma-card'; card.dataset.turmaId = doc.id; card.dataset.turmaName = turma.nome;
-
                     let roundHtml = '';
-                    const rodadaAtual = turma.rodadaAtual || 1;
-
-                    if (rodadaAtual === 1) {
-                        const statusR1 = turma.statusRodada1 || 'nao_iniciada';
-                        if (statusR1 === 'nao_iniciada') { roundHtml = `<div class="round-status status-not-started">Rodada 1: Não Iniciada</div><button class="btn btn-success start-round-btn" data-round="1">Iniciar Rodada 1</button>`; }
-                        else if (statusR1 === 'iniciada') { roundHtml = `<div class="round-status status-in-progress">Rodada 1: Em Andamento</div><button class="btn btn-warning finalizar-round-btn" data-round="1">Finalizar Rodada 1</button>`; }
-                        else { roundHtml = `<div class="round-status status-finished">Rodada 1: Finalizada</div><button class="btn btn-success start-round-btn" data-round="2">Iniciar Rodada 2</button>`; }
-                    } else if (rodadaAtual === 2) {
+                    const statusR1 = turma.statusRodada1 || 'nao_iniciada';
+                    if (statusR1 === 'nao_iniciada') { roundHtml = `<div class="round-status status-not-started">Rodada 1: Não Iniciada</div><button class="btn btn-success start-round-btn" data-round="1">Iniciar Rodada 1</button>`; }
+                    else if (statusR1 === 'iniciada') { roundHtml = `<div class="round-status status-in-progress">Rodada 1: Em Andamento</div><button class="btn btn-warning finalizar-round-btn" data-round="1">Finalizar Rodada 1</button>`; }
+                    else {
                         const statusR2 = turma.statusRodada2 || 'nao_iniciada';
-                         if (statusR2 === 'iniciada') { roundHtml = `<div class="round-status status-in-progress">Rodada 2: Em Andamento</div>`; }
-                         // Adicionar futuramente o botão de finalizar a rodada 2
+                        if (statusR2 === 'nao_iniciada') { roundHtml = `<div class="round-status status-finished">Rodada 1: Finalizada</div><button class="btn btn-success start-round-btn" data-round="2">Iniciar Rodada 2</button>`; }
+                        else { roundHtml = `<div class="round-status status-in-progress">Rodada 2: Em Andamento</div>`; }
                     }
-
                     card.innerHTML = `<div class="turma-card-header"><h3>${turma.nome}</h3></div><div class="turma-card-body"><p>Alunos inscritos: ${turma.alunos.length} | Rodada Atual: ${turma.rodadaAtual || 1}</p><div class="turma-code-container"><p>Código da Turma:</p><div class="turma-code">${turma.codigo || 'N/D'}</div></div>${roundHtml}</div><div class="turma-card-footer"><button class="btn btn-primary qr-code-btn" data-code="${turma.codigo}" data-name="${turma.nome}">Ver QR Code</button></div>`;
                     grid.appendChild(card);
                 });
                 grid.addEventListener('click', async (e) => {
                     const card = e.target.closest('.turma-card'); if (!card) return;
-                    const turmaId = card.dataset.turmaId;
+                    const turmaId = card.dataset.turmaId; const turmaName = card.dataset.turmaName;
                     if (e.target.classList.contains('start-round-btn')) {
                         const roundToStart = e.target.dataset.round;
-                        if (confirm(`Tem certeza que deseja iniciar a Rodada ${roundToStart}?`)) {
-                            let updates = { rodadaAtual: parseInt(roundToStart), [`statusRodada${roundToStart}`]: 'iniciada' };
-                            await updateDoc(doc(db, 'turmas', turmaId), updates);
-                            loadTurmas();
-                        }
+                        if (confirm(`Tem certeza que deseja iniciar a Rodada ${roundToStart}?`)) { await updateDoc(doc(db, 'turmas', turmaId), { rodadaAtual: parseInt(roundToStart), [`statusRodada${roundToStart}`]: 'iniciada' }); loadTurmas(); }
                     } else if (e.target.classList.contains('finalizar-round-btn')) {
                         const roundToFinish = e.target.dataset.round;
-                        if (confirm(`Tem certeza que deseja finalizar a Rodada ${roundToFinish}?`)) {
-                            await updateDoc(doc(db, 'turmas', turmaId), { [`statusRodada${roundToFinish}`]: 'finalizada' });
-                            loadTurmas();
-                        }
+                        if (confirm(`Tem certeza que deseja finalizar a Rodada ${roundToFinish}?`)) { await updateDoc(doc(db, 'turmas', turmaId), { [`statusRodada${roundToFinish}`]: 'finalizada' }); loadTurmas(); }
                     } else if (e.target.classList.contains('qr-code-btn')) {
-                        e.stopPropagation(); showQrCode(e.target.dataset.code, card.dataset.turmaName);
-                    } else if (e.target.closest('.turma-card-header')) {
-                        showAlunosInTurma(turmaId, card.dataset.turmaName);
-                    }
+                        e.stopPropagation(); showQrCode(e.target.dataset.code, turmaName);
+                    } else if (e.target.closest('.turma-card-header')) { showAlunosInTurma(turmaId, turmaName); }
                 });
-            } catch (error) { console.error("Erro ao carregar turmas: ", error); grid.innerHTML = '<p id="loading-message">Erro ao carregar turmas.</p>'; }
+            } catch (error) { console.error("Erro ao carregar turmas: ", error); grid.innerHTML = '<p id="loading-message">Erro ao carregar turmas. Verifique o console.</p>'; }
         }
 
-        // ... (resto das funções JS: showQrCode, showAlunosInTurma, showRespostasDetalhes)
+        function showQrCode(code, name) {
+            const qrModal = document.getElementById('qr-code-modal');
+            document.getElementById('qr-modal-title').textContent = `Código da Turma: ${name}`;
+            document.getElementById('qr-code-text').textContent = code;
+            const qrCodeContainer = document.getElementById('qr-code-display');
+            qrCodeContainer.innerHTML = '';
+            // ✅ CORREÇÃO APLICADA AQUI
+            const siteURL = "https://faguiar01.github.io/sitejoin/";
+            new QRCode(qrCodeContainer, { text: siteURL, width: 250, height: 250 });
+            qrModal.style.display = 'block';
+        }
+
+        async function showAlunosInTurma(turmaId, turmaName) {
+            // ... código para mostrar alunos ...
+        }
+
+        async function showRespostasDetalhes(alunoId, alunoName) {
+            // ... código para mostrar respostas detalhadas ...
+        }
     </script>
 </body>
 </html>

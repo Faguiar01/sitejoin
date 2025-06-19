@@ -64,7 +64,7 @@
 
     <div id="post-modal" class="modal-backdrop">
         <div class="modal-content">
-            <div class="modal-header"><h2>Nova Postagem no Mural</h2><span class="close-button">&times;</span></div>
+            <div class="modal-header"><h2>Nova Postagem no Mural</h2><span class="close-button" id="close-post-modal">&times;</span></div>
             <form id="post-form">
                 <div class="modal-body">
                     <div class="form-group"><label for="post-title">Título</label><input type="text" id="post-title" required></div>
@@ -89,7 +89,7 @@
 
         const postModal = document.getElementById('post-modal');
         const openModalBtn = document.getElementById('open-post-modal-btn');
-        const closeModalBtn = postModal.querySelector('.close-button');
+        const closeModalBtn = document.getElementById('close-post-modal');
         const cancelPostBtn = document.getElementById('cancel-post-btn');
         const postForm = document.getElementById('post-form');
         const formStatus = document.getElementById('form-status');
@@ -127,7 +127,6 @@
                 } else {
                     welcomeTitle.textContent = 'Painel do Professor';
                 }
-                // ✅ CORREÇÃO APLICADA AQUI: A mensagem é atualizada
                 welcomeMessage.textContent = 'Gerencie suas turmas, crie postagens no mural e acompanhe o progresso do jogo.';
             } else {
                 window.location.href = '../login.html';
