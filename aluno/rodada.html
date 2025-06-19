@@ -122,6 +122,7 @@
                     const respostaSnap = await getDoc(respostaRef);
                     if (respostaSnap.exists()) {
                         statusView.style.display = 'none';
+                        resultsView.style.display = 'block';
                         displayResultsR1(respostaSnap.data().respostas, respostaSnap.data().pontuacao);
                     } else if (turmaData.statusRodada1 === 'iniciada') {
                         statusView.style.display = 'none';
@@ -153,21 +154,9 @@
             const submitBtn = document.getElementById('submit-btn');
             const progressBar = document.getElementById('progress-bar');
             const progressText = document.getElementById('progress-text');
-            let currentStep = 1;
-            const totalSteps = steps.length;
-
-            function updateButtons() {
-                prevBtn.disabled = currentStep === 1;
-                nextBtn.style.display = currentStep === totalSteps ? 'none' : 'inline-block';
-                submitBtn.style.display = currentStep === totalSteps ? 'inline-block' : 'none';
-            }
-            function showStep(stepNumber) {
-                steps.forEach(step => step.classList.remove('active'));
-                round1View.querySelector(`#step-${stepNumber}`).classList.add('active');
-                progressBar.style.width = `${(stepNumber / totalSteps) * 100}%`;
-                progressText.textContent = `Etapa ${stepNumber} de ${totalSteps}`;
-                updateButtons();
-            }
+            let currentStep = 1; const totalSteps = steps.length;
+            function updateButtons() { prevBtn.disabled = currentStep === 1; nextBtn.style.display = currentStep === totalSteps ? 'none' : 'inline-block'; submitBtn.style.display = currentStep === totalSteps ? 'inline-block' : 'none'; }
+            function showStep(stepNumber) { steps.forEach(step => step.classList.remove('active')); round1View.querySelector(`#step-${stepNumber}`).classList.add('active'); progressBar.style.width = `${(stepNumber / totalSteps) * 100}%`; progressText.textContent = `Etapa ${stepNumber} de ${totalSteps}`; updateButtons(); }
             nextBtn.addEventListener('click', () => { if (currentStep < totalSteps) { currentStep++; showStep(currentStep); } });
             prevBtn.addEventListener('click', () => { if (currentStep > 1) { currentStep--; showStep(currentStep); } });
             showStep(currentStep);
@@ -180,13 +169,14 @@
             const userAnswers = {}; const formData = new FormData(e.target);
             for (const [key, value] of formData.entries()) { userAnswers[key] = value; }
             let score = 0;
-            const totalObjective = 10;
             if(userAnswers.q1 === answerKeyR1.q1) score++;
             if(userAnswers.q2 === answerKeyR1.q2) score++;
             if(userAnswers.q3 === answerKeyR1.q3) score++;
-            let matchScore = 0; for(let i=1; i<=5; i++){ if(userAnswers[`q_match_${i}`] === answerKeyR1[`q_match_${i}`]) matchScore++; } if(matchScore === 5) score++;
+            let matchScore = 0; for(let i=1; i<=5; i++){ if(userAnswers[`q_match_${i}`] === answerKeyR1[`q_match_${i}`]) matchScore++; } score += matchScore;
             let vfScore = 0; if(userAnswers.q_vf_1 === answerKeyR1.q_vf_1) vfScore++; if(userAnswers.q_vf_2 === answerKeyR1.q_vf_2) vfScore++; score += vfScore;
-            const pontuacao = { acertos: score, total: totalObjective };
+            const isOrderCorrect = userAnswers.q_order_1 === answerKeyR1.q_order_1 && userAnswers.q_order_2 === answerKeyR1.q_order_2 && userAnswers.q_order_3 === answerKeyR1.q_order_3 && userAnswers.q_order_4 === answerKeyR1.q_order_4; if(isOrderCorrect) score++;
+            const totalObjective = 12; // 3 MC + 5 Match + 2 V/F + 2 Order (all or nothing on order parts) -> actually let's simplify score
+            const pontuacao = { acertos: score, total: 11 }; // 3 + 5 + 2 + 1
             round1View.style.display = 'none';
             displayResultsR1(userAnswers, pontuacao);
             try { await setDoc(doc(db, "respostas_rodadas", `rodada1_${user.uid}`), { alunoId: user.uid, rodada: 1, respostas: userAnswers, pontuacao: pontuacao, enviadoEm: serverTimestamp() }); }
@@ -197,9 +187,6 @@
             let feedbackHTML = '<h4>Resultados das Questões Objetivas:</h4>';
             feedbackHTML += `<div class="feedback-item ${userAnswers.q1 === answerKeyR1.q1 ? 'correct' : 'incorrect'}"><p><strong>M. Escolha 1:</strong> Sua resposta: ${userAnswers.q1}. Correta: ${answerKeyR1.q1}</p></div>`;
             feedbackHTML += `<div class="feedback-item ${userAnswers.q2 === answerKeyR1.q2 ? 'correct' : 'incorrect'}"><p><strong>M. Escolha 2:</strong> Sua resposta: ${userAnswers.q2}. Correta: ${answerKeyR1.q2}</p></div>`;
-            feedbackHTML += `<div class="feedback-item ${userAnswers.q3 === answerKeyR1.q3 ? 'correct' : 'incorrect'}"><p><strong>M. Escolha 3:</strong> Sua resposta: ${userAnswers.q3}. Correta: ${answerKeyR1.q3}</p></div>`;
-            let matchScore = 0; for(let i=1; i<=5; i++){ if(userAnswers[`q_match_${i}`] === answerKeyR1[`q_match_${i}`]) matchScore++; }
-            feedbackHTML += `<div class="feedback-item ${matchScore === 5 ? 'correct':'incorrect'}"><p><strong>Relacione as Colunas:</strong> Você acertou ${matchScore} de 5.</p></div>`;
             resultsView.style.display = 'block';
             document.getElementById('score-summary').textContent = `Sua pontuação de referência: ${pontuacao.acertos} de ${pontuacao.total}.`;
             document.getElementById('detailed-feedback').innerHTML = feedbackHTML;
@@ -208,36 +195,29 @@
         function initializeRound2(turmaId) {
             const form = document.getElementById('round-2-form');
             const inputs = form.querySelectorAll('input[type="number"]');
-            const totalRecursosEl = document.getElementById('total-recursos');
-            const totalAlocadoEl = document.getElementById('total-alocado');
-            const saldoAlocarEl = document.getElementById('saldo-alocar');
             const submitBtn = document.getElementById('r2-submit-btn');
             const capitalSocial = 480000;
-            const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-
             function calculateBalance() {
                 let emprestimo = parseFloat(document.getElementById('r2-emprestimo').value) || 0;
                 let totalRecursos = capitalSocial + emprestimo;
                 let totalAlocado = 0;
                 inputs.forEach(input => { if(input.id !== 'r2-emprestimo') totalAlocado += parseFloat(input.value) || 0; });
                 let saldo = totalRecursos - totalAlocado;
-                totalRecursosEl.textContent = formatCurrency(totalRecursos);
-                totalAlocadoEl.textContent = formatCurrency(totalAlocado);
-                saldoAlocarEl.textContent = formatCurrency(saldo);
-                if (Math.abs(saldo) < 0.01 && totalAlocado === totalRecursos) { saldoAlocarEl.className = 'balanced'; submitBtn.disabled = false; }
-                else { saldoAlocarEl.className = 'unbalanced'; submitBtn.disabled = true; }
+                document.getElementById('total-recursos').textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalRecursos);
+                document.getElementById('total-alocado').textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalAlocado);
+                const saldoEl = document.getElementById('saldo-alocar');
+                saldoEl.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo);
+                if (Math.abs(saldo) < 0.01 && totalAlocado === totalRecursos && totalAlocado > 0) { saldoEl.className = 'balanced'; submitBtn.disabled = false; }
+                else { saldoEl.className = 'unbalanced'; submitBtn.disabled = true; }
             }
             inputs.forEach(input => input.addEventListener('input', calculateBalance));
-
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const user = auth.currentUser; if (!user) return;
                 const balanco = { capitalSocial: capitalSocial };
                 new FormData(form).forEach((value, key) => balanco[key] = parseFloat(value) || 0);
-
                 try {
-                    const docRef = doc(db, "respostas_rodadas", `rodada2_${turmaId}`);
-                    await setDoc(docRef, { turmaId: turmaId, balancoInicial: balanco, enviadoEm: serverTimestamp(), jogadoresQueEnviaram: [user.uid] });
+                    await setDoc(doc(db, "respostas_rodadas", `rodada2_${turmaId}`), { turmaId: turmaId, balancoInicial: balanco, enviadoEm: serverTimestamp(), jogadoresQueEnviaram: [user.uid] });
                     alert('Balanço de abertura salvo com sucesso!');
                     form.querySelectorAll('input, button').forEach(el => el.disabled = true);
                 } catch(error) { console.error("Erro ao salvar balanço: ", error); alert("Ocorreu um erro ao salvar."); }
