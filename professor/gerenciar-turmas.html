@@ -6,7 +6,7 @@
     <title>Gerenciar Turmas - Join Xperience</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-aviso: #ffc107; --cor-info: #17a2b8; --cor-perigo: #dc3545; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -14,94 +14,72 @@
         header.main-header .logo-container img { height: 50px; margin-right: 15px; }
         header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
         main { flex: 1; }
-        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
+        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; flex-wrap: wrap; gap: 10px; }
         .page-header h1 { margin: 0; font-size: 2.2em; }
         .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn-sm { padding: 5px 10px; font-size: 0.9em; }
+        .btn-primary, .btn-info { background-color: var(--cor-primaria); color: var(--cor-branco); }
         .btn-secondary { background-color: #6c757d; color: var(--cor-branco); }
         .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
-        .btn:hover { opacity: 0.85; }
+        .btn-info { background-color: var(--cor-info); }
+        .btn-warning { background-color: var(--cor-aviso); color: #212529; }
+        .btn:hover:not(:disabled) { opacity: 0.85; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
         .turmas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 30px; }
-        .turma-card { background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .turma-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
-        .turma-card-header { padding: 20px; border-bottom: 1px solid #eee; }
-        .turma-card-header h3 { margin: 0; }
-        .turma-card-body { padding: 20px; flex-grow: 1; }
+        .turma-card { background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
+        .turma-card-header { padding: 20px; border-bottom: 1px solid #eee; cursor: pointer; flex-grow: 1; transition: background-color 0.2s ease; }
+        .turma-card-header:hover { background-color: #f8f9fa; }
+        .turma-card-body { padding: 20px; }
         .turma-card-body p { margin: 0 0 15px 0; color: #666; }
-        .turma-card-body .turma-code { background-color: #e9ecef; padding: 10px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 1.4em; text-align: center; letter-spacing: 2px; }
+        .turma-code { background-color: #e9ecef; padding: 10px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 1.4em; text-align: center; letter-spacing: 2px; }
+        .round-status { text-align: center; padding: 10px; border-radius: 5px; font-weight: bold; margin-bottom: 15px; }
+        .status-not-started { background-color: #f8d7da; color: #721c24; }
+        .status-in-progress { background-color: #fff3cd; color: #856404; }
+        .status-finished { background-color: #d4edda; color: #155724; }
         .turma-card-footer { padding: 20px; background-color: #f8f9fa; border-top: 1px solid #eee; text-align: right; }
         #loading-message { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
         .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 0; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; width: 90%; max-width: 700px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
         @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
-        .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; }
+        .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
         .modal-header h2 { margin: 0; }
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .modal-body { padding: 20px; text-align: center; }
-        #qr-code-display { width: 256px; height: 256px; margin: 0 auto; padding: 3px; background: white; }
-        #qr-code-text { font-size: 2.5em; font-weight: bold; font-family: monospace; letter-spacing: 3px; margin: 20px 0 0 0;}
-        #alunos-list { list-style-type: none; padding: 0; text-align: left; max-height: 300px; overflow-y: auto; }
-        #alunos-list li { padding: 10px; border-bottom: 1px solid #eee; }
-        #alunos-list li:last-child { border-bottom: none; }
+        .modal-body { padding: 20px; text-align: center; max-height: 70vh; overflow-y: auto; }
+        #alunos-table { width: 100%; text-align: left; border-collapse: collapse; }
+        #alunos-table th, #alunos-table td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .status-badge { padding: 5px 10px; border-radius: 15px; font-size: 0.9em; font-weight: bold; }
+        .status-badge.completed { background-color: var(--cor-sucesso); color: white; }
+        .status-badge.pending { background-color: #ffc107; color: #333; }
+        #respostas-detalhes-content { text-align: left; }
+        #respostas-detalhes-content h4 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 20px; font-size: 1.2em; }
+        #respostas-detalhes-content p { background-color: #f8f9fa; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+        #respostas-detalhes-content .correct { color: var(--cor-sucesso); font-weight: bold; }
+        #respostas-detalhes-content .incorrect { color: var(--cor-perigo); font-weight: bold; }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
         .form-group input { width: 100%; padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
         .modal-footer { padding: 15px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #dee2e6; background-color: #f8f9fa; gap: 10px; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
     </style>
 </head>
 <body>
-    <header class="main-header">
-        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
-        <nav><a href="#" id="logout-button">Sair</a></nav>
-    </header>
+    <header class="main-header"><a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a><nav><a href="#" id="logout-button">Sair</a></nav></header>
     <main class="container">
-        <div class="page-header">
-            <h1>Gerenciamento de Turmas</h1>
-            <div><button id="open-create-turma-modal" class="btn btn-success">Criar Nova Turma</button></div>
-        </div>
-        <div id="turmas-grid" class="turmas-grid">
-            <p id="loading-message">Carregando turmas...</p>
-        </div>
+        <div class="page-header"><h1>Gerenciamento de Turmas</h1><div><button id="open-create-turma-modal" class="btn btn-success">Criar Nova Turma</button></div></div>
+        <div id="turmas-grid" class="turmas-grid"><p id="loading-message">Carregando turmas...</p></div>
     </main>
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
 
-    <div id="create-turma-modal" class="modal-backdrop">
-        <div class="modal-content">
-            <div class="modal-header"><h2>Criar Nova Turma</h2><span class="close-button" id="close-create-modal">&times;</span></div>
-            <form id="create-turma-form"><div class="modal-body"><div class="form-group"><label for="turma-name">Nome da Turma / Equipe</label><input type="text" id="turma-name" required></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" id="cancel-turma-btn">Cancelar</button><button type="submit" class="btn btn-success">Salvar Turma</button></div></form>
-        </div>
-    </div>
-
-    <div id="qr-code-modal" class="modal-backdrop">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="qr-modal-title">Código da Turma</h2><span class="close-button" id="close-qr-modal">&times;</span></div>
-            <div class="modal-body"><p>Projete esta tela para seus alunos escanearem.</p><div id="qr-code-display"></div><p id="qr-code-text"></p></div>
-        </div>
-    </div>
-
-    <div id="alunos-modal" class="modal-backdrop">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="alunos-modal-title">Alunos na Turma</h2><span class="close-button" id="close-alunos-modal">&times;</span></div>
-            <div class="modal-body" style="text-align:left;"><ul id="alunos-list"></ul></div>
-        </div>
-    </div>
+    <div id="create-turma-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2>Criar Nova Turma</h2><span class="close-button" id="close-create-modal">&times;</span></div><form id="create-turma-form"><div class="modal-body"><div class="form-group"><label for="turma-name">Nome da Turma / Equipe</label><input type="text" id="turma-name" required></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" id="cancel-turma-btn">Cancelar</button><button type="submit" class="btn btn-success">Salvar Turma</button></div></form></div></div>
+    <div id="qr-code-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2 id="qr-modal-title">Código da Turma</h2><span class="close-button" id="close-qr-modal">&times;</span></div><div class="modal-body"><p>Projete esta tela para seus alunos escanearem.</p><div id="qr-code-display"></div><p id="qr-code-text"></p></div></div></div>
+    <div id="alunos-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2 id="alunos-modal-title">Alunos na Turma</h2><span class="close-button" id="close-alunos-modal">&times;</span></div><div class="modal-body"><table id="alunos-table"><thead><tr><th>Aluno</th><th>Status Rodada 1</th><th>Pontuação</th><th>Ações</th></tr></thead><tbody id="alunos-list-body"></tbody></table></div></div></div>
+    <div id="respostas-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2 id="respostas-modal-title">Respostas do Aluno</h2><span class="close-button" id="close-respostas-modal">&times;</span></div><div class="modal-body" id="respostas-detalhes-content"></div></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        // ✅ CORREÇÃO APLICADA AQUI: Adicionado 'orderBy' na importação
-        import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, getDoc, orderBy } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, getDoc, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk", authDomain: "joinxperience-site.firebaseapp.com", projectId: "joinxperience-site", storageBucket: "joinxperience-site.appspot.com", messagingSenderId: "140037739806", appId: "1:140037739806:web:322493d72ca6149abce50f", measurementId: "G-V4SRK0FNBN" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -111,19 +89,19 @@
         document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
 
         const createModal = document.getElementById('create-turma-modal');
+        const qrModal = document.getElementById('qr-code-modal');
+        const alunosModal = document.getElementById('alunos-modal');
+        const respostasModal = document.getElementById('respostas-modal');
+
         document.getElementById('open-create-turma-modal').addEventListener('click', () => createModal.style.display = 'block');
         document.getElementById('close-create-modal').addEventListener('click', () => createModal.style.display = 'none');
         document.getElementById('cancel-turma-btn').addEventListener('click', () => createModal.style.display = 'none');
-
-        const qrModal = document.getElementById('qr-code-modal');
         document.getElementById('close-qr-modal').addEventListener('click', () => qrModal.style.display = 'none');
-
-        const alunosModal = document.getElementById('alunos-modal');
         document.getElementById('close-alunos-modal').addEventListener('click', () => alunosModal.style.display = 'none');
+        document.getElementById('close-respostas-modal').addEventListener('click', () => respostasModal.style.display = 'none');
 
         function generateJoinCode() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let result = '';
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let result = '';
             for (let i = 0; i < 6; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); }
             return result;
         }
@@ -133,7 +111,7 @@
             const turmaName = document.getElementById('turma-name').value;
             if (!turmaName.trim()) return;
             try {
-                await addDoc(collection(db, "turmas"), { nome: turmaName, professorId: currentUser.uid, codigo: generateJoinCode(), criadoEm: serverTimestamp(), alunos: [] });
+                await addDoc(collection(db, "turmas"), { nome: turmaName, professorId: currentUser.uid, codigo: generateJoinCode(), criadoEm: serverTimestamp(), alunos: [], rodadaAtual: 1, statusRodada1: 'nao_iniciada' });
                 createModal.style.display = 'none';
                 document.getElementById('create-turma-form').reset();
                 loadTurmas();
@@ -144,73 +122,114 @@
             if (!currentUser) return;
             const grid = document.getElementById('turmas-grid');
             grid.innerHTML = '<p id="loading-message">Carregando turmas...</p>';
-
-            // A consulta agora usa a função orderBy importada corretamente
             const q = query(collection(db, "turmas"), where("professorId", "==", currentUser.uid), orderBy("criadoEm", "desc"));
-
             try {
                 const querySnapshot = await getDocs(q);
                 grid.innerHTML = '';
-                if (querySnapshot.empty) {
-                    grid.innerHTML = '<p id="loading-message">Nenhuma turma criada ainda.</p>';
-                } else {
-                    querySnapshot.forEach((doc) => {
-                        const turma = doc.data();
-                        const card = document.createElement('div');
-                        card.className = 'turma-card';
-                        card.dataset.turmaId = doc.id;
-                        card.dataset.turmaName = turma.nome;
-                        card.innerHTML = `<div class="turma-card-header"><h3>${turma.nome}</h3></div><div class="turma-card-body"><p>Alunos inscritos: ${turma.alunos.length}</p><p>Código da Turma:</p><div class="turma-code">${turma.codigo}</div></div><div class="turma-card-footer"><button class="btn btn-primary qr-code-btn" data-code="${turma.codigo}" data-name="${turma.nome}">Ver QR Code</button></div>`;
-                        grid.appendChild(card);
-                    });
-                    grid.querySelectorAll('.qr-code-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const code = button.dataset.code;
-                            const name = button.dataset.name;
-                            document.getElementById('qr-modal-title').textContent = `Código da Turma: ${name}`;
-                            document.getElementById('qr-code-text').textContent = code;
-                            const qrCodeContainer = document.getElementById('qr-code-display');
-                            qrCodeContainer.innerHTML = '';
-                            new QRCode(qrCodeContainer, { text: code, width: 250, height: 250, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
-                            qrModal.style.display = 'block';
-                        });
-                    });
-                    grid.querySelectorAll('.turma-card').forEach(card => {
-                        card.addEventListener('click', () => {
-                            const turmaId = card.dataset.turmaId;
-                            const turmaName = card.dataset.turmaName;
-                            showAlunosInTurma(turmaId, turmaName);
-                        });
-                    });
-                }
-            } catch (error) { console.error("Erro ao carregar turmas: ", error); grid.innerHTML = '<p id="loading-message">Erro ao carregar turmas. Verifique o console para mais detalhes.</p>'; }
+                if (querySnapshot.empty) { grid.innerHTML = '<p id="loading-message">Nenhuma turma criada ainda.</p>'; return; }
+                querySnapshot.forEach((doc) => {
+                    const turma = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'turma-card'; card.dataset.turmaId = doc.id; card.dataset.turmaName = turma.nome;
+                    let roundHtml = '';
+                    const status = turma.statusRodada1 || 'nao_iniciada';
+                    if (status === 'nao_iniciada') {
+                        roundHtml = `<div class="round-status status-not-started">Rodada 1: Não Iniciada</div><button class="btn btn-success start-round-btn">Iniciar Rodada 1</button>`;
+                    } else if (status === 'iniciada') {
+                        roundHtml = `<div class="round-status status-in-progress">Rodada 1: Em Andamento</div><button class="btn btn-warning finalizar-round-btn">Finalizar Rodada 1</button>`;
+                    } else {
+                        roundHtml = `<div class="round-status status-finished">Rodada 1: Finalizada</div>`;
+                    }
+                    card.innerHTML = `<div class="turma-card-header"><h3>${turma.nome}</h3></div><div class="turma-card-body"><p>Alunos inscritos: ${turma.alunos.length}</p><div class="turma-code-container"><p>Código da Turma:</p><div class="turma-code">${turma.codigo || 'N/D'}</div></div>${roundHtml}</div><div class="turma-card-footer"><button class="btn btn-primary qr-code-btn" data-code="${turma.codigo}" data-name="${turma.nome}">Ver QR Code</button></div>`;
+                    grid.appendChild(card);
+                });
+                grid.addEventListener('click', async (e) => {
+                    const card = e.target.closest('.turma-card');
+                    if (!card) return;
+                    const turmaId = card.dataset.turmaId;
+                    if (e.target.classList.contains('start-round-btn')) {
+                        if (confirm('Tem certeza que deseja iniciar a Rodada 1 para esta turma?')) {
+                            await updateDoc(doc(db, 'turmas', turmaId), { statusRodada1: 'iniciada' });
+                            loadTurmas();
+                        }
+                    } else if (e.target.classList.contains('finalizar-round-btn')) {
+                        if (confirm('Tem certeza que deseja finalizar a Rodada 1?')) {
+                            await updateDoc(doc(db, 'turmas', turmaId), { statusRodada1: 'finalizada' });
+                            loadTurmas();
+                        }
+                    } else if (e.target.classList.contains('qr-code-btn')) {
+                        e.stopPropagation();
+                        const code = e.target.dataset.code;
+                        const name = e.target.dataset.name;
+                        showQrCode(code, name);
+                    } else if (e.target.closest('.turma-card-header')) {
+                        const turmaName = card.dataset.turmaName;
+                        showAlunosInTurma(turmaId, turmaName);
+                    }
+                });
+            } catch (error) { console.error("Erro ao carregar turmas: ", error); grid.innerHTML = '<p id="loading-message">Erro ao carregar turmas. Verifique o console.</p>'; }
+        }
+
+        function showQrCode(code, name) {
+            document.getElementById('qr-modal-title').textContent = `Código da Turma: ${name}`;
+            document.getElementById('qr-code-text').textContent = code;
+            const qrCodeContainer = document.getElementById('qr-code-display');
+            qrCodeContainer.innerHTML = '';
+            new QRCode(qrCodeContainer, { text: code, width: 250, height: 250 });
+            qrModal.style.display = 'block';
         }
 
         async function showAlunosInTurma(turmaId, turmaName) {
-            const listContainer = document.getElementById('alunos-list');
-            listContainer.innerHTML = '<li>Carregando alunos...</li>';
-            document.getElementById('alunos-modal-title').textContent = `Alunos na Turma: ${turmaName}`;
+            const listBody = document.getElementById('alunos-list-body');
+            listBody.innerHTML = '<tr><td colspan="4">Carregando alunos...</td></tr>';
+            document.getElementById('alunos-modal-title').textContent = `Resultados: ${turmaName}`;
             alunosModal.style.display = 'block';
-            try {
-                const turmaRef = doc(db, "turmas", turmaId);
-                const turmaSnap = await getDoc(turmaRef);
-                if (!turmaSnap.exists() || !turmaSnap.data().alunos || turmaSnap.data().alunos.length === 0) {
-                    listContainer.innerHTML = '<li>Nenhum aluno inscrito nesta turma ainda.</li>';
-                    return;
+            const turmaRef = doc(db, "turmas", turmaId);
+            const turmaSnap = await getDoc(turmaRef);
+            if (!turmaSnap.exists() || !turmaSnap.data().alunos || turmaSnap.data().alunos.length === 0) { listBody.innerHTML = '<tr><td colspan="4">Nenhum aluno inscrito nesta turma.</td></tr>'; return; }
+            const studentIds = turmaSnap.data().alunos;
+            listBody.innerHTML = '';
+            for (const studentId of studentIds) {
+                const studentDoc = await getDoc(doc(db, "usuarios", studentId));
+                const studentName = studentDoc.exists() ? studentDoc.data().nome : "Aluno Desconhecido";
+                const respostaDoc = await getDoc(doc(db, "respostas_rodadas", `rodada1_${studentId}`));
+                let status = '<span class="status-badge pending">Pendente</span>', pontuacao = '- / -', actions = '';
+                if (respostaDoc.exists()) {
+                    const pont = respostaDoc.data().pontuacao;
+                    status = '<span class="status-badge completed">Finalizado</span>';
+                    pontuacao = `${pont.acertos} / ${pont.total}`;
+                    actions = `<button class="btn btn-info btn-sm ver-respostas-btn" data-aluno-id="${studentId}" data-aluno-name="${studentName}">Ver Respostas</button>`;
                 }
-                const studentIds = turmaSnap.data().alunos;
-                const studentPromises = studentIds.map(id => getDoc(doc(db, "usuarios", id)));
-                const studentDocs = await Promise.all(studentPromises);
-                listContainer.innerHTML = '';
-                studentDocs.forEach(studentDoc => {
-                    if (studentDoc.exists()) {
-                        const li = document.createElement('li');
-                        li.textContent = studentDoc.data().nome;
-                        listContainer.appendChild(li);
-                    }
-                });
-            } catch(error) { console.error("Erro ao buscar alunos:", error); listContainer.innerHTML = '<li>Ocorreu um erro ao carregar a lista de alunos.</li>'; }
+                const tableRow = document.createElement('tr');
+                tableRow.innerHTML = `<td>${studentName}</td><td>${status}</td><td>${pontuacao}</td><td>${actions}</td>`;
+                listBody.appendChild(tableRow);
+            }
+            listBody.querySelectorAll('.ver-respostas-btn').forEach(button => {
+                button.addEventListener('click', (e) => { e.stopPropagation(); showRespostasDetalhes(e.target.dataset.alunoId, e.target.dataset.alunoName); });
+            });
+        }
+
+        async function showRespostasDetalhes(alunoId, alunoName) {
+            const contentDiv = document.getElementById('respostas-detalhes-content');
+            contentDiv.innerHTML = '<p>Carregando respostas...</p>';
+            document.getElementById('respostas-modal-title').textContent = `Respostas de ${alunoName}`;
+            respostasModal.style.display = 'block';
+            const respostaRef = doc(db, "respostas_rodadas", `rodada1_${alunoId}`);
+            const respostaSnap = await getDoc(respostaRef);
+            if (!respostaSnap.exists()) { contentDiv.innerHTML = '<p>Não foi possível encontrar as respostas.</p>'; return; }
+
+            const respostas = respostaSnap.data().respostas;
+            const answerKey = { q1: 'c', q2: 'b', q3: 'c', q_match_1: 'passivo', q_match_2: 'ativo', q_match_3: 'ativo', q_match_4: 'pl', q_match_5: 'ativo', q_vf_1: 'false', q_vf_2: 'true', q_order_1: 'b', q_order_2: 'd', q_order_3: 'c', q_order_4: 'a' };
+            const formatAnswer = (userAnswer, correctAnswer) => { const isCorrect = userAnswer === correctAnswer; return `<b>${userAnswer || 'Não respondido'}</b> <span class="${isCorrect ? 'correct' : 'incorrect'}">(${isCorrect ? 'Correto' : `Incorreto, gabarito: ${correctAnswer}`})</span>`; };
+
+            let html = `<h4>Atividade 1: Múltipla Escolha</h4><p>1. Item fora da DRE: ${formatAnswer(respostas.q1, answerKey.q1)}</p><p>2. Juros Compostos: ${formatAnswer(respostas.q2, answerKey.q2)}</p><p>3. Competência do ISS: ${formatAnswer(respostas.q3, answerKey.q3)}</p>`;
+            html += `<h4>Atividade 2: Relacione as Colunas</h4>`;
+            for(let i=1; i<=5; i++) { html += `<p>Item ${i}: ${formatAnswer(respostas[`q_match_${i}`], answerKey[`q_match_${i}`])}</p>`; }
+            html += `<h4>Atividade 3: Verdadeiro ou Falso</h4>`;
+            html += `<p>1. Lucro vs Caixa: ${formatAnswer(respostas.q_vf_1, answerKey.q_vf_1)}</p><p>2. Depreciação: ${formatAnswer(respostas.q_vf_2, answerKey.q_vf_2)}</p>`;
+            html += '<h4>Atividade 5: Estudo de Caso</h4>';
+            html += `<p><strong>1. Impacto no Fluxo de Caixa:</strong><br>${respostas.q_case_1 || 'Não respondido'}</p><p style="margin-top:15px;"><strong>2. Impacto na Margem de Lucro:</strong><br>${respostas.q_case_2 || 'Não respondido'}</p>`;
+            contentDiv.innerHTML = html;
         }
     </script>
 </body>
