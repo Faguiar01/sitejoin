@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Cenários da Roleta - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-perigo: #dc3545; --cor-info: #17a2b8; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        main { flex: 1; }
+        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
+        .page-header h1 { margin: 0; font-size: 2.2em; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
+        .btn-danger { background-color: var(--cor-perigo); color: var(--cor-branco); }
+        .btn:hover:not(:disabled) { opacity: 0.85; }
+        .content-box { background-color: var(--cor-branco); padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 30px; }
+        h2 { margin-top: 0; border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; }
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; box-sizing: border-box; font-family: inherit; }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .form-group small { color: #6c757d; }
+        .scenario-list { list-style-type: none; padding: 0; }
+        .scenario-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; gap: 15px; }
+        .scenario-item:last-child { border-bottom: none; }
+        .scenario-item p { margin: 0; line-height: 1.4; color: #555; }
+        .scenario-item p strong { color: var(--cor-texto); }
+        .actions button { font-size: 0.9em; padding: 5px 10px; }
+        #loading-message, #access-denied { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="#" id="logout-button">Sair</a></nav>
+    </header>
+
+    <main class="container">
+        <div id="page-content" style="display: none;">
+            <div class="page-header">
+                <h1>Gerenciar Cenários</h1>
+                <div><a href="professor.html" class="btn btn-primary">Voltar ao Painel</a></div>
+            </div>
+
+            <div class="content-box">
+                <h2>Cenários Padrão (Não editáveis)</h2>
+                <ul class="scenario-list" id="default-scenarios-list"><li id="loading-default">Carregando...</li></ul>
+            </div>
+
+            <div class="content-box">
+                <h2>Meus Cenários Customizados</h2>
+                <form id="add-scenario-form">
+                    <div class="form-group">
+                        <label for="sc-title">Título do Cenário</label>
+                        <input type="text" id="sc-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sc-desc">Descrição</label>
+                        <textarea id="sc-desc" rows="4" required></textarea>
+                        <small>Use a tag [VALOR] onde o valor aleatório deve aparecer. Ex: "Você recebeu um bônus de R$ [VALOR]".</small>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="sc-min">Valor Mínimo (R$)</label>
+                            <input type="number" id="sc-min" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sc-max">Valor Máximo (R$)</label>
+                            <input type="number" id="sc-max" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Adicionar Cenário Customizado</button>
+                </form>
+                <hr style="margin: 30px 0;">
+                <h3>Cenários Criados por Você</h3>
+                <ul class="scenario-list" id="custom-scenarios-list"><li id="loading-custom">Carregando...</li></ul>
+            </div>
+        </div>
+        <div id="access-denied" style="display: none;">
+            <h1>Acesso Negado</h1>
+            <p>Você não tem permissão para acessar esta página. Apenas administradores.</p>
+            <a href="professor.html" class="btn btn-primary">Voltar ao Painel</a>
+        </div>
+    </main>
+
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp, query, where, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const pageContent = document.getElementById('page-content');
+        const accessDenied = document.getElementById('access-denied');
+        let currentUser;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDocRef = doc(db, "usuarios", user.uid);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists() && userDoc.data().isAdmin === true) {
+                    pageContent.style.display = 'block';
+                    initializeAdminPage();
+                } else {
+                    accessDenied.style.display = 'block';
+                }
+            } else {
+                window.location.href = '../login.html';
+            }
+        });
+
+        document.getElementById('logout-button').addEventListener('click', (e) => {
+            e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; });
+        });
+
+        function initializeAdminPage() {
+            const defaultList = document.getElementById('default-scenarios-list');
+            const customList = document.getElementById('custom-scenarios-list');
+            const addForm = document.getElementById('add-scenario-form');
+
+            const renderList = (listEl, scenarios, isCustom) => {
+                listEl.innerHTML = '';
+                if (scenarios.length === 0) {
+                    listEl.innerHTML = `<li>Nenhum cenário encontrado.</li>`;
+                    return;
+                }
+                scenarios.forEach(sc => {
+                    const li = document.createElement('li');
+                    li.className = 'scenario-item';
+                    let buttons = '';
+                    if (isCustom) {
+                        buttons = `<div class="actions"><button class="btn btn-danger" data-id="${sc.id}">Excluir</button></div>`;
+                    }
+                    li.innerHTML = `
+                        <div>
+                            <p><strong>${sc.titulo}</strong></p>
+                            <p>${sc.descricao}</p>
+                        </div>
+                        ${buttons}
+                    `;
+                    listEl.appendChild(li);
+                });
+            };
+
+            async function loadScenarios() {
+                // Carregar cenários padrão
+                const defaultQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "default"), orderBy("titulo"));
+                const defaultSnapshot = await getDocs(defaultQuery);
+                const defaultScenarios = defaultSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderList(defaultList, defaultScenarios, false);
+
+                // Carregar cenários customizados do professor logado
+                const customQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "custom"), where("professorId", "==", currentUser.uid), orderBy("criadoEm", "desc"));
+                const customSnapshot = await getDocs(customQuery);
+                const customScenarios = customSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderList(customList, customScenarios, true);
+            }
+
+            addForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const newScenario = {
+                    titulo: document.getElementById('sc-title').value,
+                    descricao: document.getElementById('sc-desc').value,
+                    valorMin: parseFloat(document.getElementById('sc-min').value),
+                    valorMax: parseFloat(document.getElementById('sc-max').value),
+                    tipo: 'custom',
+                    professorId: currentUser.uid,
+                    criadoEm: serverTimestamp()
+                };
+
+                if (newScenario.valorMin > newScenario.valorMax) {
+                    alert('O valor mínimo não pode ser maior que o valor máximo.');
+                    return;
+                }
+
+                try {
+                    await addDoc(collection(db, "roleta_cenarios"), newScenario);
+                    addForm.reset();
+                    loadScenarios();
+                } catch (error) {
+                    console.error("Erro ao adicionar cenário:", error);
+                    alert("Ocorreu um erro ao salvar o cenário.");
+                }
+            });
+
+            customList.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('btn-danger')) {
+                    const docId = e.target.dataset.id;
+                    if (confirm("Tem certeza que deseja excluir este cenário customizado?")) {
+                        try {
+                            await deleteDoc(doc(db, "roleta_cenarios", docId));
+                            loadScenarios();
+                        } catch (error) {
+                            console.error("Erro ao excluir:", error);
+                        }
+                    }
+                }
+            });
+
+            loadScenarios();
+        }
+    </script>
+</body>
+</html>

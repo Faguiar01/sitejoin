@@ -54,11 +54,10 @@
         </div>
         <div class="container">
             <div class="dashboard-grid" id="dashboard-grid">
-                <a href="cenarios.html" class="card"><div class="icon">🚀</div><h3>Cenários</h3><p>Sugira novos cenários de simulação para a plataforma.</p></a>
                 <a href="bussola.html" class="card"><div class="icon">🧭</div><h3>Bússola</h3><p>Acesse o glossário de termos e conceitos do jogo.</p></a>
                 <a href="gerenciar-turmas.html" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Crie, organize e acompanhe o progresso de suas turmas.</p></a>
                 <a href="relatorios.html" class="card"><div class="icon">📊</div><h3>Relatórios</h3><p>Visualize relatórios detalhados e insights sobre as rodadas.</p></a>
-                </div>
+            </div>
         </div>
     </main>
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
@@ -86,7 +85,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- LÓGICA DO MODAL DE POSTAGEM (EXISTENTE) ---
         const postModal = document.getElementById('post-modal');
         const openModalBtn = document.getElementById('open-post-modal-btn');
         const closeModalBtn = document.getElementById('close-post-modal');
@@ -112,7 +110,6 @@
             } catch (error) { console.error("Erro ao adicionar documento: ", error); formStatus.textContent = 'Erro ao publicar. Tente novamente.'; formStatus.style.color = 'red'; }
         });
 
-        // --- LÓGICA DE AUTENTICAÇÃO E VERIFICAÇÃO DE ADMIN (MODIFICADA) ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const welcomeTitle = document.getElementById('welcome-title');
@@ -125,25 +122,33 @@
                     const userName = userData.nome || 'Professor(a)';
                     welcomeTitle.textContent = `Bem-vindo(a), ${userName}!`;
 
-                    // ===== NOVA LÓGICA DE ADMIN =====
                     if (userData.isAdmin === true) {
                         const grid = document.getElementById('dashboard-grid');
-                        const adminCardHTML = `
+
+                        const adminCardBibliotecaHTML = `
                             <a href="gerenciar-biblioteca.html" class="card">
                                 <div class="icon">📚</div>
                                 <h3>Gerenciar Biblioteca</h3>
                                 <p>Adicione ou remova materiais de estudo como vídeos, manuais e podcasts.</p>
                             </a>
                         `;
-                        // Adiciona o novo card ao final do grid
-                        grid.insertAdjacentHTML('beforeend', adminCardHTML);
+
+                        const adminCardCenariosHTML = `
+                            <a href="gerenciar-cenarios.html" class="card">
+                                <div class="icon">🎲</div>
+                                <h3>Gerenciar Cenários</h3>
+                                <p>Crie e edite os cenários da roleta para customizar a experiência das turmas.</p>
+                            </a>
+                        `;
+
+                        grid.insertAdjacentHTML('beforeend', adminCardBibliotecaHTML);
+                        grid.insertAdjacentHTML('beforeend', adminCardCenariosHTML);
                     }
-                    // ===================================
 
                 } else {
                     welcomeTitle.textContent = 'Painel do Professor';
                 }
-                welcomeMessage.textContent = 'Use as ferramentas abaixo para gerenciar o jogo, sugerir cenários, acompanhar suas turmas e ver relatórios.';
+                welcomeMessage.textContent = 'Use as ferramentas abaixo para gerenciar o jogo, acompanhar suas turmas e ver relatórios.';
             } else {
                 window.location.href = '../login.html';
             }
