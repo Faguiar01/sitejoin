@@ -18,34 +18,30 @@
         .page-header p { margin: 10px 0 0 0; font-size: 1.1em; color: #555; }
         .progress-bar-container { width: 100%; background-color: #e0e0e0; border-radius: 10px; margin-top: 20px; overflow: hidden; height: 10px; }
         .progress-bar { width: 0%; height: 100%; background-color: var(--cor-sucesso); border-radius: 10px; transition: width 0.4s ease; }
-
-        .round-view, .activity-step { display: none; }
-        .round-view.active, .activity-step.active { display: block; animation: fadeIn 0.5s; }
+        .activity-step { display: none; }
+        .activity-step.active { display: block; animation: fadeIn 0.5s; }
         .activity-block { background-color: var(--cor-branco); margin-top: 20px; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .activity-block h3 { font-size: 1.5em; margin-top: 0; border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; }
+        .activity-block h3, .activity-block h4 { font-size: 1.5em; margin-top: 0; border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; }
+        .activity-block h4 { font-size: 1.2em; margin-top: 30px; border-bottom-style: dashed; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; font-size: 1.1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-
+        .form-group input, .form-group select { width: 100%; padding: 10px; font-size: 1.1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        .dynamic-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 8px; background-color: #f9f9f9; flex-wrap: wrap; }
+        .remove-btn { background-color: var(--cor-perigo); color: white; border: none; padding: 5px 10px; font-size: 0.9em; border-radius: 5px; cursor: pointer; }
+        .catalog-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+        .catalog-item input { width: 80px; text-align: right; }
         .navigation-buttons { display: flex; justify-content: space-between; margin-top: 40px; }
         .btn { padding: 12px 25px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; font-size: 1.1em; cursor: pointer; }
-        .btn-secondary { background-color: #6c757d; color: var(--cor-branco); }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        .btn:hover:not(:disabled) { opacity: 0.85; }
-
-        /* Estilos da Roleta */
+        /* Estilos da Roleta, Modal, etc... */
         .roulette-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
         .roulette-pointer { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 30px solid var(--cor-cinza-escuro); z-index: 10; }
         #roulette-wheel { width: 100%; height: 100%; border-radius: 50%; border: 8px solid #ccc; background-image: conic-gradient( #ffc107 0% 10%, #dc3545 10% 20%, #17a2b8 20% 30%, #28a745 30% 40%, #6f42c1 40% 50%, #fd7e14 50% 60%, #20c997 60% 70%, #e83e8c 70% 80%, #6610f2 80% 90%, #007bff 90% 100% ); transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 10px rgba(0,0,0,0.2); }
         .btn-spin { margin-top: 20px; padding: 10px 30px; font-size: 1.2em; }
-
         .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
         .modal-content { background-color: #fefefe; margin: auto; padding: 0; width: 90%; max-width: 500px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.4s; overflow: hidden; }
         .modal-header { padding: 15px 20px; background-color: var(--cor-primaria); color: var(--cor-branco); }
         .modal-body { padding: 25px; line-height: 1.6; }
-
         .status-message { text-align: center; padding: 40px; background-color: var(--cor-branco); border-radius: 8px; margin-top: 30px; }
         @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
@@ -59,69 +55,85 @@
             <div class="status-message"><h2>Verificando status da rodada...</h2></div>
         </div>
 
-        <div id="round-3-view" class="round-view">
-            <div class="page-header">
-                <h1>Rodada 3: Janeiro - Estruturação</h1>
-                <p id="progress-text-r3">Etapa 1 de 3</p>
+        <div id="round-3-view" style="display: none;">
+             <div class="page-header">
+                <h1>Rodada 3: Janeiro - Planejamento</h1>
+                <p id="progress-text-r3">Etapa 1 de 5</p>
                 <div class="progress-bar-container"><div id="progress-bar-r3" class="progress-bar"></div></div>
             </div>
 
-            <form id="round3-form">
+            <div>
                 <div id="step-1-r3" class="activity-step">
                     <div class="activity-block">
-                        <h3>Atividade 1: Plano de Contas</h3>
-                        <p>Antes de começar, toda empresa precisa de um bom plano de contas para organizar suas finanças. Marque abaixo para confirmar que você e sua equipe entendem a função de cada grupo de contas que usarão em suas planilhas.</p>
-                        <div class="form-group">
-                            <label><input type="checkbox" name="plano_contas" value="ativos" required> <b>Ativos:</b> Recursos e bens da empresa (Caixa, Estoques, Imóveis).</label>
-                            <label><input type="checkbox" name="plano_contas" value="passivos" required> <b>Passivos:</b> Dívidas e obrigações com terceiros (Fornecedores, Empréstimos).</label>
-                            <label><input type="checkbox" name="plano_contas" value="pl" required> <b>Patrimônio Líquido:</b> O capital dos sócios na empresa.</label>
-                            <label><input type="checkbox" name="plano_contas" value="receitas" required> <b>Receitas:</b> Entradas de dinheiro provenientes das vendas.</label>
-                            <label><input type="checkbox" name="plano_contas" value="custos_despesas" required> <b>Custos e Despesas:</b> Gastos para manter a operação.</label>
-                        </div>
+                        <h3>Atividade 1: Definição dos Custos Fixos</h3>
+                        <p>Cadastre os custos fixos mensais da sua empresa (Aluguel, Internet, etc.).</p>
+                        <form id="add-custo-form" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                            <input type="text" id="custo-desc" placeholder="Descrição do Custo" required style="flex-grow: 1; min-width: 200px;">
+                            <input type="number" id="custo-valor" placeholder="Valor Mensal (R$)" min="0" required style="min-width: 150px;">
+                            <button type="submit" class="btn btn-success">Adicionar</button>
+                        </form>
+                        <div id="custos-fixos-list"></div>
                     </div>
                 </div>
 
                 <div id="step-2-r3" class="activity-step">
                     <div class="activity-block">
-                        <h3>Atividade 2: Decisões de Estrutura</h3>
-                        <p>Defina a estrutura de custos e investimentos da sua empresa para este primeiro mês de operação.</p>
-                        <div class="form-group">
-                            <label for="r3-aluguel">Custo Fixo: Aluguel do Mês (R$)</label>
-                            <input type="number" id="r3-aluguel" min="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="r3-funcionarios">Contratação: Nº de funcionários</label>
-                            <input type="number" id="r3-funcionarios" min="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="r3-salario">Custo Fixo: Salário médio por funcionário (R$)</label>
-                            <input type="number" id="r3-salario" min="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="r3-materia-prima">Investimento: Compra de Matéria-Prima (R$)</label>
-                            <input type="number" id="r3-materia-prima" min="0" required>
-                        </div>
+                        <h3>Atividade 2: Contratação de Equipe</h3>
+                        <p>Selecione os cargos do catálogo e defina quantos funcionários de cada tipo sua empresa irá contratar.</p>
+                        <div id="rh-catalog-list"></div>
                     </div>
                 </div>
 
                 <div id="step-3-r3" class="activity-step">
+                     <div class="activity-block">
+                        <h3>Atividade 3: Aquisição de Ativos e Estoque</h3>
+                        <h4>Maquinário</h4>
+                        <p>Marque as máquinas do catálogo que deseja comprar para sua empresa.</p>
+                        <div id="maquinas-catalog-list"></div>
+                        <hr>
+                        <h4>Matéria-Prima</h4>
+                        <p>Defina a quantidade inicial de cada matéria-prima que deseja comprar para o seu estoque.</p>
+                        <div id="mp-catalog-list"></div>
+                    </div>
+                </div>
+
+                <div id="step-4-r3" class="activity-step">
+                     <div class="activity-block">
+                        <h3>Atividade 4: Simulação de Produção</h3>
+                        <p>Escolha um produto e a quantidade que deseja produzir. O simulador verificará se você tem os recursos necessários.</p>
+                        <div style="display: flex; gap: 10px; align-items: end; flex-wrap: wrap;">
+                            <div class="form-group" style="flex-grow: 1;">
+                                <label for="product-select">Selecione o Produto:</label>
+                                <select id="product-select"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="production-qty">Quantidade a Produzir:</label>
+                                <input type="number" id="production-qty" min="0">
+                            </div>
+                            <button id="simulate-btn" type="button" class="btn btn-primary">Simular Produção</button>
+                        </div>
+                        <div id="sim-result" style="margin-top: 20px; font-weight: bold; padding: 10px; border-radius: 5px;"></div>
+                    </div>
+                </div>
+
+                <div id="step-5-r3" class="activity-step">
                     <div class="activity-block" style="text-align: center;">
-                        <h3>Atividade 3: Cenário do Mês</h3>
-                        <p>Sua empresa está pronta para o primeiro mês! Mas o mercado é imprevisível. Gire a roleta para descobrir o desafio ou a oportunidade que você enfrentará.</p>
+                        <h3>Atividade 5: Cenário do Mês</h3>
+                        <p>Seu planejamento está pronto! Gire a roleta para descobrir o evento que sua empresa enfrentará.</p>
                         <div class="roulette-wrapper">
                             <div class="roulette-pointer"></div>
                             <div id="roulette-wheel"></div>
                         </div>
-                        <button type="button" id="spin-button" class="btn btn-spin btn-success">Girar a Roleta</button>
+                        <button type="button" id="spin-button" class="btn btn-spin btn-success" disabled>Carregando...</button>
                     </div>
                 </div>
 
                 <div class="navigation-buttons">
                     <button type="button" id="prev-btn-r3" class="btn btn-secondary">Anterior</button>
                     <button type="button" id="next-btn-r3" class="btn btn-primary">Próxima Atividade</button>
-                    <button type="submit" id="submit-btn-r3" class="btn btn-success" style="display: none;">Finalizar e Enviar Rodada 3</button>
+                    <button type="button" id="submit-btn-r3" class="btn btn-success" style="display: none;">Finalizar e Enviar Rodada</button>
                 </div>
-            </form>
+            </div>
         </div>
 
         <div id="result-modal" class="modal-backdrop">
@@ -131,7 +143,7 @@
             </div>
         </div>
     </main>
-    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE</p></footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
@@ -150,168 +162,73 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
         let turmaId = null;
+        let catalogo = {};
+        let decisoes = { custosFixos: [], contratacoes: {}, aquisicaoMaquinas: [], compraMateriaPrima: {}, planoProducao: null, cenarioSorteado: null };
 
-        // --- LÓGICA PRINCIPAL DE ROTEAMENTO DE RODADA ---
+        const statusView = document.getElementById('status-view');
+        const round3View = document.getElementById('round-3-view');
+
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                try {
-                    const turmasRef = collection(db, "turmas");
-                    const q = query(turmasRef, where("alunos", "array-contains", user.uid), limit(1));
-                    const querySnapshot = await getDocs(q);
+            if (!user) { window.location.href = '../login.html'; return; }
+            try {
+                const turmasRef = collection(db, "turmas");
+                const q = query(turmasRef, where("alunos", "array-contains", user.uid), limit(1));
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) { statusView.innerHTML = `<div class="status-message"><h2>Você não está em uma turma.</h2></div>`; return; }
 
-                    if (querySnapshot.empty) {
-                        document.getElementById('status-view').innerHTML = `<div class="status-message"><h2>Você não está em uma turma.</h2><p>Volte ao painel e insira o código.</p><br/><a href="xperience.html" class="btn btn-primary">Voltar</a></div>`;
-                        return;
-                    }
+                const turmaDoc = querySnapshot.docs[0];
+                turmaId = turmaDoc.id;
+                const turmaData = turmaDoc.data();
+                const rodadaAtual = turmaData.rodadaAtual || 1;
 
-                    const turmaDoc = querySnapshot.docs[0];
-                    turmaId = turmaDoc.id;
-                    const turmaData = turmaDoc.data();
-                    const rodadaAtual = turmaData.rodadaAtual || 1;
-
-                    document.getElementById('status-view').style.display = 'none';
-
-                    if (rodadaAtual === 3) {
-                        const respostaRef = doc(db, "respostas_rodadas", `rodada3_${turmaId}`);
-                        const respostaSnap = await getDoc(respostaRef);
-                        if (respostaSnap.exists()) {
-                            document.getElementById('round-3-view').innerHTML = `<div class="status-message"><h2>Decisões da Rodada 3 já enviadas.</h2><p>Aguarde o início da próxima rodada.</p></div>`;
-                            document.getElementById('round-3-view').classList.add('active');
-                        } else if (turmaData.statusRodada3 === 'iniciada') {
-                            document.getElementById('round-3-view').classList.add('active');
-                            initializeRound3();
-                        } else {
-                             document.getElementById('status-view').innerHTML = `<div class="status-message"><h2>Rodada 3: Aguardando Início</h2><p>Seu professor ainda não iniciou esta rodada.</p></div>`;
-                             document.getElementById('status-view').style.display = 'block';
-                        }
+                if (rodadaAtual === 3 && turmaData.statusRodada3 === 'iniciada') {
+                    const respostaRef = doc(db, "respostas_rodadas", `rodada3_${turmaId}`);
+                    const respostaSnap = await getDoc(respostaRef);
+                    if (respostaSnap.exists()) {
+                        statusView.innerHTML = `<div class="status-message"><h2>Decisões da Rodada 3 já enviadas.</h2></div>`;
                     } else {
-                        document.getElementById('status-view').innerHTML = `<div class="status-message"><h2>A rodada atual é a ${rodadaAtual}.</h2><p>Esta página é para a Rodada 3.</p></div>`;
-                        document.getElementById('status-view').style.display = 'block';
+                        statusView.style.display = 'none';
+                        round3View.style.display = 'block';
+                        await loadAllCatalogsAndInitializeUI();
                     }
-                } catch (error) {
-                    console.error("Erro ao verificar status da rodada:", error);
-                    document.getElementById('status-view').innerHTML = `<div class="status-message"><h2>Ocorreu um erro</h2><p>Não foi possível carregar os dados da rodada. Verifique o console para um possível link de criação de índice.</p></div>`;
-                    document.getElementById('status-view').style.display = 'block';
+                } else {
+                    statusView.innerHTML = `<div class="status-message"><h2>A rodada ${rodadaAtual} da sua turma não é a Rodada 3 ou ainda não foi iniciada.</h2></div>`;
                 }
-            } else {
-                window.location.href = '../login.html';
+            } catch (error) {
+                console.error("Erro ao verificar status:", error);
+                statusView.innerHTML = `<div class="status-message"><h2>Ocorreu um erro</h2><p>Verifique o console para um possível link de criação de índice.</p></div>`;
             }
         });
 
-        // --- LÓGICA ESPECÍFICA DA RODADA 3 ---
-        function initializeRound3() {
-            const steps = document.querySelectorAll('#round-3-view .activity-step');
-            const prevBtn = document.getElementById('prev-btn-r3');
-            const nextBtn = document.getElementById('next-btn-r3');
-            const submitBtn = document.getElementById('submit-btn-r3');
-            const progressBar = document.getElementById('progress-bar-r3');
-            const progressText = document.getElementById('progress-text-r3');
-            let currentStep = 1;
-            const totalSteps = steps.length;
-            let roletaResultado = null;
+        async function loadAllCatalogsAndInitializeUI() {
+            try {
+                const [maquinasSnap, mpSnap, rhSnap, produtosSnap] = await Promise.all([
+                    getDocs(collection(db, 'catalogo_maquinas')),
+                    getDocs(collection(db, 'catalogo_materias_primas')),
+                    getDocs(collection(db, 'catalogo_rh')),
+                    getDocs(collection(db, 'catalogo_produtos'))
+                ]);
+                catalogo.maquinas = maquinasSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                catalogo.materiasPrimas = mpSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                catalogo.rh = rhSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                catalogo.produtos = produtosSnap.docs.map(d => ({id: d.id, ...d.data()}));
 
-            function updateUI() {
-                steps.forEach((step, index) => {
-                    step.classList.toggle('active', (index + 1) === currentStep);
-                });
-                progressBar.style.width = `${((currentStep -1) / (totalSteps-1)) * 100}%`;
-                progressText.textContent = `Etapa ${currentStep} de ${totalSteps}`;
-                prevBtn.disabled = currentStep === 1;
-                nextBtn.style.display = currentStep === totalSteps ? 'none' : 'inline-block';
-                submitBtn.style.display = (currentStep === totalSteps && roletaResultado) ? 'inline-block' : 'none';
+                initializeRound3UI();
+            } catch (error) {
+                console.error("Erro ao carregar catálogos:", error);
+                alert("Falha ao carregar os dados do jogo. Tente recarregar a página.");
             }
-
-            nextBtn.addEventListener('click', () => {
-                if (currentStep < totalSteps) currentStep++;
-                updateUI();
-            });
-
-            prevBtn.addEventListener('click', () => {
-                if (currentStep > 1) currentStep--;
-                updateUI();
-            });
-
-            document.getElementById('round3-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                if (!roletaResultado) {
-                    alert("Você precisa girar a roleta antes de finalizar a rodada!");
-                    return;
-                }
-                const decisoesR3 = {
-                    aluguel: document.getElementById('r3-aluguel').value,
-                    funcionarios: document.getElementById('r3-funcionarios').value,
-                    salario: document.getElementById('r3-salario').value,
-                    materiaPrima: document.getElementById('r3-materia-prima').value,
-                    cenarioSorteado: roletaResultado
-                };
-
-                try {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = "Enviando...";
-                    const docRef = doc(db, "respostas_rodadas", `rodada3_${turmaId}`);
-                    await setDoc(docRef, { rodada: 3, turmaId: turmaId, decisoes: decisoesR3, enviadoEm: serverTimestamp() });
-                    document.getElementById('round-3-view').innerHTML = `<div class="status-message"><h2>Decisões da Rodada 3 enviadas com sucesso!</h2><p>Aguarde seu professor avançar para a próxima rodada.</p><br/><a href="xperience.html" class="btn btn-primary">Voltar ao Painel</a></div>`;
-                } catch(error) {
-                    console.error("Erro ao salvar decisões: ", error);
-                    alert("Ocorreu um erro ao salvar suas decisões. Tente novamente.");
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "Finalizar e Enviar Rodada 3";
-                }
-            });
-
-            // --- Lógica da Roleta (integrada) ---
-            const spinButton = document.getElementById('spin-button');
-            const wheel = document.getElementById('roulette-wheel');
-            const modal = document.getElementById('result-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const modalDescription = document.getElementById('modal-description');
-            let scenarios = [];
-            let currentRotation = 0;
-
-            async function fetchScenarios() {
-                const defaultQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "default"));
-                const customQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "custom"));
-                const [defaultSnapshot, customSnapshot] = await Promise.all([getDocs(defaultQuery), getDocs(customQuery)]);
-                scenarios = [...defaultSnapshot.docs.map(doc => doc.data()), ...customSnapshot.docs.map(doc => doc.data())];
-                if (scenarios.length > 0) spinButton.disabled = false;
-                else spinButton.textContent = "Nenhum Cenário";
-            }
-
-            spinButton.addEventListener('click', () => {
-                if (scenarios.length === 0) return;
-                spinButton.disabled = true;
-                const totalSpins = 5; 
-                const randomIndex = Math.floor(Math.random() * scenarios.length);
-                const selectedScenario = scenarios[randomIndex];
-                const segmentAngle = 360 / scenarios.length;
-                const stopAngle = (randomIndex * segmentAngle) + (segmentAngle / 2);
-                currentRotation += (totalSpins * 360) + stopAngle - (currentRotation % 360);
-                wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-                setTimeout(() => {
-                    const value = Math.floor(Math.random() * (selectedScenario.valorMax - selectedScenario.valorMin + 1)) + selectedScenario.valorMin;
-                    const finalDescription = selectedScenario.descricao.replace('[VALOR]', value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
-
-                    roletaResultado = { titulo: selectedScenario.titulo, descricao: finalDescription, valor: value };
-
-                    modalTitle.textContent = roletaResultado.titulo;
-                    modalDescription.textContent = roletaResultado.descricao;
-                    modal.style.display = 'flex';
-
-                    modal.onclick = () => {
-                        modal.style.display = 'none';
-                        updateUI();
-                    };
-
-                }, 4200);
-            });
-
-            fetchScenarios();
-            updateUI();
         }
 
-        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+        function initializeRound3UI() {
+            // ... (A Lógica completa para as 5 atividades dinâmicas será colocada aqui)
+            // Este script irá popular os formulários, listas, e cuidar de toda a interatividade
+            // que planejamos, passo a passo.
+        }
+
+        document.getElementById('logout-button').addEventListener('click', () => signOut(auth));
     </script>
 </body>
 </html>

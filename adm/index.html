@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Administrador - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); }
+        .dashboard-header { text-align: center; padding: 40px 20px; background-color: var(--cor-branco); border-bottom: 1px solid #ddd; }
+        .dashboard-header h1 { margin: 0; font-size: 2.8em; color: var(--cor-texto); }
+        .dashboard-header p { font-size: 1.2em; color: #666; max-width: 600px; margin: 10px auto 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 40px 0; }
+        .card { background-color: var(--cor-branco); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding: 25px; text-decoration: none; color: var(--cor-texto); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+        .card .icon { font-size: 3em; margin-bottom: 15px; color: var(--cor-primaria); text-align: center; }
+        .card h3 { margin: 0 0 10px 0; font-size: 1.5em; text-align: center; }
+        .card p { flex-grow: 1; margin: 0 0 20px 0; color: #555; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <h1>Painel de Controle do Administrador</h1>
+        <p>Use as ferramentas abaixo para configurar a economia, os conteúdos e os desafios do jogo.</p>
+    </div>
+    <div class="container">
+        <div class="dashboard-grid">
+            <a href="gerenciar-catalogo.html" class="card"><div class="icon">📦</div><h3>Gerenciar Catálogo</h3><p>Cadastre máquinas, matérias-primas e moldes disponíveis para os alunos.</p></a>
+            <a href="gerenciar-rh.html" class="card"><div class="icon">👥</div><h3>Gerenciar RH</h3><p>Cadastre os cargos e salários de mercado disponíveis para contratação.</p></a>
+            <a href="gerenciar-produtos.html" class="card"><div class="icon">⚙️</div><h3>Gerenciar Produtos</h3><p>Defina a "receita" de cada produto final, combinando insumos e processos.</p></a>
+            <a href="gerenciar-cenarios.html" class="card"><div class="icon">🎲</div><h3>Gerenciar Cenários</h3><p>Crie e edite os cenários da roleta para customizar a experiência das turmas.</p></a>
+            <a href="gerenciar-biblioteca.html" class="card"><div class="icon">📚</div><h3>Gerenciar Biblioteca</h3><p>Adicione ou remova materiais de estudo como vídeos, manuais e podcasts.</p></a>
+            <a href="../professor/professor.html" class="card"><div class="icon">🎓</div><h3>Voltar ao Painel Professor</h3><p>Acesse a visão geral do professor para gerenciar turmas e relatórios.</p></a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Catálogo - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-sucesso: #28a745; --cor-perigo: #dc3545; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 20px; background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: var(--cor-texto); border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; }
+        h2 { font-size: 1.5em; margin-top: 30px; }
+        .form-container { margin-bottom: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
+        .form-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); align-items: end; }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        input, textarea, button { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
+        button { background-color: var(--cor-sucesso); color: var(--cor-branco); border: none; cursor: pointer; font-weight: bold; }
+        button:hover { opacity: 0.9; }
+        #maquinas-list, #materias-primas-list { margin-top: 20px; }
+        .item-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; padding: 10px; border-bottom: 1px solid #eee; align-items: center;}
+        .item-row:nth-child(even) { background-color: #f9f9f9; }
+        .item-row span { word-wrap: break-word; }
+        .delete-btn { background-color: var(--cor-perigo); color: var(--cor-branco); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.9em; }
+        nav { background-color: var(--cor-branco); padding: 1rem 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        nav .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        nav .logo-container img { height: 50px; margin-right: 15px; }
+        .btn-nav { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="../index.html" class="logo-container">
+            <img src="../JOIN.png" alt="Logo Join Xperience">
+            <span>Join Xperience (Admin)</span>
+        </a>
+        <div>
+            <a href="../professor/professor.html" class="btn-nav">Voltar ao Painel</a>
+            <button id="logout-button" class="btn-nav" style="background:var(--cor-cinza-escuro); color:white; border-color:var(--cor-cinza-escuro);">Sair</button>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Gerenciar Catálogo do Jogo</h1>
+
+        <div class="form-container">
+            <h2>Cadastrar Nova Máquina</h2>
+            <form id="add-maquina-form">
+                <div class="form-grid">
+                    <div class="form-group"><label for="maquina-nome">Nome da Máquina:</label><input type="text" id="maquina-nome" required></div>
+                    <div class="form-group"><label for="maquina-custo">Custo (R$):</label><input type="number" id="maquina-custo" min="0" required></div>
+                    <div class="form-group"><label for="maquina-capacidade">Capacidade (unid/mês):</label><input type="number" id="maquina-capacidade" min="0" required></div>
+                    <div class="form-group"><label for="maquina-operacional">Custo/Hora (R$):</label><input type="number" id="maquina-operacional" min="0" value="0" required></div>
+                    <div class="form-group"><button type="submit">Adicionar Máquina</button></div>
+                </div>
+            </form>
+            <div id="maquinas-list"><h3>Máquinas Cadastradas</h3></div>
+        </div>
+
+        <div class="form-container">
+            <h2>Cadastrar Nova Matéria-Prima</h2>
+            <form id="add-materia-prima-form">
+                 <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 2fr 1fr 2fr 1fr; align-items:end;">
+                    <div class="form-group"><label for="mp-codigo">Código:</label><input type="text" id="mp-codigo" required></div>
+                    <div class="form-group"><label for="mp-nome">Nomeclatura:</label><input type="text" id="mp-nome" required></div>
+                    <div class="form-group"><label for="mp-tipo">Tipo:</label><input type="text" id="mp-tipo" required></div>
+                    <div class="form-group"><label for="mp-descricao">Descrição:</label><input type="text" id="mp-descricao"></div>
+                    <div class="form-group"><label for="mp-preco">Preço (R$):</label><input type="number" id="mp-preco" min="0" step="0.01" required></div>
+                    <div class="form-group"><label for="mp-obs">Observações:</label><input type="text" id="mp-obs"></div>
+                    <div class="form-group"><button type="submit">Adicionar Matéria-Prima</button></div>
+                </div>
+            </form>
+            <div id="materias-primas-list"><h3>Matérias-Primas Cadastradas</h3></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const maquinasCollection = collection(db, 'catalogo_maquinas');
+        const materiasPrimasCollection = collection(db, 'catalogo_materias_primas');
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) { window.location.href = '../login.html'; }
+            // Adicionar aqui a verificação de 'isAdmin' se necessário
+        });
+
+        document.getElementById('logout-button').addEventListener('click', () => {
+            signOut(auth).catch(error => console.error("Erro ao sair:", error));
+        });
+
+        const renderList = (element, data, renderer) => {
+            element.innerHTML = `<h3>${element.querySelector('h3').textContent}</h3>`;
+            if (data.length === 0) { element.innerHTML += '<p>Nenhum item cadastrado ainda.</p>'; return; }
+            data.forEach(item => {
+                const itemRow = document.createElement('div');
+                itemRow.className = 'item-row';
+                itemRow.innerHTML = renderer(item);
+                element.appendChild(itemRow);
+            });
+        };
+
+        onSnapshot(maquinasCollection, snapshot => renderList(
+            document.getElementById('maquinas-list'), 
+            snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })),
+            item => `
+                <span><strong>Nome:</strong> ${item.nome}</span>
+                <span><strong>Custo:</strong> ${item.custo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                <span><strong>Capacidade:</strong> ${item.capacidade} unid/mês</span>
+                <span><strong>Custo/Hora:</strong> ${item.operacional.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                <button class="delete-btn" data-id="${item.id}" data-tipo="maquina">Excluir</button>
+            `
+        ));
+
+        onSnapshot(materiasPrimasCollection, snapshot => renderList(
+            document.getElementById('materias-primas-list'), 
+            snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })),
+            item => `
+                <span><strong>Cód:</strong> ${item.codigo}</span>
+                <span><strong>Nome:</strong> ${item.nome}</span>
+                <span><strong>Tipo:</strong> ${item.tipo}</span>
+                <span><strong>Preço:</strong> ${item.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                <span><strong>Descrição:</strong> ${item.descricao || '-'}</span>
+                <span><strong>Obs:</strong> ${item.obs || '-'}</span>
+                <button class="delete-btn" data-id="${item.id}" data-tipo="materia-prima">Excluir</button>
+            `
+        ));
+
+        document.getElementById('add-maquina-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const form = e.target;
+            await addDoc(maquinasCollection, {
+                nome: form['maquina-nome'].value,
+                custo: parseFloat(form['maquina-custo'].value),
+                capacidade: parseInt(form['maquina-capacidade'].value),
+                operacional: parseFloat(form['maquina-operacional'].value)
+            });
+            form.reset();
+        });
+
+        document.getElementById('add-materia-prima-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const form = e.target;
+            await addDoc(materiasPrimasCollection, {
+                codigo: form['mp-codigo'].value,
+                nome: form['mp-nome'].value,
+                tipo: form['mp-tipo'].value,
+                descricao: form['mp-descricao'].value,
+                preco: parseFloat(form['mp-preco'].value),
+                obs: form['mp-obs'].value
+            });
+            form.reset();
+        });
+
+        document.addEventListener('click', async e => {
+            if (e.target.classList.contains('delete-btn')) {
+                const id = e.target.dataset.id, type = e.target.dataset.tipo;
+                if (confirm(`Tem certeza que deseja excluir este item?`)) {
+                    const collectionName = type === 'maquina' ? 'catalogo_maquinas' : 'catalogo_materias_primas';
+                    await deleteDoc(doc(db, collectionName, id));
+                }
+            }
+        });
+    </script>
+</body>
+</html>
