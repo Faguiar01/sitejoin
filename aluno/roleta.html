@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roleta de Cenários - Join Xperience</title>
+    <style>
+        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-info: #17a2b8; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; text-align: center; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav { display: flex; align-items: center; gap: 15px; }
+        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        main { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+
+        .roulette-wrapper { position: relative; width: 400px; height: 400px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .roulette-pointer { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-bottom: 40px solid var(--cor-cinza-escuro); z-index: 10; }
+        #roulette-wheel { width: 100%; height: 100%; border-radius: 50%; border: 10px solid #ccc; background-image: conic-gradient( #ffc107 0% 10%, #dc3545 10% 20%, #17a2b8 20% 30%, #28a745 30% 40%, #6f42c1 40% 50%, #fd7e14 50% 60%, #20c997 60% 70%, #e83e8c 70% 80%, #6610f2 80% 90%, #007bff 90% 100% ); transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 10px rgba(0,0,0,0.2); }
+        .btn-spin { margin-top: 30px; padding: 15px 40px; font-size: 1.5em; cursor: pointer; border: none; border-radius: 10px; background-color: var(--cor-sucesso); color: var(--cor-branco); transition: background-color 0.3s; }
+        .btn-spin:disabled { background-color: #6c757d; cursor: not-allowed; }
+        .btn-spin:hover:not(:disabled) { background-color: #218838; }
+
+        .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; animation: backdropFadeIn 0.3s; }
+        @keyframes backdropFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content { background-color: #fefefe; margin: auto; padding: 0; width: 90%; max-width: 500px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: contentFadeIn 0.4s; overflow: hidden; }
+        @keyframes contentFadeIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-header { padding: 15px 20px; background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .modal-header h2 { margin: 0; font-size: 1.5em; }
+        .modal-body { padding: 25px; font-size: 1.1em; line-height: 1.6; }
+        .modal-body p { margin: 0; }
+        .modal-footer { padding: 15px 20px; text-align: right; background-color: #f8f9fa; display: flex; justify-content: flex-end; gap: 10px;}
+        .btn-modal { padding: 10px 25px; border: none; border-radius: 8px; color: var(--cor-branco); cursor: pointer; font-weight: bold; }
+        .btn-modal-close { background-color: var(--cor-primaria); }
+        .btn-modal-back { background-color: var(--cor-info); }
+
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav>
+            <a href="xperience.html" class="btn btn-primary">Voltar ao Painel</a>
+            <a href="#" id="logout-button">Sair</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div>
+            <h1>Roleta de Cenários</h1>
+            <p>Gire a roleta para descobrir o evento deste mês!</p>
+            <div class="roulette-wrapper">
+                <div class="roulette-pointer"></div>
+                <div id="roulette-wheel"></div>
+            </div>
+            <button id="spin-button" class="btn-spin">Girar a Roleta</button>
+        </div>
+    </main>
+
+    <div id="result-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="modal-title">Resultado do Sorteio</h2></div>
+            <div class="modal-body"><p id="modal-description">Descrição do cenário aparecerá aqui.</p></div>
+            <div class="modal-footer">
+                <button id="modal-back-btn" class="btn-modal btn-modal-back">Voltar ao Painel</button>
+                <button id="modal-close-btn" class="btn-modal btn-modal-close">Girar Novamente</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let scenarios = [];
+        const spinButton = document.getElementById('spin-button');
+        const wheel = document.getElementById('roulette-wheel');
+        const modal = document.getElementById('result-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDescription = document.getElementById('modal-description');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalBackBtn = document.getElementById('modal-back-btn');
+        let currentRotation = 0;
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                fetchScenarios(user);
+            } else {
+                window.location.href = '../login.html';
+            }
+        });
+
+        async function fetchScenarios(user) {
+            spinButton.disabled = true;
+            spinButton.textContent = "Carregando Cenários...";
+
+            const defaultQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "default"));
+            const customQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "custom"));
+
+            try {
+                const [defaultSnapshot, customSnapshot] = await Promise.all([getDocs(defaultQuery), getDocs(customQuery)]);
+
+                const defaultScenarios = defaultSnapshot.docs.map(doc => doc.data());
+                const customScenarios = customSnapshot.docs.map(doc => doc.data());
+
+                scenarios = [...defaultScenarios, ...customScenarios];
+
+                if (scenarios.length > 0) {
+                    spinButton.disabled = false;
+                    spinButton.textContent = "Girar a Roleta";
+                } else {
+                    spinButton.textContent = "Nenhum cenário disponível";
+                    alert("Nenhum cenário foi encontrado no banco de dados. Peça para seu professor adicionar alguns!");
+                }
+            } catch (error) {
+                console.error("Erro ao buscar cenários:", error);
+                spinButton.textContent = "Erro ao carregar";
+                alert("Ocorreu um erro ao buscar os cenários. Verifique o console para mais detalhes.");
+            }
+        }
+
+        spinButton.addEventListener('click', () => {
+            if (scenarios.length === 0) return;
+
+            spinButton.disabled = true;
+            const totalSpins = 5; 
+            const randomIndex = Math.floor(Math.random() * scenarios.length);
+            const selectedScenario = scenarios[randomIndex];
+
+            // Um ângulo para cada cenário possível
+            const segmentAngle = 360 / scenarios.length;
+            const stopAngle = (randomIndex * segmentAngle) + (segmentAngle / 2);
+
+            currentRotation += (totalSpins * 360) + stopAngle - (currentRotation % 360);
+
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                showResult(selectedScenario);
+            }, 4200); 
+        });
+
+        function showResult(scenario) {
+            const value = Math.floor(Math.random() * (scenario.valorMax - scenario.valorMin + 1)) + scenario.valorMin;
+            const finalDescription = scenario.descricao.replace('[VALOR]', value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+
+            modalTitle.textContent = scenario.titulo;
+            modalDescription.textContent = finalDescription;
+            modal.style.display = 'flex';
+        }
+
+        modalCloseBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            spinButton.disabled = false; // Permite girar novamente
+        });
+
+        modalBackBtn.addEventListener('click', () => {
+            window.location.href = 'xperience.html';
+        });
+
+        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+    </script>
+</body>
+</html>
