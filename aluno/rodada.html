@@ -33,7 +33,6 @@
         .navigation-buttons { display: flex; justify-content: space-between; margin-top: 40px; }
         .btn { padding: 12px 25px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; font-size: 1.1em; cursor: pointer; }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        /* Estilos da Roleta, Modal, etc... */
         .roulette-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
         .roulette-pointer { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 30px solid var(--cor-cinza-escuro); z-index: 10; }
         #roulette-wheel { width: 100%; height: 100%; border-radius: 50%; border: 8px solid #ccc; background-image: conic-gradient( #ffc107 0% 10%, #dc3545 10% 20%, #17a2b8 20% 30%, #28a745 30% 40%, #6f42c1 40% 50%, #fd7e14 50% 60%, #20c997 60% 70%, #e83e8c 70% 80%, #6610f2 80% 90%, #007bff 90% 100% ); transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 10px rgba(0,0,0,0.2); }
@@ -137,7 +136,7 @@
         </div>
 
         <div id="result-modal" class="modal-backdrop">
-            <div class="modal-content">
+             <div class="modal-content">
                 <div class="modal-header"><h2 id="modal-title">Resultado do Sorteio</h2></div>
                 <div class="modal-body"><p id="modal-description"></p></div>
             </div>
@@ -164,8 +163,8 @@
         const db = getFirestore(app);
 
         let turmaId = null;
-        let catalogo = {};
-        let decisoes = { custosFixos: [], contratacoes: {}, aquisicaoMaquinas: [], compraMateriaPrima: {}, planoProducao: null, cenarioSorteado: null };
+        const catalogo = {};
+        const decisoes = { custosFixos: [], contratacoes: {}, aquisicaoMaquinas: [], compraMateriaPrima: {}, planoProducao: null, cenarioSorteado: null };
 
         const statusView = document.getElementById('status-view');
         const round3View = document.getElementById('round-3-view');
@@ -188,13 +187,15 @@
                     const respostaSnap = await getDoc(respostaRef);
                     if (respostaSnap.exists()) {
                         statusView.innerHTML = `<div class="status-message"><h2>Decisões da Rodada 3 já enviadas.</h2></div>`;
+                        statusView.style.display = 'block';
                     } else {
                         statusView.style.display = 'none';
                         round3View.style.display = 'block';
                         await loadAllCatalogsAndInitializeUI();
                     }
                 } else {
-                    statusView.innerHTML = `<div class="status-message"><h2>A rodada ${rodadaAtual} da sua turma não é a Rodada 3 ou ainda não foi iniciada.</h2></div>`;
+                    statusView.innerHTML = `<div class="status-message"><h2>A rodada atual (${rodadaAtual}) não é a Rodada 3 ou ainda não foi iniciada.</h2></div>`;
+                    statusView.style.display = 'block';
                 }
             } catch (error) {
                 console.error("Erro ao verificar status:", error);
@@ -204,28 +205,67 @@
 
         async function loadAllCatalogsAndInitializeUI() {
             try {
-                const [maquinasSnap, mpSnap, rhSnap, produtosSnap] = await Promise.all([
+                const [maquinasSnap, mpSnap, rhSnap, produtosSnap, cenariosSnap] = await Promise.all([
                     getDocs(collection(db, 'catalogo_maquinas')),
                     getDocs(collection(db, 'catalogo_materias_primas')),
                     getDocs(collection(db, 'catalogo_rh')),
-                    getDocs(collection(db, 'catalogo_produtos'))
+                    getDocs(collection(db, 'catalogo_produtos')),
+                    getDocs(query(collection(db, 'roleta_cenarios')))
                 ]);
                 catalogo.maquinas = maquinasSnap.docs.map(d => ({id: d.id, ...d.data()}));
                 catalogo.materiasPrimas = mpSnap.docs.map(d => ({id: d.id, ...d.data()}));
                 catalogo.rh = rhSnap.docs.map(d => ({id: d.id, ...d.data()}));
                 catalogo.produtos = produtosSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                catalogo.cenarios = cenariosSnap.docs.map(d => d.data());
 
                 initializeRound3UI();
             } catch (error) {
                 console.error("Erro ao carregar catálogos:", error);
-                alert("Falha ao carregar os dados do jogo. Tente recarregar a página.");
+                alert("Falha ao carregar os dados do jogo. Verifique se todos os índices do Firestore foram criados e recarregue a página.");
             }
         }
 
         function initializeRound3UI() {
-            // ... (A Lógica completa para as 5 atividades dinâmicas será colocada aqui)
-            // Este script irá popular os formulários, listas, e cuidar de toda a interatividade
-            // que planejamos, passo a passo.
+            const steps = document.querySelectorAll('#round-3-view .activity-step');
+            const prevBtn = document.getElementById('prev-btn-r3'), nextBtn = document.getElementById('next-btn-r3'), submitBtn = document.getElementById('submit-btn-r3');
+            const progressBar = document.getElementById('progress-bar-r3'), progressText = document.getElementById('progress-text-r3');
+            let currentStep = 1;
+            const totalSteps = steps.length;
+
+            function updateUI() {
+                steps.forEach((step, index) => step.classList.toggle('active', (index + 1) === currentStep));
+                progressBar.style.width = `${((currentStep - 1) / (totalSteps - 1)) * 100}%`;
+                progressText.textContent = `Etapa ${currentStep} de ${totalSteps}`;
+                prevBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+                nextBtn.style.display = currentStep === totalSteps ? 'none' : 'inline-block';
+                submitBtn.style.display = (currentStep === totalSteps && decisoes.cenarioSorteado) ? 'inline-block' : 'none';
+            }
+
+            nextBtn.addEventListener('click', () => { if (currentStep < totalSteps) currentStep++; updateUI(); });
+            prevBtn.addEventListener('click', () => { if (currentStep > 1) currentStep--; updateUI(); });
+
+            // Atividade 1: Custos Fixos
+            const addCustoForm = document.getElementById('add-custo-form');
+            const custosListEl = document.getElementById('custos-fixos-list');
+            const renderCustos = () => {
+                custosListEl.innerHTML = decisoes.custosFixos.map((item, index) => `<div class="dynamic-list-item"><span>${item.descricao}: ${item.valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</span><button type="button" class="remove-btn" data-index="${index}" data-list="custos">Remover</button></div>`).join('');
+            };
+            addCustoForm.addEventListener('submit', e => { e.preventDefault(); const desc = document.getElementById('custo-desc').value, valor = parseFloat(document.getElementById('custo-valor').value); if(desc&&valor){ decisoes.custosFixos.push({descricao:desc,valor}); renderCustos(); addCustoForm.reset(); }});
+
+            // Atividade 2: RH
+            const rhListEl = document.getElementById('rh-catalog-list');
+            rhListEl.innerHTML = catalogo.rh.map(cargo => `<div class="catalog-item"><span><b>${cargo.funcao}</b> (Salário: ${cargo.salarioBase.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})})</span><input type="number" class="rh-qty" data-id="${cargo.id}" value="0" min="0"></div>`).join('');
+
+            // Atividade 3: Ativos e Estoque
+            const maquinasListEl = document.getElementById('maquinas-catalog-list');
+            maquinasListEl.innerHTML = catalogo.maquinas.map(m => `<div class="catalog-item"><label><input type="checkbox" class="maquina-cb" data-id="${m.id}"> <b>${m.nome}</b> (Custo: ${m.custo.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})})</label></div>`).join('');
+            const mpListEl = document.getElementById('mp-catalog-list');
+            mpListEl.innerHTML = catalogo.materiasPrimas.map(mp => `<div class="catalog-item"><span><b>${mp.nome}</b> (${mp.codigo}) - Preço: ${mp.preco.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}/unid</span><input type="number" class="mp-qty" data-id="${mp.id}" placeholder="Qtd" min="0"></div>`).join('');
+
+            // Lógica da Roleta e demais atividades... (O restante do script completo)
+            // ...
+
+            updateUI(); // Inicia a UI na primeira etapa
         }
 
         document.getElementById('logout-button').addEventListener('click', () => signOut(auth));
