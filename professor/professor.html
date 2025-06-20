@@ -53,18 +53,18 @@
             </div>
         </div>
         <div class="container">
-            <div class="dashboard-grid">
+            <div class="dashboard-grid" id="dashboard-grid">
                 <a href="cenarios.html" class="card"><div class="icon">🚀</div><h3>Cenários</h3><p>Sugira novos cenários de simulação para a plataforma.</p></a>
                 <a href="bussola.html" class="card"><div class="icon">🧭</div><h3>Bússola</h3><p>Acesse o glossário de termos e conceitos do jogo.</p></a>
                 <a href="gerenciar-turmas.html" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Crie, organize e acompanhe o progresso de suas turmas.</p></a>
                 <a href="relatorios.html" class="card"><div class="icon">📊</div><h3>Relatórios</h3><p>Visualize relatórios detalhados e insights sobre as rodadas.</p></a>
-            </div>
+                </div>
         </div>
     </main>
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
     <div id="post-modal" class="modal-backdrop">
         <div class="modal-content">
-            <div class="modal-header"><h2>Nova Postagem no Mural</h2><span class="close-button" id="close-post-modal">&times;</span></div>
+            <div class="modal-header"><h2>Nova Postagem no Mural</h2><span class="close-button" id="close-post-modal">×</span></div>
             <form id="post-form">
                 <div class="modal-body">
                     <div class="form-group"><label for="post-title">Título</label><input type="text" id="post-title" required></div>
@@ -80,10 +80,13 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
         const firebaseConfig = { apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk", authDomain: "joinxperience-site.firebaseapp.com", projectId: "joinxperience-site", storageBucket: "joinxperience-site.appspot.com", messagingSenderId: "140037739806", appId: "1:140037739806:web:322493d72ca6149abce50f", measurementId: "G-V4SRK0FNBN" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // --- LÓGICA DO MODAL DE POSTAGEM (EXISTENTE) ---
         const postModal = document.getElementById('post-modal');
         const openModalBtn = document.getElementById('open-post-modal-btn');
         const closeModalBtn = document.getElementById('close-post-modal');
@@ -108,15 +111,35 @@
                 setTimeout(() => { closeModal(); }, 1500);
             } catch (error) { console.error("Erro ao adicionar documento: ", error); formStatus.textContent = 'Erro ao publicar. Tente novamente.'; formStatus.style.color = 'red'; }
         });
+
+        // --- LÓGICA DE AUTENTICAÇÃO E VERIFICAÇÃO DE ADMIN (MODIFICADA) ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const welcomeTitle = document.getElementById('welcome-title');
                 const welcomeMessage = document.getElementById('welcome-message');
                 const userDocRef = doc(db, "usuarios", user.uid);
                 const userDoc = await getDoc(userDocRef);
+
                 if (userDoc.exists()) {
-                    const userName = userDoc.data().nome || 'Professor(a)';
+                    const userData = userDoc.data();
+                    const userName = userData.nome || 'Professor(a)';
                     welcomeTitle.textContent = `Bem-vindo(a), ${userName}!`;
+
+                    // ===== NOVA LÓGICA DE ADMIN =====
+                    if (userData.isAdmin === true) {
+                        const grid = document.getElementById('dashboard-grid');
+                        const adminCardHTML = `
+                            <a href="gerenciar-biblioteca.html" class="card">
+                                <div class="icon">📚</div>
+                                <h3>Gerenciar Biblioteca</h3>
+                                <p>Adicione ou remova materiais de estudo como vídeos, manuais e podcasts.</p>
+                            </a>
+                        `;
+                        // Adiciona o novo card ao final do grid
+                        grid.insertAdjacentHTML('beforeend', adminCardHTML);
+                    }
+                    // ===================================
+
                 } else {
                     welcomeTitle.textContent = 'Painel do Professor';
                 }
@@ -125,6 +148,7 @@
                 window.location.href = '../login.html';
             }
         });
+
         document.getElementById('logout-button').addEventListener('click', (e) => {
             e.preventDefault();
             signOut(auth).then(() => { window.location.href = '../index.html'; });

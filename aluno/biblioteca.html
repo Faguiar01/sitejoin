@@ -18,42 +18,19 @@
         .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: opacity 0.3s ease; display: inline-block; }
         .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
         .btn:hover { opacity: 0.85; }
-
-        /* --- NOVO: Estilos do Filtro --- */
-        .filter-container {
-            background-color: #fff;
-            padding: 15px;
-            margin-top: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+        .filter-container { background-color: #fff; padding: 15px; margin-top: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px; }
         .filter-container label { font-weight: 600; font-size: 1.1em; }
-        .filter-container select {
-            padding: 10px;
-            font-size: 1em;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-        }
-
+        .filter-container select { padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; background-color: #fff; }
         .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 20px; }
-        .resource-card { 
-            background-color: var(--cor-branco); 
-            border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
-            display: flex; /* Alterado para flex para funcionar com o filtro */
-            flex-direction: column; 
-            overflow: hidden; 
-            transition: transform 0.3s ease, opacity 0.4s ease; /* Adicionada transição de opacidade */
-        }
+        .resource-card { background-color: var(--cor-branco); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; overflow: hidden; transition: transform 0.3s ease, opacity 0.4s ease; }
         .resource-card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
         .resource-card .icon { font-size: 2.5em; margin-bottom: 15px; }
         .resource-card h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.4em; }
         .resource-card p { color: #555; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
         .resource-card-footer { background-color: #f8f9fa; padding: 15px 25px; text-align: right; border-top: 1px solid #eee;}
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #loading-message { grid-column: 1 / -1; text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
     </style>
 </head>
@@ -81,80 +58,9 @@
             </select>
         </div>
 
-        <div class="resource-grid">
-            <div class="resource-card" data-category="manual">
-                <div class="resource-card-content">
-                    <div class="icon">📄</div>
-                    <h3>Livro: Educação Financeira nas Escolas</h3>
-                    <p>Material oficial do Governo Federal para o Ensino Médio. Aborda temas como vida familiar, trabalho e empreendedorismo.</p>
-                </div>
-                <div class="resource-card-footer">
-                    <a href="https://gmw.investidor.gov.br/wp-content/uploads/2021/03/EM-Livro2-VoceSeuFuturoFazendoAcontecer.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Acessar PDF</a>
-                </div>
+        <div class="resource-grid" id="resource-grid-container">
+            <p id="loading-message">Carregando recursos...</p>
             </div>
-            <div class="resource-card" data-category="manual">
-                <div class="resource-card-content">
-                    <div class="icon">📄</div>
-                    <h3>Apostila: Assistente de Contabilidade</h3>
-                    <p>Material de apoio do curso do SENAI, abordando temas como classificação de contas, ativos, passivos e capital próprio.</p>
-                </div>
-                <div class="resource-card-footer">
-                    <a href="https://pt.scribd.com/document/567334837/Assistente-contabilidade" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Acessar Material</a>
-                </div>
-            </div>
-            <div class="resource-card" data-category="manual">
-                <div class="resource-card-content">
-                    <div class="icon">📄</div>
-                    <h3>Caderno: Educação Financeira para Jovens</h3>
-                    <p>Um caderno prático da CAPES com uma sequência didática que contextualiza a matemática financeira e o orçamento.</p>
-                </div>
-                <div class="resource-card-footer">
-                    <a href="https://educapes.capes.gov.br/bitstream/capes/598168/2/caderno%20pedag%C3%B3gico%2013_04_2021%20final.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Acessar Caderno</a>
-                </div>
-            </div>
-
-            <div class="resource-card" data-category="video">
-                <div class="resource-card-content">
-                    <div class="icon">🎬</div>
-                    <h3>Vídeo: 5 Passos para uma Gestão de Custos</h3>
-                    <p>Dicas práticas do SENAI Play para controlar custos, negociar com fornecedores e entender custos fixos e variáveis.</p>
-                </div>
-                <div class="resource-card-footer">
-                    <a href="https://www.youtube.com/watch?v=XVC1_KYgGxI" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Assistir Vídeo</a>
-                </div>
-            </div>
-             <div class="resource-card" data-category="video">
-                <div class="resource-card-content">
-                    <div class="icon">🎬</div>
-                    <h3>Vídeo: Educação Financeira (Turma da Mônica)</h3>
-                    <p>De forma lúdica, a Turma da Mônica apresenta conceitos básicos e importantes sobre como lidar com o dinheiro.</p>
-                </div>
-                <div class="resource-card-footer">
-                    <a href="https://www.youtube.com/watch?v=2eL4wpyLxnQ" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Assistir Vídeo</a>
-                </div>
-            </div>
-            <div class="resource-card" data-category="video">
-                <div class="resource-card-content">
-                    <div class="icon">🎬</div>
-                    <h3>Vídeo: Gestão Financeira na Prática</h3>
-                    <p>Os conceitos de fluxo de caixa, orçamento e capital de giro ensinados pelo SENAI Play de forma universal e aplicável.</p>
-                </div>
-                <div class="resource-card-footer">
-                    <a href="https://www.youtube.com/watch?v=fibSbSi4ims" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Assistir Vídeo</a>
-                </div>
-            </div>
-
-             <div class="resource-card" data-category="podcast">
-                <div class="resource-card-content">
-                    <div class="icon">🎙️</div>
-                    <h3>Podcast: Conexão Indústria</h3>
-                    <p>O podcast oficial do SENAI que aborda inovação, empreendedorismo e o perfil do profissional do futuro.</p>
-                </div>
-                <div class="resource-card-footer">
-                    <a href="https://senaimt.ind.br/midias/podcasts" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Ouvir Podcast</a>
-                </div>
-            </div>
-        </div>
     </main>
 
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
@@ -162,6 +68,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -173,27 +81,88 @@
         };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = '../login.html'; } });
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadResources();
+            } else {
+                window.location.href = '../login.html';
+            }
+        });
         document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
 
-        // --- NOVO: LÓGICA DO FILTRO DE CATEGORIAS ---
-        const categoryFilter = document.getElementById('category-filter');
-        const resourceCards = document.querySelectorAll('.resource-card');
+        const gridContainer = document.getElementById('resource-grid-container');
 
-        categoryFilter.addEventListener('change', (event) => {
-            const selectedCategory = event.target.value;
+        async function loadResources() {
+            gridContainer.innerHTML = '<p id="loading-message">Carregando recursos...</p>';
+            const q = query(collection(db, "biblioteca_recursos"), orderBy("criadoEm", "desc"));
 
-            resourceCards.forEach(card => {
-                const cardCategory = card.dataset.category;
+            try {
+                const querySnapshot = await getDocs(q);
+                gridContainer.innerHTML = ''; // Limpa a mensagem de "carregando"
 
-                // Se a categoria selecionada for "todos" OU a categoria do card for a mesma da selecionada
-                if (selectedCategory === 'todos' || cardCategory === selectedCategory) {
-                    card.style.display = 'flex'; // Mostra o card
-                } else {
-                    card.style.display = 'none'; // Esconde o card
+                if (querySnapshot.empty) {
+                    gridContainer.innerHTML = '<p id="loading-message">Nenhum recurso disponível no momento.</p>';
+                    return;
                 }
+
+                querySnapshot.forEach((doc) => {
+                    const resource = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'resource-card';
+                    card.dataset.category = resource.categoria;
+
+                    if (resource.categoria === 'video') {
+                        card.innerHTML = `
+                            <div class="video-wrapper">
+                                ${resource.link} </div>
+                            <div class="resource-card-content">
+                                <h3>${resource.titulo}</h3>
+                                <p>${resource.descricao}</p>
+                            </div>
+                        `;
+                    } else {
+                        const icon = resource.categoria === 'manual' ? '📄' : '🎙️';
+                        const linkText = resource.categoria === 'manual' ? 'Acessar Material' : 'Ouvir Podcast';
+                        card.innerHTML = `
+                            <div class="resource-card-content">
+                                <div class="icon">${icon}</div>
+                                <h3>${resource.titulo}</h3>
+                                <p>${resource.descricao}</p>
+                            </div>
+                            <div class="resource-card-footer">
+                                <a href="${resource.link}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">${linkText}</a>
+                            </div>
+                        `;
+                    }
+                    gridContainer.appendChild(card);
+                });
+
+                // Re-aplica o listener do filtro após carregar os cards
+                setupFilter();
+
+            } catch (error) {
+                console.error("Erro ao carregar recursos: ", error);
+                gridContainer.innerHTML = '<p id="loading-message">Ocorreu um erro ao carregar os recursos. Tente novamente mais tarde.</p>';
+            }
+        }
+
+        function setupFilter() {
+            const categoryFilter = document.getElementById('category-filter');
+            categoryFilter.addEventListener('change', (event) => {
+                const selectedCategory = event.target.value;
+                const resourceCards = document.querySelectorAll('.resource-card');
+
+                resourceCards.forEach(card => {
+                    if (selectedCategory === 'todos' || card.dataset.category === selectedCategory) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
-        });
+        }
     </script>
 </body>
 </html>
