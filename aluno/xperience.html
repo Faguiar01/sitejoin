@@ -74,6 +74,8 @@
         const db = getFirestore(app);
 
         let currentUser;
+        const statusContainer = document.getElementById('turma-status-container');
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -91,7 +93,6 @@
         document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
 
         async function updateDashboardStatus(user) {
-            const statusContainer = document.getElementById('turma-status-container');
             try {
                 const turmasRef = collection(db, "turmas");
                 const q = query(turmasRef, where("alunos", "array-contains", user.uid), limit(1));
@@ -100,45 +101,72 @@
                 if (querySnapshot.empty) {
                     statusContainer.className = 'turma-status-container status-join';
                     statusContainer.innerHTML = `<p>Você ainda não faz parte de uma turma. Insira o código aqui!</p><form id="join-turma-form"><input type="text" id="turma-code" placeholder="Digite o código" required><button type="submit" class="btn btn-success">Entrar na Turma</button></form>`;
-                    document.getElementById('join-turma-form').addEventListener('submit', handleJoinTurma);
                 } else {
                     const turmaDoc = querySnapshot.docs[0];
                     const turmaData = turmaDoc.data();
                     const rodadaAtual = turmaData.rodadaAtual || 1;
 
-                    // LÓGICA DE STATUS REFEITA PARA SER MAIS ESPECÍFICA
-                    if (rodadaAtual === 1) {
-                        // ... (lógica existente para a Rodada 1) ...
-                    } else if (rodadaAtual === 2) {
-                        // ... (lógica existente para a Rodada 2) ...
-                    } else if (rodadaAtual === 3) {
-                        const respostaRef = doc(db, "respostas_rodadas", `rodada3_${turmaDoc.id}`);
-                        const respostaSnap = await getDoc(respostaRef);
-
-                        if (respostaSnap.exists()) {
-                            statusContainer.className = 'turma-status-container status-completed';
-                            statusContainer.innerHTML = `<p><strong>Sua equipe finalizou a Rodada 3!</strong></p><p style="font-size: 1em; font-weight: normal;">Aguarde o professor iniciar a próxima rodada.</p>`;
-                        } else if (turmaData.statusRodada3 === 'iniciada') {
-                            statusContainer.className = 'turma-status-container status-ready';
-                            statusContainer.innerHTML = `<p><strong>A Rodada 3 da sua turma "${turmaData.nome}" começou!</strong></p><a href="rodada.html" class="btn btn-success">Jogar Agora!</a>`;
-                        } else { // Rodada 3 ainda não iniciada pelo professor
-                            statusContainer.className = 'turma-status-container status-waiting';
-                            statusContainer.innerHTML = `<p>Você está na turma "<strong>${turmaData.nome}</strong>". Aguardando seu professor iniciar a Rodada 3.</p>`;
-                        }
-                    } else { // Para rodadas futuras (4, 5...)
-                         statusContainer.className = 'turma-status-container status-completed';
-                         statusContainer.innerHTML = `<p><strong>Sua equipe já finalizou a Rodada ${rodadaAtual - 1}.</strong></p><p style="font-size: 1em; font-weight: normal;">Aguarde o professor iniciar a próxima rodada.</p>`;
+                    // Lógica de exibição do status (agora com R3)
+                    if (rodadaAtual === 1 && turmaData.statusRodada1 === 'iniciada') {
+                        statusContainer.className = 'turma-status-container status-ready';
+                        statusContainer.innerHTML = `<p><strong>A Rodada 1 da sua turma "${turmaData.nome}" começou!</strong></p><a href="rodada.html" class="btn btn-success">Jogar Agora!</a>`;
+                    } else if (rodadaAtual === 2 && turmaData.statusRodada2 === 'iniciada') {
+                        statusContainer.className = 'turma-status-container status-ready';
+                        statusContainer.innerHTML = `<p><strong>A Rodada 2 (${turmaData.nome}) começou!</strong></p><p style="font-size: 1em; font-weight: normal;">É hora de estruturar sua empresa.</p><a href="rodada.html" class="btn btn-success">Iniciar Balanço</a>`;
+                    } else if (rodadaAtual === 3 && turmaData.statusRodada3 === 'iniciada') {
+                        statusContainer.className = 'turma-status-container status-ready';
+                        statusContainer.innerHTML = `<p><strong>A Rodada 3 da sua turma "${turmaData.nome}" começou!</strong></p><a href="rodada.html" class="btn btn-success">Jogar Agora!</a>`;
+                    } else {
+                        statusContainer.className = 'turma-status-container status-waiting';
+                        statusContainer.innerHTML = `<p>Você está na turma "<strong>${turmaData.nome}</strong>". Aguardando seu professor iniciar a Rodada ${rodadaAtual}.</p>`;
                     }
                 }
             } catch (error) {
                 console.error("Erro ao verificar status da turma:", error);
-                statusContainer.innerHTML = `<p style="color:red;">Ocorreu um erro ao carregar os dados da sua turma. Tente recarregar a página.</p>`;
+                statusContainer.innerHTML = `<p style="color:red;">Ocorreu um erro ao carregar os dados. Verifique o console para um link de criação de índice.</p>`;
             }
         }
 
         async function handleJoinTurma(e) {
-            // ... (código existente da função handleJoinTurma, sem alterações) ...
+            e.preventDefault();
+            const turmaCodeInput = document.getElementById('turma-code');
+            if (!turmaCodeInput) return;
+
+            const turmaCode = turmaCodeInput.value.trim().toUpperCase();
+            if (!turmaCode) { alert('Por favor, digite um código.'); return; }
+
+            const turmasRef = collection(db, "turmas");
+            const q = query(turmasRef, where("codigo", "==", turmaCode));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) { alert("Código da turma inválido."); return; }
+
+                const turmaDoc = querySnapshot.docs[0];
+
+                // LÓGICA CORRIGIDA AQUI
+                if (turmaDoc.data().alunos && turmaDoc.data().alunos.includes(currentUser.uid)) { 
+                    alert(`Você já faz parte desta turma!`);
+                    updateDashboardStatus(currentUser); // Força a atualização do painel
+                    return; 
+                }
+
+                await updateDoc(turmaDoc.ref, { alunos: arrayUnion(currentUser.uid) });
+
+                alert(`Inscrição na turma "${turmaDoc.data().nome}" realizada com sucesso!`);
+                updateDashboardStatus(currentUser);
+            } catch (error) { 
+                console.error("Erro ao entrar na turma: ", error); 
+                alert("Ocorreu um erro ao tentar entrar na turma. Verifique o console."); 
+            }
         }
+
+        statusContainer.addEventListener('submit', (e) => {
+            if (e.target && e.target.id === 'join-turma-form') {
+                handleJoinTurma(e);
+            }
+        });
+
     </script>
 </body>
 </html>

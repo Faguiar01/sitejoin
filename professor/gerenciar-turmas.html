@@ -39,7 +39,19 @@
         .status-finished { background-color: #d4edda; color: #155724; }
         .turma-card-footer { padding: 20px; background-color: #f8f9fa; border-top: 1px solid #eee; text-align: right; }
         #loading-message { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
-        /* Cole aqui o CSS dos seus modais */
+        .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; width: 90%; max-width: 700px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
+        @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
+        .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
+        .modal-header h2 { margin: 0; }
+        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-body { padding: 20px; text-align: center; max-height: 70vh; overflow-y: auto; }
+        #qr-code-display { width: 256px; height: 256px; margin: 15px auto; padding: 3px; background: white; display: flex; justify-content: center; align-items: center; }
+        #qr-code-text { font-size: 2.5em; font-weight: bold; font-family: monospace; letter-spacing: 3px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group input { width: 100%; padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        .modal-footer { padding: 15px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #dee2e6; background-color: #f8f9fa; gap: 10px; }
+        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
     </style>
 </head>
 <body>
@@ -48,13 +60,16 @@
         <div class="page-header"><h1>Gerenciamento de Turmas</h1><div><button id="open-create-turma-modal" class="btn btn-success">Criar Nova Turma</button></div></div>
         <div id="turmas-grid" class="turmas-grid"><p id="loading-message">Carregando turmas...</p></div>
     </main>
+    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+
+    <div id="create-turma-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2>Criar Nova Turma</h2><span class="close-button">&times;</span></div><form id="create-turma-form"><div class="modal-body"><div class="form-group"><label for="turma-name">Nome da Turma / Equipe</label><input type="text" id="turma-name" required></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary close-button">Cancelar</button><button type="submit" class="btn btn-success">Salvar Turma</button></div></form></div></div>
+    <div id="qr-code-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h2 id="qr-modal-title">Código da Turma</h2><span class="close-button">&times;</span></div><div class="modal-body"><p>Projete esta tela para seus alunos escanearem.</p><div id="qr-code-display"></div><p id="qr-code-text"></p></div></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, getDoc, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        // CONFIG CORRETO INSERIDO AQUI
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -72,7 +87,31 @@
         onAuthStateChanged(auth, (user) => { if (user) { currentUser = user; loadTurmas(); } else { window.location.href = '../login.html'; } });
         document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
 
-        // Adicionar a lógica de abrir/fechar modais aqui
+        // Lógica dos Modais
+        const createModal = document.getElementById('create-turma-modal');
+        const qrModal = document.getElementById('qr-code-modal');
+        document.getElementById('open-create-turma-modal').addEventListener('click', () => createModal.style.display = 'block');
+
+        document.querySelectorAll('.modal-backdrop .close-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                createModal.style.display = 'none';
+                qrModal.style.display = 'none';
+            });
+        });
+
+        function generateJoinCode() { const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let result = ''; for (let i = 0; i < 6; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); } return result; }
+
+        document.getElementById('create-turma-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const turmaName = document.getElementById('turma-name').value;
+            if (!turmaName.trim()) return;
+            try {
+                await addDoc(collection(db, "turmas"), { nome: turmaName, professorId: currentUser.uid, codigo: generateJoinCode(), criadoEm: serverTimestamp(), alunos: [], rodadaAtual: 1, statusRodada1: 'nao_iniciada', statusRodada2: 'nao_iniciada', statusRodada3: 'nao_iniciada' });
+                createModal.style.display = 'none';
+                document.getElementById('create-turma-form').reset();
+                loadTurmas();
+            } catch (error) { console.error("Erro ao criar turma: ", error); alert("Não foi possível criar a turma."); }
+        });
 
         async function loadTurmas() {
             if (!currentUser) return;
@@ -141,11 +180,19 @@
                             await updateDoc(doc(db, 'turmas', turmaId), { [`statusRodada${roundToFinish}`]: 'finalizada' });
                             loadTurmas();
                         }
+                    } else if (e.target.classList.contains('qr-code-btn')) {
+                        const qrModal = document.getElementById('qr-code-modal');
+                        const qrCodeContainer = document.getElementById('qr-code-display');
+                        qrCodeContainer.innerHTML = '';
+                        new QRCode(qrCodeContainer, { text: `https://faguiar01.github.io/sitejoin/`, width: 250, height: 250 });
+                        document.getElementById('qr-modal-title').textContent = `Código para a Turma: ${e.target.dataset.name}`;
+                        document.getElementById('qr-code-text').textContent = e.target.dataset.code;
+                        qrModal.style.display = 'block';
                     }
                 });
             } catch (error) {
                 console.error("Erro ao carregar turmas: ", error);
-                grid.innerHTML = `<p id="loading-message">Ocorreu um erro ao carregar turmas. Verifique o console para um link de criação de índice.</p>`;
+                grid.innerHTML = `<p id="loading-message">Ocorreu um erro. Verifique o console para um link de criação de índice.</p>`;
             }
         }
     </script>

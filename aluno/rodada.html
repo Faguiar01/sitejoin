@@ -5,149 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rodada Atual - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-perigo: #dc3545; --cor-info: #17a2b8; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
+        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-perigo: #dc3545; --cor-info: #17a2b8; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .round-view { display: none; }
+        .round-view.active { display: block; animation: fadeIn 0.5s; }
+        .status-message { text-align: center; padding: 40px; background-color: var(--cor-branco); border-radius: 8px; margin-top: 30px; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
         header.main-header .logo-container img { height: 50px; margin-right: 15px; }
         header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        main { flex: 1; }
         .page-header { padding: 20px; text-align: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
         .page-header h1 { margin: 0; font-size: 2.2em; }
-        .page-header p { margin: 10px 0 0 0; font-size: 1.1em; color: #555; }
-        .progress-bar-container { width: 100%; background-color: #e0e0e0; border-radius: 10px; margin-top: 20px; overflow: hidden; height: 10px; }
-        .progress-bar { width: 0%; height: 100%; background-color: var(--cor-sucesso); border-radius: 10px; transition: width 0.4s ease; }
-        .activity-step { display: none; }
-        .activity-step.active { display: block; animation: fadeIn 0.5s; }
+        .page-header p { margin: 10px 0 0; }
         .activity-block { background-color: var(--cor-branco); margin-top: 20px; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .activity-block h3, .activity-block h4 { font-size: 1.5em; margin-top: 0; border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; }
-        .activity-block h4 { font-size: 1.2em; margin-top: 30px; border-bottom-style: dashed; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; font-size: 1.1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        .dynamic-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 8px; background-color: #f9f9f9; flex-wrap: wrap; }
-        .remove-btn { background-color: var(--cor-perigo); color: white; border: none; padding: 5px 10px; font-size: 0.9em; border-radius: 5px; cursor: pointer; }
-        .catalog-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        .catalog-item input { width: 80px; text-align: right; }
-        .navigation-buttons { display: flex; justify-content: space-between; margin-top: 40px; }
-        .btn { padding: 12px 25px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; font-size: 1.1em; cursor: pointer; }
+        .activity-block label { display: block; background-color: #f8f9fa; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; }
+        .btn { padding: 12px 25px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; text-decoration: none; }
+        .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        .roulette-wrapper { position: relative; width: 300px; height: 300px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
-        .roulette-pointer { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 30px solid var(--cor-cinza-escuro); z-index: 10; }
-        #roulette-wheel { width: 100%; height: 100%; border-radius: 50%; border: 8px solid #ccc; background-image: conic-gradient( #ffc107 0% 10%, #dc3545 10% 20%, #17a2b8 20% 30%, #28a745 30% 40%, #6f42c1 40% 50%, #fd7e14 50% 60%, #20c997 60% 70%, #e83e8c 70% 80%, #6610f2 80% 90%, #007bff 90% 100% ); transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 10px rgba(0,0,0,0.2); }
-        .btn-spin { margin-top: 20px; padding: 10px 30px; font-size: 1.2em; }
-        .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
-        .modal-content { background-color: #fefefe; margin: auto; padding: 0; width: 90%; max-width: 500px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.4s; overflow: hidden; }
-        .modal-header { padding: 15px 20px; background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .modal-body { padding: 25px; line-height: 1.6; }
-        .status-message { text-align: center; padding: 40px; background-color: var(--cor-branco); border-radius: 8px; margin-top: 30px; }
+        .balance-sheet-form .form-grid { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; }
+        .balance-sheet-form .form-group { margin-bottom: 15px; }
+        .balance-sheet-form label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .balance-sheet-form input { width: 100%; padding: 10px; font-size: 1.1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        .summary-box { margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 8px; }
+        .summary-box p { display: flex; justify-content: space-between; font-size: 1.2em; margin: 10px 0; }
+        #saldo-alocar.unbalanced { color: var(--cor-perigo); }
+        #saldo-alocar.balanced { color: var(--cor-sucesso); }
         @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+        footer.main-footer { padding: 20px; text-align: center; margin-top: auto; background-color: var(--cor-cinza-escuro); color: var(--cor-branco); }
     </style>
 </head>
 <body>
     <header class="main-header"><a href="xperience.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a><nav><a href="#" id="logout-button">Sair</a></nav></header>
-
     <main class="container">
         <div id="status-view">
             <div class="status-message"><h2>Verificando status da rodada...</h2></div>
         </div>
-
-        <div id="round-3-view" style="display: none;">
-             <div class="page-header">
-                <h1>Rodada 3: Janeiro - Planejamento</h1>
-                <p id="progress-text-r3">Etapa 1 de 5</p>
-                <div class="progress-bar-container"><div id="progress-bar-r3" class="progress-bar"></div></div>
-            </div>
-
-            <div>
-                <div id="step-1-r3" class="activity-step">
-                    <div class="activity-block">
-                        <h3>Atividade 1: Definição dos Custos Fixos</h3>
-                        <p>Cadastre os custos fixos mensais da sua empresa (Aluguel, Internet, etc.).</p>
-                        <form id="add-custo-form" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                            <input type="text" id="custo-desc" placeholder="Descrição do Custo" required style="flex-grow: 1; min-width: 200px;">
-                            <input type="number" id="custo-valor" placeholder="Valor Mensal (R$)" min="0" required style="min-width: 150px;">
-                            <button type="submit" class="btn btn-success">Adicionar</button>
-                        </form>
-                        <div id="custos-fixos-list"></div>
-                    </div>
-                </div>
-
-                <div id="step-2-r3" class="activity-step">
-                    <div class="activity-block">
-                        <h3>Atividade 2: Contratação de Equipe</h3>
-                        <p>Selecione os cargos do catálogo e defina quantos funcionários de cada tipo sua empresa irá contratar.</p>
-                        <div id="rh-catalog-list"></div>
-                    </div>
-                </div>
-
-                <div id="step-3-r3" class="activity-step">
-                     <div class="activity-block">
-                        <h3>Atividade 3: Aquisição de Ativos e Estoque</h3>
-                        <h4>Maquinário</h4>
-                        <p>Marque as máquinas do catálogo que deseja comprar para sua empresa.</p>
-                        <div id="maquinas-catalog-list"></div>
-                        <hr>
-                        <h4>Matéria-Prima</h4>
-                        <p>Defina a quantidade inicial de cada matéria-prima que deseja comprar para o seu estoque.</p>
-                        <div id="mp-catalog-list"></div>
-                    </div>
-                </div>
-
-                <div id="step-4-r3" class="activity-step">
-                     <div class="activity-block">
-                        <h3>Atividade 4: Simulação de Produção</h3>
-                        <p>Escolha um produto e a quantidade que deseja produzir. O simulador verificará se você tem os recursos necessários.</p>
-                        <div style="display: flex; gap: 10px; align-items: end; flex-wrap: wrap;">
-                            <div class="form-group" style="flex-grow: 1;">
-                                <label for="product-select">Selecione o Produto:</label>
-                                <select id="product-select"></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="production-qty">Quantidade a Produzir:</label>
-                                <input type="number" id="production-qty" min="0">
-                            </div>
-                            <button id="simulate-btn" type="button" class="btn btn-primary">Simular Produção</button>
-                        </div>
-                        <div id="sim-result" style="margin-top: 20px; font-weight: bold; padding: 10px; border-radius: 5px;"></div>
-                    </div>
-                </div>
-
-                <div id="step-5-r3" class="activity-step">
-                    <div class="activity-block" style="text-align: center;">
-                        <h3>Atividade 5: Cenário do Mês</h3>
-                        <p>Seu planejamento está pronto! Gire a roleta para descobrir o evento que sua empresa enfrentará.</p>
-                        <div class="roulette-wrapper">
-                            <div class="roulette-pointer"></div>
-                            <div id="roulette-wheel"></div>
-                        </div>
-                        <button type="button" id="spin-button" class="btn btn-spin btn-success" disabled>Carregando...</button>
-                    </div>
-                </div>
-
-                <div class="navigation-buttons">
-                    <button type="button" id="prev-btn-r3" class="btn btn-secondary">Anterior</button>
-                    <button type="button" id="next-btn-r3" class="btn btn-primary">Próxima Atividade</button>
-                    <button type="button" id="submit-btn-r3" class="btn btn-success" style="display: none;">Finalizar e Enviar Rodada</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="result-modal" class="modal-backdrop">
-             <div class="modal-content">
-                <div class="modal-header"><h2 id="modal-title">Resultado do Sorteio</h2></div>
-                <div class="modal-body"><p id="modal-description"></p></div>
-            </div>
-        </div>
+        <div id="round-1-view" class="round-view"></div>
+        <div id="round-2-view" class="round-view"></div>
+        <div id="round-3-view" class="round-view"></div>
     </main>
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE</p></footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
@@ -162,110 +66,154 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let turmaId = null;
-        const catalogo = {};
-        const decisoes = { custosFixos: [], contratacoes: {}, aquisicaoMaquinas: [], compraMateriaPrima: {}, planoProducao: null, cenarioSorteado: null };
-
         const statusView = document.getElementById('status-view');
-        const round3View = document.getElementById('round-3-view');
+        const views = { 1: document.getElementById('round-1-view'), 2: document.getElementById('round-2-view'), 3: document.getElementById('round-3-view') };
+        let turmaId = null;
+        let currentUser = null;
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = '../login.html'; return; }
-            try {
-                const turmasRef = collection(db, "turmas");
-                const q = query(turmasRef, where("alunos", "array-contains", user.uid), limit(1));
-                const querySnapshot = await getDocs(q);
-                if (querySnapshot.empty) { statusView.innerHTML = `<div class="status-message"><h2>Você não está em uma turma.</h2></div>`; return; }
+            currentUser = user;
+            await checkRoundStatus(user);
+        });
 
-                const turmaDoc = querySnapshot.docs[0];
+        async function checkRoundStatus(user) {
+            try {
+                const userDocSnap = await getDoc(doc(db, "usuarios", user.uid));
+                if (!userDocSnap.exists()) throw new Error("Usuário não encontrado no Firestore.");
+                const turmasQuery = query(collection(db, "turmas"), where("alunos", "array-contains", user.uid), limit(1));
+                const turmaDocSnap = await getDocs(turmasQuery);
+
+                if (turmaDocSnap.empty) {
+                    statusView.innerHTML = `<div class="status-message"><h2>Você não está em uma turma.</h2></div>`;
+                    statusView.style.display = 'block';
+                    return;
+                }
+
+                const turmaDoc = turmaDocSnap.docs[0];
                 turmaId = turmaDoc.id;
                 const turmaData = turmaDoc.data();
-                const rodadaAtual = turmaData.rodadaAtual || 1;
+                const rodadaAtualDaTurma = turmaData.rodadaAtual || 1;
+                const progressoDoAluno = userDocSnap.data().progresso?.[turmaId] || 0;
+                const proximaRodadaDoAluno = progressoDoAluno + 1;
 
-                if (rodadaAtual === 3 && turmaData.statusRodada3 === 'iniciada') {
-                    const respostaRef = doc(db, "respostas_rodadas", `rodada3_${turmaId}`);
-                    const respostaSnap = await getDoc(respostaRef);
-                    if (respostaSnap.exists()) {
-                        statusView.innerHTML = `<div class="status-message"><h2>Decisões da Rodada 3 já enviadas.</h2></div>`;
-                        statusView.style.display = 'block';
+                statusView.style.display = 'none';
+                Object.values(views).forEach(v => { v.style.display = 'none'; v.classList.remove('active'); });
+
+                if (rodadaAtualDaTurma > proximaRodadaDoAluno) {
+                    statusView.innerHTML = `<div class="status-message"><h2>Sua turma está na Rodada ${rodadaAtualDaTurma}, mas você precisa completar a Rodada ${proximaRodadaDoAluno}.</h2><p>Solicite ao professor para reabrir a rodada.</p></div>`;
+                    statusView.style.display = 'block';
+                } else if (rodadaAtualDaTurma === proximaRodadaDoAluno) {
+                     const statusRodada = turmaData[`statusRodada${rodadaAtualDaTurma}`] || 'nao_iniciada';
+                     if (statusRodada === 'iniciada') {
+                        const respostaId = `rodada${rodadaAtualDaTurma}_${user.uid}`; // Resposta é sempre por aluno
+                        const respostaSnap = await getDoc(doc(db, "respostas_rodadas", respostaId));
+
+                        if(respostaSnap.exists()){
+                             statusView.innerHTML = `<div class="status-message"><h2>Decisões da Rodada ${rodadaAtualDaTurma} já enviadas.</h2></div>`;
+                             statusView.style.display = 'block';
+                        } else {
+                            const viewContainer = views[rodadaAtualDaTurma];
+                            viewContainer.style.display = 'block';
+                            viewContainer.classList.add('active');
+                            if (rodadaAtualDaTurma === 1) initializeRound1(viewContainer);
+                            else if (rodadaAtualDaTurma === 2) initializeRound2(viewContainer);
+                        }
                     } else {
-                        statusView.style.display = 'none';
-                        round3View.style.display = 'block';
-                        await loadAllCatalogsAndInitializeUI();
+                        statusView.innerHTML = `<div class="status-message"><h2>Você está pronto para a Rodada ${rodadaAtualDaTurma}.</h2><p>Aguarde o professor iniciar a rodada.</p></div>`;
+                        statusView.style.display = 'block';
                     }
                 } else {
-                    statusView.innerHTML = `<div class="status-message"><h2>A rodada atual (${rodadaAtual}) não é a Rodada 3 ou ainda não foi iniciada.</h2></div>`;
+                    statusView.innerHTML = `<div class="status-message"><h2>Você completou a Rodada ${progressoDoAluno}.</h2><p>Aguarde o professor avançar a turma.</p></div>`;
                     statusView.style.display = 'block';
                 }
             } catch (error) {
-                console.error("Erro ao verificar status:", error);
-                statusView.innerHTML = `<div class="status-message"><h2>Ocorreu um erro</h2><p>Verifique o console para um possível link de criação de índice.</p></div>`;
-            }
-        });
-
-        async function loadAllCatalogsAndInitializeUI() {
-            try {
-                const [maquinasSnap, mpSnap, rhSnap, produtosSnap, cenariosSnap] = await Promise.all([
-                    getDocs(collection(db, 'catalogo_maquinas')),
-                    getDocs(collection(db, 'catalogo_materias_primas')),
-                    getDocs(collection(db, 'catalogo_rh')),
-                    getDocs(collection(db, 'catalogo_produtos')),
-                    getDocs(query(collection(db, 'roleta_cenarios')))
-                ]);
-                catalogo.maquinas = maquinasSnap.docs.map(d => ({id: d.id, ...d.data()}));
-                catalogo.materiasPrimas = mpSnap.docs.map(d => ({id: d.id, ...d.data()}));
-                catalogo.rh = rhSnap.docs.map(d => ({id: d.id, ...d.data()}));
-                catalogo.produtos = produtosSnap.docs.map(d => ({id: d.id, ...d.data()}));
-                catalogo.cenarios = cenariosSnap.docs.map(d => d.data());
-
-                initializeRound3UI();
-            } catch (error) {
-                console.error("Erro ao carregar catálogos:", error);
-                alert("Falha ao carregar os dados do jogo. Verifique se todos os índices do Firestore foram criados e recarregue a página.");
+                console.error("ERRO CRÍTICO:", error);
+                statusView.innerHTML = `<div class="status-message"><h2>Erro ao carregar:</h2><p style="color:red; word-break: break-all;">${error.message}</p><p>Verifique o console para mais detalhes.</p></div>`;
+                statusView.style.display = 'block';
             }
         }
 
-        function initializeRound3UI() {
-            const steps = document.querySelectorAll('#round-3-view .activity-step');
-            const prevBtn = document.getElementById('prev-btn-r3'), nextBtn = document.getElementById('next-btn-r3'), submitBtn = document.getElementById('submit-btn-r3');
-            const progressBar = document.getElementById('progress-bar-r3'), progressText = document.getElementById('progress-text-r3');
-            let currentStep = 1;
-            const totalSteps = steps.length;
+        function initializeRound1(container) {
+            container.innerHTML = `
+                <div class="page-header"><h1>Rodada 1: Nivelamento</h1></div>
+                <div class="activity-block">
+                    <form id="round1-form">
+                        <p>Qual destes itens NÃO faz parte de um DRE?</p>
+                        <label><input type="radio" name="q1" value="a" required> Receita de Vendas</label>
+                        <label><input type="radio" name="q1" value="c"> Dinheiro em Caixa</label>
+                        <button type="submit" class="btn btn-success" style="width:100%; margin-top:20px;">Enviar</button>
+                    </form>
+                </div>`;
+            container.querySelector('#round1-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    await setDoc(doc(db, "respostas_rodadas", `rodada1_${currentUser.uid}`), { enviadoEm: serverTimestamp(), turmaId });
+                    await updateDoc(doc(db, "usuarios", currentUser.uid), { [`progresso.${turmaId}`]: 1 });
+                    container.innerHTML = `<div class="status-message"><h2>Rodada 1 Finalizada!</h2><a href="xperience.html" class="btn btn-primary" style="margin-top:20px;">Voltar ao Painel</a></div>`;
+                } catch(error) { console.error(error); alert("Erro ao salvar."); }
+            });
+        }
 
-            function updateUI() {
-                steps.forEach((step, index) => step.classList.toggle('active', (index + 1) === currentStep));
-                progressBar.style.width = `${((currentStep - 1) / (totalSteps - 1)) * 100}%`;
-                progressText.textContent = `Etapa ${currentStep} de ${totalSteps}`;
-                prevBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
-                nextBtn.style.display = currentStep === totalSteps ? 'none' : 'inline-block';
-                submitBtn.style.display = (currentStep === totalSteps && decisoes.cenarioSorteado) ? 'inline-block' : 'none';
+        function initializeRound2(container) {
+            container.innerHTML = `
+                <div class="page-header"><h1>Rodada 2: Estruturação da Empresa</h1><p>Aloque o capital inicial.</p></div>
+                <div class="activity-block">
+                    <h3>Balanço Patrimonial de Abertura</h3>
+                    <form id="round-2-form" class="balance-sheet-form">
+                        <div class="form-grid">
+                            <div><h4>Fontes de Recursos</h4>
+                                <div class="form-group"><label>Capital Social</label><input value="R$ 480.000,00" disabled></div>
+                                <div class="form-group"><label for="r2-emprestimo">Empréstimo</label><input type="number" id="r2-emprestimo" name="emprestimo" min="0" value="0"></div>
+                            </div>
+                            <div><h4>Alocação de Recursos (Ativos)</h4>
+                                <div class="form-group"><label for="r2-caixa">Caixa</label><input type="number" id="r2-caixa" name="caixa" min="0" value="0"></div>
+                                <div class="form-group"><label for="r2-estoques">Estoques</label><input type="number" id="r2-estoques" name="estoques" min="0" value="0"></div>
+                                <div class="form-group"><label for="r2-imoveis">Imóveis</label><input type="number" id="r2-imoveis" name="imoveis" min="0" value="0"></div>
+                                <div class="form-group"><label for="r2-maquinas">Máquinas</label><input type="number" id="r2-maquinas" name="maquinas" min="0" value="0"></div>
+                                <div class="form-group"><label for="r2-veiculos">Veículos</label><input type="number" id="r2-veiculos" name="veiculos" min="0" value="0"></div>
+                            </div>
+                        </div>
+                        <div class="summary-box"><p>Total de Recursos: <span id="total-recursos"></span></p><p>Total Alocado: <span id="total-alocado"></span></p><hr><p><strong>Saldo a Alocar:</strong> <span id="saldo-alocar" class="unbalanced"></span></p></div>
+                        <div style="text-align:center; margin-top:30px;"><button type="submit" id="r2-submit-btn" class="btn btn-success" disabled>Finalizar</button></div>
+                    </form>
+                </div>`;
+
+            const form = container.querySelector('#round-2-form');
+            const inputs = form.querySelectorAll('input[type="number"]');
+            const submitBtn = form.querySelector('#r2-submit-btn');
+            const capitalSocial = 480000;
+            const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
+            function calculateBalance() {
+                let emprestimo = parseFloat(form.querySelector('#r2-emprestimo').value) || 0;
+                let totalRecursos = capitalSocial + emprestimo;
+                let totalAlocado = 0;
+                inputs.forEach(input => { if(input.id !== 'r2-emprestimo') totalAlocado += parseFloat(input.value) || 0; });
+                let saldo = totalRecursos - totalAlocado;
+
+                form.querySelector('#total-recursos').textContent = formatCurrency(totalRecursos);
+                form.querySelector('#total-alocado').textContent = formatCurrency(totalAlocado);
+                const saldoEl = form.querySelector('#saldo-alocar');
+                saldoEl.textContent = formatCurrency(saldo);
+
+                const canSubmit = Math.abs(saldo) < 0.01 && totalAlocado > 0;
+                submitBtn.disabled = !canSubmit;
+                saldoEl.className = canSubmit ? 'balanced' : 'unbalanced';
             }
-
-            nextBtn.addEventListener('click', () => { if (currentStep < totalSteps) currentStep++; updateUI(); });
-            prevBtn.addEventListener('click', () => { if (currentStep > 1) currentStep--; updateUI(); });
-
-            // Atividade 1: Custos Fixos
-            const addCustoForm = document.getElementById('add-custo-form');
-            const custosListEl = document.getElementById('custos-fixos-list');
-            const renderCustos = () => {
-                custosListEl.innerHTML = decisoes.custosFixos.map((item, index) => `<div class="dynamic-list-item"><span>${item.descricao}: ${item.valor.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}</span><button type="button" class="remove-btn" data-index="${index}" data-list="custos">Remover</button></div>`).join('');
-            };
-            addCustoForm.addEventListener('submit', e => { e.preventDefault(); const desc = document.getElementById('custo-desc').value, valor = parseFloat(document.getElementById('custo-valor').value); if(desc&&valor){ decisoes.custosFixos.push({descricao:desc,valor}); renderCustos(); addCustoForm.reset(); }});
-
-            // Atividade 2: RH
-            const rhListEl = document.getElementById('rh-catalog-list');
-            rhListEl.innerHTML = catalogo.rh.map(cargo => `<div class="catalog-item"><span><b>${cargo.funcao}</b> (Salário: ${cargo.salarioBase.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})})</span><input type="number" class="rh-qty" data-id="${cargo.id}" value="0" min="0"></div>`).join('');
-
-            // Atividade 3: Ativos e Estoque
-            const maquinasListEl = document.getElementById('maquinas-catalog-list');
-            maquinasListEl.innerHTML = catalogo.maquinas.map(m => `<div class="catalog-item"><label><input type="checkbox" class="maquina-cb" data-id="${m.id}"> <b>${m.nome}</b> (Custo: ${m.custo.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})})</label></div>`).join('');
-            const mpListEl = document.getElementById('mp-catalog-list');
-            mpListEl.innerHTML = catalogo.materiasPrimas.map(mp => `<div class="catalog-item"><span><b>${mp.nome}</b> (${mp.codigo}) - Preço: ${mp.preco.toLocaleString('pt-BR', {style:'currency', currency:'BRL'})}/unid</span><input type="number" class="mp-qty" data-id="${mp.id}" placeholder="Qtd" min="0"></div>`).join('');
-
-            // Lógica da Roleta e demais atividades... (O restante do script completo)
-            // ...
-
-            updateUI(); // Inicia a UI na primeira etapa
+            form.addEventListener('input', calculateBalance);
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault(); submitBtn.disabled = true;
+                const balanco = { capitalSocial };
+                new FormData(form).forEach((value, key) => balanco[key] = parseFloat(value) || 0);
+                try {
+                    await setDoc(doc(db, "respostas_rodadas", `rodada2_${currentUser.uid}`), { balancoInicial: balanco, turmaId });
+                    const userDocRef = doc(db, "usuarios", currentUser.uid);
+                    await updateDoc(userDocRef, { [`progresso.${turmaId}`]: 2 });
+                    container.innerHTML = `<div class="status-message"><h2>Empresa Estruturada!</h2><a href="xperience.html" class="btn btn-primary">Voltar ao Painel</a></div>`;
+                } catch(error) { console.error(error); alert("Erro ao salvar."); submitBtn.disabled = false; }
+            });
+            calculateBalance();
         }
 
         document.getElementById('logout-button').addEventListener('click', () => signOut(auth));
