@@ -25,10 +25,10 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .content-section {
-            display: none; /* Todas as seções começam escondidas */
+            display: none;
         }
         .active {
-            display: block; /* A classe .active torna a seção visível */
+            display: block;
         }
         h1, h2 {
             color: #4a4a4a;
@@ -42,11 +42,6 @@
             margin-top: 20px;
             text-align: center;
         }
-        .message-box.info {
-            background-color: #e0e7ff;
-            border: 1px solid #a7bfff;
-            color: #3e5fce;
-        }
         .message-box.warning {
             background-color: #fff3cd;
             border: 1px solid #ffeeba;
@@ -57,7 +52,6 @@
             border: 1px solid #c3e6cb;
             color: #155724;
         }
-        /* Estilos para o Loader */
         #loading-container {
             text-align: center;
         }
@@ -74,10 +68,9 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* Estilos básicos para formulários e botões */
         button, .btn {
             background-color: #6c63ff;
-            color: white !important; /* !important para sobrescrever cor do link */
+            color: white !important;
             padding: 12px 20px;
             border: none;
             border-radius: 5px;
@@ -85,14 +78,13 @@
             font-size: 16px;
             margin-top: 20px;
             transition: background-color 0.3s;
-            text-decoration: none; /* Remove sublinhado de links */
-            display: inline-block; /* Para que o 'a' se comporte como botão */
+            text-decoration: none;
+            display: inline-block;
         }
         button:hover, .btn:hover {
             background-color: #574fdc;
             color: white;
         }
-        /* NOVO ESTILO PARA O BOTÃO VOLTAR */
         .btn-secondary {
             background-color: #6c757d;
         }
@@ -117,117 +109,50 @@
             <div class="loader"></div>
             <p>Aguarde enquanto buscamos seus dados e o status da sua turma.</p>
         </div>
-
         <div id="bloqueado-container" class="content-section">
             <h1>Atenção: Você está atrasado!</h1>
             <div class="message-box warning">
-                <p>Sua turma já avançou para uma rodada futura, mas você ainda não concluiu as etapas anteriores.</p>
-                <p>Por favor, converse com seu professor para regularizar sua situação. No momento, você não pode prosseguir.</p>
+                <p>Sua turma já avançou, mas você não concluiu as etapas anteriores. Fale com seu professor.</p>
             </div>
             <a href="xperience.html" class="btn btn-secondary">Voltar ao Painel</a>
         </div>
-
         <div id="aguardando-professor-container" class="content-section">
             <h1>Parabéns por concluir a rodada!</h1>
             <div class="message-box success">
-                <p>Você finalizou todas as suas tarefas para a rodada atual. Excelente trabalho!</p>
-                <p>Agora, você precisa aguardar o professor avançar toda a turma para a próxima rodada.</p>
+                <p>Você finalizou suas tarefas. Aguarde o professor avançar a turma.</p>
+            </div>
+            <a href="xperience.html" class="btn btn-secondary">Voltar ao Painel</a>
+        </div>
+        <div id="finalizado-container" class="content-section">
+            <h1>Simulação Concluída!</h1>
+            <div class="message-box success">
+                <p>Parabéns por completar todas as rodadas!</p>
             </div>
             <a href="xperience.html" class="btn btn-secondary">Voltar ao Painel</a>
         </div>
 
-        <div id="finalizado-container" class="content-section">
-            <h1>Simulação Concluída!</h1>
-            <div class="message-box success">
-                <p>Você completou com sucesso todas as rodadas do Join Xperience. Parabéns pela sua jornada!</p>
-                <p>Aguarde as instruções finais do seu professor.</p>
-            </div>
-             <a href="xperience.html" class="btn btn-secondary">Voltar ao Painel</a>
-        </div>
-
-
         <div id="rodada1-container" class="content-section">
             <h1>Rodada 1: Nivelamento</h1>
-            <p>Bem-vindo ao Join Xperience! Antes de começar, responda a este quiz para avaliarmos seus conhecimentos iniciais.</p>
+            <p>Bem-vindo ao Join Xperience! Responda ao quiz abaixo para avaliarmos seus conhecimentos iniciais.</p>
             <form id="form-rodada1">
-                <label for="q1">Pergunta 1: O que é um Ativo em contabilidade?</label>
-                <input type="text" id="q1" name="q1" required>
-                <label for="q2">Qual a diferença entre Receita e Lucro?</label>
-                <textarea id="q2" name="q2" rows="3" required></textarea>
+                <div id="quiz-dinamico-container">
+                    <p>Carregando perguntas...</p>
+                </div>
                 <button type="submit">Finalizar Rodada 1</button>
             </form>
         </div>
 
         <div id="rodada2-container" class="content-section">
-            <h1>Rodada 2: Balanço Patrimonial Inicial</h1>
-            <p>Nesta rodada, sua tarefa é preencher o Balanço Patrimonial da sua empresa com base nas decisões tomadas.</p>
-            <form id="form-rodada2">
-                <fieldset>
-                    <legend>Ativos</legend>
-                    <label for="caixa">Caixa:</label>
-                    <input type="number" id="caixa" name="caixa" required>
-                    <label for="estoque">Estoque:</label>
-                    <input type="number" id="estoque" name="estoque" required>
-                </fieldset>
-                <fieldset>
-                    <legend>Passivos</legend>
-                    <label for="fornecedores">Fornecedores:</label>
-                    <input type="number" id="fornecedores" name="fornecedores" required>
-                </fieldset>
-                <fieldset>
-                    <legend>Patrimônio Líquido</legend>
-                    <label for="capital-social">Capital Social:</label>
-                    <input type="number" id="capital-social" name="capital-social" required>
-                </fieldset>
-                <button type="submit">Finalizar Rodada 2</button>
-            </form>
+             <h1>Rodada 2: Balanço Patrimonial Inicial</h1>
+             <p>Preencha o Balanço Patrimonial da sua empresa com base nas decisões tomadas.</p>
+             <form id="form-rodada2">
+                 <button type="submit">Finalizar Rodada 2</button>
+             </form>
         </div>
 
         <div id="rodada3-container" class="content-section">
-             <style>
-                .passo { border-left: 3px solid #6c63ff; padding-left: 15px; margin-bottom: 25px; }
-                .instrucao-manual { background-color: #eef; padding: 10px; border-radius: 4px; font-weight: bold;}
-            </style>
-
-            <h1>Rodada 3: Operando sua Empresa</h1>
-            <p>Siga os passos abaixo. Para cada decisão, anote o impacto financeiro correspondente na sua planilha de controle (DRE e Balanço Patrimonial).</p>
-
-            <div id="passos-rodada3">
-
-                <div class="passo">
-                    <h3>Passo 1: Comprar Matéria-Prima</h3>
-                    <p>Consulte o <a href="../catalogo_materias_primas.html" target="_blank">Catálogo de Matérias-Primas</a> para ver preços e opções.</p>
-                    <p class="instrucao-manual">➡️ Anote o valor total desta compra na sua planilha de DRE (como Custo) e atualize seu Balanço (diminui o Caixa, aumenta o Estoque).</p>
-                </div>
-
-                <div class="passo">
-                    <h3>Passo 2: Contratar Funcionários</h3>
-                    <p>Visite o <a href="../catalogo_rh.html" target="_blank">Catálogo de RH</a> para ver os salários e perfis dos candidatos.</p>
-                    <p class="instrucao-manual">➡️ Anote o valor total dos salários na sua planilha de DRE como 'Despesa Operacional'.</p>
-                </div>
-
-                <div class="passo">
-                    <h3>Passo 3: Produzir</h3>
-                    <p>Defina quantos produtos você irá fabricar. Lembre-se que a produção consome matéria-prima do seu estoque.</p>
-                    <p class="instrucao-manual">➡️ Na sua planilha, transfira o custo da matéria-prima usada do 'Estoque de Matéria-Prima' para 'Estoque de Produtos Acabados'.</p>
-                </div>
-
-                <div class="passo">
-                    <h3>Passo 4: Marketing e Vendas</h3>
-                    <p>Decida quanto investir em marketing para alcançar seus clientes e definir seu preço de venda. Consulte os <a href="../catalogo_produtos.html" target="_blank">seus produtos</a>.</p>
-                    <p class="instrucao-manual">➡️ Anote o gasto com marketing como 'Despesa de Venda' no DRE. Ao realizar vendas, registre a 'Receita' no DRE e a entrada do dinheiro no 'Caixa' do Balanço.</p>
-                </div>
-
-                <div class="passo">
-                    <h3>Passo 5: Revisão Final</h3>
-                    <p>Revise todas as suas planilhas financeiras. Garanta que o Balanço Patrimonial está equilibrado (Ativos = Passivos + PL).</p>
-                    <p class="instrucao-manual">➡️ Quando tudo estiver preenchido e conferido, você pode finalizar a rodada.</p>
-                </div>
-
-            </div>
             <button id="btn-finalizar-rodada3">Concluí minhas anotações e quero Finalizar a Rodada 3</button>
         </div>
-
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -235,7 +160,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script type="module">
-        // A SUA CONFIGURAÇÃO DO FIREBASE FOI COLOCADA AQUI!
+        // SUA CONFIGURAÇÃO DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -256,105 +181,111 @@
         let turmaDocData = null;
         let turmaId = null;
 
-        // Função para esconder todas as seções e mostrar a escolhida
         function showSection(sectionId) {
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
             });
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.classList.add('active');
+            document.getElementById(sectionId)?.classList.add('active');
+        }
+
+        // ==========================================================
+        // AQUI ESTÁ A LÓGICA PARA O QUIZ ALEATÓRIO
+        // ==========================================================
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
         }
 
-        // Função principal que executa a lógica de roteamento
+        async function montarQuizAleatorio() {
+            const quizContainer = document.getElementById('quiz-dinamico-container');
+            try {
+                const snapshot = await db.collection('banco_questoes_r1').get();
+                if (snapshot.empty) {
+                    quizContainer.innerHTML = '<p style="color: red;">Não foi possível encontrar o banco de questões.</p>';
+                    return;
+                }
+
+                let todasAsPerguntas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                shuffleArray(todasAsPerguntas);
+                const perguntasSorteadas = todasAsPerguntas.slice(0, 5);
+
+                // Linha para depuração que você pode adicionar se precisar
+                console.log("Perguntas sorteadas:", perguntasSorteadas);
+
+                let quizHTML = '';
+                perguntasSorteadas.forEach((pergunta, index) => {
+                    quizHTML += `<fieldset style="border: none; padding: 0; margin-bottom: 20px;">`;
+                    quizHTML += `<legend style="font-size: 1.1em; font-weight: bold; margin-bottom: 10px;">${index + 1}. ${pergunta.enunciado}</legend>`;
+                    if (pergunta.tipo === 'multipla_escolha' && pergunta.opcoes) {
+                        pergunta.opcoes.forEach((opcao, i) => {
+                            const optionId = `q${index}_opt${i}`;
+                            quizHTML += `<div><input type="radio" id="${optionId}" name="pergunta_${index}" value="${i}" required><label for="${optionId}">${opcao}</label></div>`;
+                        });
+                    } else if (pergunta.tipo === 'dissertativa') {
+                        quizHTML += `<div><textarea name="pergunta_${index}" rows="3" placeholder="Sua resposta..." required></textarea></div>`;
+                    }
+                    quizHTML += `</fieldset>`;
+                });
+                quizContainer.innerHTML = quizHTML;
+            } catch (error) {
+                console.error("Erro ao montar o quiz:", error);
+                quizContainer.innerHTML = '<p style="color: red;">Ocorreu um erro ao carregar as perguntas.</p>';
+            }
+        }
+
         async function carregarDadosDaRodada(user) {
             if (!user) return;
             currentUser = user;
-
             try {
-                // 1. Encontrar a turma do aluno
                 const turmasQuery = await db.collection('turmas').where('alunos', 'array-contains', user.uid).get();
+                if (turmasQuery.empty) throw new Error("Você não está matriculado em nenhuma turma.");
 
-                if (turmasQuery.empty) {
-                    throw new Error("Você não está matriculado em nenhuma turma. Fale com seu professor.");
-                }
-
-                const turmaDoc = turmasQuery.docs[0]; // Pega a primeira turma que encontrar
+                const turmaDoc = turmasQuery.docs[0];
                 turmaId = turmaDoc.id;
                 turmaDocData = turmaDoc.data();
 
-                // 2. Buscar os dados do aluno (usuário)
                 const userDoc = await db.collection('usuarios').doc(user.uid).get();
-                if (!userDoc.exists) {
-                    throw new Error("Não foi possível encontrar seus dados de usuário.");
-                }
+                if (!userDoc.exists) throw new Error("Não foi possível encontrar seus dados de usuário.");
                 userDocData = userDoc.data();
 
-                // 3. Obter os dados de progresso e rodada atual
                 const rodadaAtualDaTurma = turmaDocData.rodadaAtual || 0;
-
                 const progressoDoAluno = (userDocData.progresso && userDocData.progresso[turmaId]) ? userDocData.progresso[turmaId] : 0;
 
-                console.log(`Turma: ${turmaId}, Rodada da Turma: ${rodadaAtualDaTurma}, Progresso do Aluno: ${progressoDoAluno}`);
-
-
-                // ===================================
-                // LÓGICA DO ROTEADOR
-                // ===================================
-
-                const totalRodadas = 5; 
+                const totalRodadas = 5;
                 if (progressoDoAluno >= totalRodadas) {
                      showSection('finalizado-container');
                      return;
                 }
-
                 if (rodadaAtualDaTurma > progressoDoAluno + 1) {
                     showSection('bloqueado-container');
-                }
-                else if (progressoDoAluno >= rodadaAtualDaTurma) {
+                } else if (progressoDoAluno >= rodadaAtualDaTurma) {
                     showSection('aguardando-professor-container');
-                }
-                else if (rodadaAtualDaTurma === 1 && progressoDoAluno === 0) {
+                } else if (rodadaAtualDaTurma === 1 && progressoDoAluno === 0) {
                     showSection('rodada1-container');
-                }
-                else if (rodadaAtualDaTurma === 2 && progressoDoAluno === 1) {
+                    montarQuizAleatorio();
+                } else if (rodadaAtualDaTurma === 2 && progressoDoAluno === 1) {
                     showSection('rodada2-container');
-                }
-                else if (rodadaAtualDaTurma === 3 && progressoDoAluno === 2) {
+                } else if (rodadaAtualDaTurma === 3 && progressoDoAluno === 2) {
                     showSection('rodada3-container');
-                }
-                else {
+                } else {
                     showSection('aguardando-professor-container');
                 }
-
             } catch (error) {
                 console.error("Erro ao carregar dados da rodada:", error);
-                const loadingContainer = document.getElementById('loading-container');
-                loadingContainer.innerHTML = `<h1 style="color: red;">Erro!</h1><p>${error.message}</p>`;
+                document.getElementById('loading-container').innerHTML = `<h1 style="color: red;">Erro!</h1><p>${error.message}</p>`;
                 showSection('loading-container');
             }
         }
 
         async function finalizarRodada(rodadaConcluida) {
-            if (!currentUser || !turmaId) {
-                alert("Erro: Usuário ou turma não identificados.");
-                return;
-            }
-
+            if (!currentUser || !turmaId) return alert("Erro: Usuário ou turma não identificados.");
             showSection('loading-container'); 
-
             try {
                 const userRef = db.collection('usuarios').doc(currentUser.uid);
-
-                await userRef.update({
-                    [`progresso.${turmaId}`]: rodadaConcluida
-                });
-
-                console.log(`Progresso atualizado para a rodada ${rodadaConcluida}`);
-
+                await userRef.update({ [`progresso.${turmaId}`]: rodadaConcluida });
                 await carregarDadosDaRodada(currentUser);
-
             } catch (error) {
                 console.error("Erro ao finalizar a rodada:", error);
                 alert("Ocorreu um erro ao salvar seu progresso. Tente novamente.");
@@ -363,29 +294,22 @@
         }
 
         auth.onAuthStateChanged(user => {
-            if (user) {
-                carregarDadosDaRodada(user);
-            } else {
-                console.log("Usuário não autenticado. Redirecionando para o login...");
-                window.location.href = '../login.html'; 
-            }
+            if (user) carregarDadosDaRodada(user);
+            else window.location.href = '../login.html';
         });
 
-        document.getElementById('form-rodada1').addEventListener('submit', (e) => {
+        document.getElementById('form-rodada1').addEventListener('submit', e => {
             e.preventDefault();
             finalizarRodada(1);
         });
-
-        document.getElementById('form-rodada2').addEventListener('submit', (e) => {
+        document.getElementById('form-rodada2').addEventListener('submit', e => {
             e.preventDefault();
             finalizarRodada(2);
         });
-
-        document.getElementById('btn-finalizar-rodada3').addEventListener('click', (e) => {
+        document.getElementById('btn-finalizar-rodada3').addEventListener('click', e => {
             e.preventDefault();
             finalizarRodada(3);
         });
-
     </script>
 </body>
 </html>
