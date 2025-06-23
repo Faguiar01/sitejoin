@@ -42,6 +42,11 @@
             margin-top: 20px;
             text-align: center;
         }
+        .message-box.info {
+            background-color: #e0e7ff;
+            border: 1px solid #a7bfff;
+            color: #3e5fce;
+        }
         .message-box.warning {
             background-color: #fff3cd;
             border: 1px solid #ffeeba;
@@ -102,13 +107,13 @@
     </style>
 </head>
 <body>
-
     <div class="main-container">
         <div id="loading-container" class="content-section active">
             <h1>Carregando sua jornada...</h1>
             <div class="loader"></div>
             <p>Aguarde enquanto buscamos seus dados e o status da sua turma.</p>
         </div>
+
         <div id="bloqueado-container" class="content-section">
             <h1>Atenção: Você está atrasado!</h1>
             <div class="message-box warning">
@@ -116,6 +121,7 @@
             </div>
             <a href="xperience.html" class="btn btn-secondary">Voltar ao Painel</a>
         </div>
+
         <div id="aguardando-professor-container" class="content-section">
             <h1>Parabéns por concluir a rodada!</h1>
             <div class="message-box success">
@@ -123,6 +129,7 @@
             </div>
             <a href="xperience.html" class="btn btn-secondary">Voltar ao Painel</a>
         </div>
+
         <div id="finalizado-container" class="content-section">
             <h1>Simulação Concluída!</h1>
             <div class="message-box success">
@@ -143,24 +150,87 @@
         </div>
 
         <div id="rodada2-container" class="content-section">
-             <h1>Rodada 2: Balanço Patrimonial Inicial</h1>
-             <p>Preencha o Balanço Patrimonial da sua empresa com base nas decisões tomadas.</p>
-             <form id="form-rodada2">
-                 <button type="submit">Finalizar Rodada 2</button>
-             </form>
+            <h1>Rodada 2: A Fundação da InovaPlas</h1>
+            <p>Com seu Capital Social de <strong>R$ 480.000,00</strong>, sua missão é fazer o investimento inicial na sua linha de produção, escolhendo uma máquina e um molde compatível.</p>
+            <form id="form-rodada2">
+                <fieldset style="margin-bottom: 20px; border-color: #6c63ff;">
+                    <legend style="font-size: 1.2em; color: #6c63ff;">Decisão de Investimento</legend>
+                    <label for="maquina-select"><strong>1. Selecione a Máquina Injetora:</strong></label>
+                    <select id="maquina-select" required>
+                        <option value="">Carregando máquinas...</option>
+                    </select>
+                    <div id="maquina-detalhes-extra" style="font-size: 0.9em;"></div>
+                    <label for="molde-select"><strong>2. Selecione o Molde (apenas compatíveis):</strong></label>
+                    <select id="molde-select" required disabled>
+                        <option value="">Escolha uma máquina primeiro</option>
+                    </select>
+                </fieldset>
+                <div id="combo-detalhes" class="message-box info">
+                    <p><strong>Custo Total do Investimento:</strong> R$ 0,00</p>
+                    <p><strong>Capital Restante (Caixa):</strong> R$ 480.000,00</p>
+                </div>
+                <button type="submit">Comprar Combo e Fundar a InovaPlas</button>
+            </form>
         </div>
 
-        <div id="rodada3-container" class="content-section">
-            <button id="btn-finalizar-rodada3">Concluí minhas anotações e quero Finalizar a Rodada 3</button>
+    <div id="rodada3-container" class="content-section">
+
+        <style>
+            .passo { border-left: 3px solid #6c63ff; padding-left: 15px; margin-bottom: 25px; }
+            .instrucao-manual { background-color: #eef; padding: 10px; border-radius: 4px; font-weight: bold;}
+        </style>
+
+        <h1>Rodada 3: Primeira Demanda de Cliente!</h1>
+
+        <div class="message-box info">
+            <h3>Boas Notícias: Pedido Recebido!</h3>
+            <p>A rede de lojas de utilidades "OrganizaTudo" fez um pedido formal de <strong>800 unidades do produto "Caixas Organizadoras Médias"</strong>. Sua missão é planejar e executar a produção para atender a este primeiro grande cliente!</p>
         </div>
-    </div>
+
+        <h3>Seu Plano de Ação</h3>
+        <p>Siga os passos abaixo para organizar sua produção. Lembre-se de registrar cada decisão financeira em suas planilhas de controle (DRE e Balanço Patrimonial).</p>
+
+        <div id="passos-rodada3">
+
+            <div class="passo">
+                <h3>Passo 1: Planejamento de Matéria-Prima</h3>
+                <p>Para produzir 800 caixas, de quanta matéria-prima você precisa? Consulte a "receita" do produto e seu estoque atual (que provavelmente está zerado). Vá ao <a href="../catalogo_materias_primas.html" target="_blank">Catálogo de Matérias-Primas</a> para simular a compra.</p>
+                <p class="instrucao-manual">➡️ Anote o **Custo da Matéria-Prima** comprada no seu DRE e atualize seu Balanço (o Caixa diminui, o Estoque de Matéria-Prima aumenta).</p>
+            </div>
+
+            <div class="passo">
+                <h3>Passo 2: Planejamento de Pessoal (RH)</h3>
+                <p>Consulte a capacidade produtiva da máquina que você comprou na Rodada 2. Quantos dias de produção serão necessários para fabricar 800 caixas? Você precisa contratar funcionários para operar a máquina? Visite o <a href="../catalogo_rh.html" target="_blank">Catálogo de RH</a>.</p>
+                <p class="instrucao-manual">➡️ Anote o custo total com **Salários** como 'Despesa Operacional' no seu DRE.</p>
+            </div>
+
+            <div class="passo">
+                <h3>Passo 3: Produção e Marketing</h3>
+                <p>Com matéria-prima e equipe prontas, é hora de produzir! Ao mesmo tempo, quanto você investirá em marketing para fortalecer o relacionamento com a "OrganizaTudo" e garantir futuras vendas?</p>
+                <p class="instrucao-manual">➡️ Na sua planilha, mova o custo da matéria-prima usada para a produção. Anote o gasto com **Marketing** como 'Despesa de Venda' no DRE.</p>
+            </div>
+
+            <div class="passo">
+                <h3>Passo 4: Definição de Preço e Faturamento</h3>
+                <p>Com base em todos os seus custos (matéria-prima, salários, marketing), defina o preço de venda final para as 800 caixas. Calcule a Receita Total que este pedido irá gerar.</p>
+                <p class="instrucao-manual">➡️ Registre a **Receita Total** da venda no seu DRE.</p>
+            </div>
+
+            <div class="passo">
+                <h3>Passo 5: Fechamento Contábil da Rodada</h3>
+                <p>Revise suas planilhas. Calcule o Lucro ou Prejuízo da rodada no DRE. Atualize seu Balanço Patrimonial com o novo valor de Caixa e o Lucro/Prejuízo no Patrimônio Líquido. O Balanço está equilibrado?</p>
+                <p class="instrucao-manual">➡️ Quando tudo estiver preenchido e conferido, você pode finalizar a rodada.</p>
+            </div>
+
+        </div>
+        <button id="btn-finalizar-rodada3">Concluí meu planejamento e quero Finalizar a Rodada 3</button>
+    </div></div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script type="module">
-        // SUA CONFIGURAÇÃO DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -171,7 +241,6 @@
             measurementId: "G-V4SRK0FNBN"
         };
 
-        // Inicializa o Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -180,6 +249,8 @@
         let userDocData = null;
         let turmaDocData = null;
         let turmaId = null;
+        let catalogoMaquinas = [];
+        let catalogoMoldes = [];
 
         function showSection(sectionId) {
             document.querySelectorAll('.content-section').forEach(section => {
@@ -188,13 +259,24 @@
             document.getElementById(sectionId)?.classList.add('active');
         }
 
-        // ==========================================================
-        // AQUI ESTÁ A LÓGICA PARA O QUIZ ALEATÓRIO
-        // ==========================================================
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        async function carregarCatalogos() {
+            if (catalogoMaquinas.length > 0 && catalogoMoldes.length > 0) return;
+            try {
+                const [maquinasSnapshot, moldesSnapshot] = await Promise.all([
+                    db.collection('catalogo_maquinas').get(),
+                    db.collection('catalogo_moldes').get()
+                ]);
+                catalogoMaquinas = maquinasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                catalogoMoldes = moldesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } catch (error) {
+                console.error("Erro ao carregar catálogos:", error);
             }
         }
 
@@ -206,18 +288,12 @@
                     quizContainer.innerHTML = '<p style="color: red;">Não foi possível encontrar o banco de questões.</p>';
                     return;
                 }
-
                 let todasAsPerguntas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 shuffleArray(todasAsPerguntas);
                 const perguntasSorteadas = todasAsPerguntas.slice(0, 5);
-
-                // Linha para depuração que você pode adicionar se precisar
-                console.log("Perguntas sorteadas:", perguntasSorteadas);
-
                 let quizHTML = '';
                 perguntasSorteadas.forEach((pergunta, index) => {
-                    quizHTML += `<fieldset style="border: none; padding: 0; margin-bottom: 20px;">`;
-                    quizHTML += `<legend style="font-size: 1.1em; font-weight: bold; margin-bottom: 10px;">${index + 1}. ${pergunta.enunciado}</legend>`;
+                    quizHTML += `<fieldset style="border: none; padding: 0; margin-bottom: 20px;"><legend style="font-size: 1.1em; font-weight: bold; margin-bottom: 10px;">${index + 1}. ${pergunta.enunciado}</legend>`;
                     if (pergunta.tipo === 'multipla_escolha' && pergunta.opcoes) {
                         pergunta.opcoes.forEach((opcao, i) => {
                             const optionId = `q${index}_opt${i}`;
@@ -232,6 +308,61 @@
             } catch (error) {
                 console.error("Erro ao montar o quiz:", error);
                 quizContainer.innerHTML = '<p style="color: red;">Ocorreu um erro ao carregar as perguntas.</p>';
+            }
+        }
+
+        function popularSelecaoMaquinas() {
+            const maquinaSelect = document.getElementById('maquina-select');
+            const moldeSelect = document.getElementById('molde-select');
+            const detalhesDiv = document.getElementById('combo-detalhes');
+            const maquinaDetalhesExtraDiv = document.getElementById('maquina-detalhes-extra');
+
+            maquinaSelect.innerHTML = '<option value="">-- Escolha uma máquina --</option>';
+            catalogoMaquinas.forEach(maquina => {
+                const option = document.createElement('option');
+                option.value = maquina.id;
+                option.textContent = `${maquina.nome} (T: ${maquina.tonelagem}T)`;
+                maquinaSelect.appendChild(option);
+            });
+
+            maquinaSelect.addEventListener('change', () => {
+                const maquinaId = maquinaSelect.value;
+                moldeSelect.innerHTML = '<option value="">-- Escolha um molde --</option>';
+                moldeSelect.disabled = true;
+                maquinaDetalhesExtraDiv.innerHTML = '';
+
+                if (!maquinaId) {
+                    atualizarCustos();
+                    return;
+                };
+
+                const maquinaSelecionada = catalogoMaquinas.find(m => m.id === maquinaId);
+                maquinaDetalhesExtraDiv.innerHTML = `<p style="font-style: italic; margin-top: 5px; color: #555;">${maquinaSelecionada.descricao}</p>`;
+
+                const moldesCompativeis = catalogoMoldes.filter(molde => maquinaSelecionada.tonelagem >= molde.tonelagemMinima);
+                moldesCompativeis.forEach(molde => {
+                    const option = document.createElement('option');
+                    option.value = molde.id;
+                    option.textContent = `${molde.produtoFinal} (Custo: R$ ${molde.custo})`;
+                    moldeSelect.appendChild(option);
+                });
+
+                moldeSelect.disabled = false;
+                atualizarCustos();
+            });
+
+            moldeSelect.addEventListener('change', atualizarCustos);
+
+            function atualizarCustos() {
+                const maquinaId = maquinaSelect.value;
+                const moldeId = moldeSelect.value;
+                const maquina = catalogoMaquinas.find(m => m.id === maquinaId);
+                const molde = catalogoMoldes.find(m => m.id === moldeId);
+                const custoMaquina = maquina ? maquina.custo : 0;
+                const custoMolde = molde ? molde.custo : 0;
+                const custoTotal = custoMaquina + custoMolde;
+                const capitalRestante = 480000 - custoTotal;
+                detalhesDiv.innerHTML = `<p><strong>Custo Total do Investimento:</strong> R$ ${custoTotal.toLocaleString('pt-BR')}</p><p><strong>Capital Restante (Caixa):</strong> R$ ${capitalRestante.toLocaleString('pt-BR')}</p>`;
             }
         }
 
@@ -253,6 +384,8 @@
                 const rodadaAtualDaTurma = turmaDocData.rodadaAtual || 0;
                 const progressoDoAluno = (userDocData.progresso && userDocData.progresso[turmaId]) ? userDocData.progresso[turmaId] : 0;
 
+                await carregarCatalogos();
+
                 const totalRodadas = 5;
                 if (progressoDoAluno >= totalRodadas) {
                      showSection('finalizado-container');
@@ -267,6 +400,7 @@
                     montarQuizAleatorio();
                 } else if (rodadaAtualDaTurma === 2 && progressoDoAluno === 1) {
                     showSection('rodada2-container');
+                    popularSelecaoMaquinas();
                 } else if (rodadaAtualDaTurma === 3 && progressoDoAluno === 2) {
                     showSection('rodada3-container');
                 } else {
@@ -302,10 +436,43 @@
             e.preventDefault();
             finalizarRodada(1);
         });
-        document.getElementById('form-rodada2').addEventListener('submit', e => {
+
+        document.getElementById('form-rodada2').addEventListener('submit', async (e) => {
             e.preventDefault();
-            finalizarRodada(2);
+            const maquinaId = document.getElementById('maquina-select').value;
+            const moldeId = document.getElementById('molde-select').value;
+            if (!maquinaId || !moldeId) {
+                alert("Por favor, selecione uma máquina e um molde compatível.");
+                return;
+            }
+            const maquinaComprada = catalogoMaquinas.find(m => m.id === maquinaId);
+            const moldeComprado = catalogoMoldes.find(m => m.id === moldeId);
+            const custoTotal = maquinaComprada.custo + moldeComprado.custo;
+
+            if (custoTotal > 480000) {
+                alert("Investimento excede o Capital Social de R$ 480.000,00!");
+                return;
+            }
+            showSection('loading-container');
+            try {
+                const userRef = db.collection('usuarios').doc(currentUser.uid);
+                await userRef.update({
+                    'ativos.maquinas': firebase.firestore.FieldValue.arrayUnion(maquinaId),
+                    'ativos.moldes': firebase.firestore.FieldValue.arrayUnion(moldeId),
+                    'balanco_inicial.caixa': 480000 - custoTotal,
+                    'balanco_inicial.investimento_ativo_fixo': custoTotal,
+                    'balanco_inicial.capital_social': 480000,
+                    [`progresso.${turmaId}`]: 2
+                });
+                console.log(`Combo comprado e progresso atualizado para a rodada 2`);
+                await carregarDadosDaRodada(currentUser);
+            } catch (error) {
+                console.error("Erro ao finalizar a rodada 2:", error);
+                alert("Ocorreu um erro ao salvar sua decisão. Tente novamente.");
+                showSection('rodada2-container');
+            }
         });
+
         document.getElementById('btn-finalizar-rodada3').addEventListener('click', e => {
             e.preventDefault();
             finalizarRodada(3);
