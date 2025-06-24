@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rodada 3: Operações e Investimentos - InovaPlas</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { color: #003366; border-bottom: 2px solid #b3d1ff; padding-bottom: 10px; }
+        .section-box { border: 1px solid #ddd; border-radius: 5px; padding: 20px; margin-top: 25px; }
+        .section-box h2 { margin-top: 0; font-size: 1.4em; color: #0052cc; }
+        .section-box.warning { background-color: #fff3cd; border-color: #ffeeba; }
+        .btn { display: inline-block; background-color: #007bff; color: white; padding: 12px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: background-color 0.3s; border: none; cursor: pointer; }
+        .btn:hover { background-color: #0056b3; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        .btn-roleta { background-color: #ffc107; color: #333; }
+        .btn-roleta:hover { background-color: #e0a800; }
+        #final-actions { text-align: center; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rodada 3: Operações e Investimentos</h1>
+        <p>A sua empresa está a funcionar! Nesta rodada, você irá gerir as primeiras operações, lidar com eventos inesperados do mercado e fazer investimentos estratégicos para o futuro.</p>
+
+        <div id="loading-container"><p>A carregar o estado da sua rodada...</p></div>
+
+        <div id="game-content" style="display: none;">
+            <!-- Seção da Roleta de Eventos -->
+            <div class="section-box warning">
+                <h2>Evento de Mercado Obrigatório</h2>
+                <p id="roleta-status">Para simular a imprevisibilidade do mercado, precisa de girar a roleta de eventos para revelar acontecimentos que podem afetar a sua empresa.</p>
+                <a id="roleta-link" href="#" target="_blank" class="btn btn-roleta">Girar a Roleta de Eventos</a>
+            </div>
+
+            <!-- Seção de Investimentos (Placeholder) -->
+            <div class="section-box">
+                <h2>Decisões de Investimento</h2>
+                <p>Analise o mercado e decida se é o momento certo para investir em novas tecnologias ou expandir a sua capacidade. (Funcionalidade a ser implementada na Rodada 4/5)</p>
+            </div>
+
+            <!-- Seção de Movimentações (Placeholder) -->
+            <div class="section-box">
+                <h2>Movimentações Financeiras</h2>
+                <p>Registe todas as suas despesas e receitas na sua planilha de controlo para manter a saúde financeira da sua empresa.</p>
+            </div>
+
+            <div id="final-actions">
+                <button id="btn-finalizar-rodada3" class="btn" disabled>Finalizar Rodada 3</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const loadingDiv = document.getElementById('loading-container');
+        const gameContentDiv = document.getElementById('game-content');
+        const roletaStatus = document.getElementById('roleta-status');
+        const roletaLink = document.getElementById('roleta-link');
+        const finalizarBtn = document.getElementById('btn-finalizar-rodada3');
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                setupRodada(user);
+            } else {
+                alert("Sessão expirada. A redirecionar para o login.");
+                window.top.location.href = '../login.html';
+            }
+        });
+
+        async function setupRodada(user) {
+            try {
+                const userRef = db.collection('usuarios').doc(user.uid);
+                const userDoc = await userRef.get();
+                if (!userDoc.exists) throw new Error("Dados do utilizador não encontrados.");
+                const userData = userDoc.data();
+
+                const turmaId = userData.turmaId;
+                if (!turmaId) throw new Error("O utilizador não está associado a nenhuma turma.");
+
+                const turmaRef = db.collection('turmas').doc(turmaId);
+                const turmaDoc = await turmaRef.get();
+                if (!turmaDoc.exists) throw new Error("Dados da turma não encontrados.");
+
+                const turmaData = turmaDoc.data();
+                const girosNecessarios = turmaData.girosNecessarios_r3 || 3; // Padrão de 3 giros
+                const girosFeitos = (userData.girosRoleta && userData.girosRoleta[turmaId]) || 0;
+
+                const girosRestantes = girosNecessarios - girosFeitos;
+
+                if (girosRestantes > 0) {
+                    roletaStatus.textContent = `Para continuar, precisa de girar a roleta mais ${girosRestantes} vez(es). Clique no botão abaixo. Após cada giro, pode fechar a aba da roleta e recarregar esta página para atualizar o seu progresso.`;
+                    roletaLink.href = 'roleta.html';
+                    roletaLink.style.display = 'inline-block';
+                    finalizarBtn.disabled = true;
+                    finalizarBtn.textContent = `Aguardando ${girosRestantes} Giro(s) da Roleta`;
+                } else {
+                    roletaStatus.textContent = "Excelente! Você já completou todos os eventos de mercado obrigatórios para esta rodada.";
+                    roletaLink.style.display = 'none'; // Esconde o botão da roleta
+                    finalizarBtn.disabled = false;
+                    finalizarBtn.textContent = "Finalizar Rodada 3 e Avançar";
+                }
+
+                loadingDiv.style.display = 'none';
+                gameContentDiv.style.display = 'block';
+
+            } catch (error) {
+                console.error("Erro ao configurar a Rodada 3:", error);
+                loadingDiv.innerHTML = `<p style="color: red;">Erro: ${error.message}</p>`;
+            }
+        }
+
+        finalizarBtn.addEventListener('click', async () => {
+            finalizarBtn.disabled = true;
+            finalizarBtn.textContent = "A guardar o seu progresso...";
+
+            try {
+                const user = auth.currentUser;
+                if (user) {
+                    await db.collection('usuarios').doc(user.uid).update({ rodadaAtual: 4 });
+                    alert("Rodada 3 finalizada com sucesso!");
+                    window.top.location.href = 'rodada.html'; // Volta para o roteador
+                }
+            } catch (error) {
+                 console.error("Erro ao finalizar a Rodada 3:", error);
+                 alert("Ocorreu um erro ao guardar o seu progresso. Tente novamente.");
+                 finalizarBtn.disabled = false;
+                 finalizarBtn.textContent = "Finalizar Rodada 3 e Avançar";
+            }
+        });
+
+    </script>
+</body>
+</html>

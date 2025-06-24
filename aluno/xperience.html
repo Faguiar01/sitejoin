@@ -5,61 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Xperience - InovaPlas</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 100%; max-width: 600px; text-align: center; }
-        #loading { font-size: 1.2em; color: #333; }
-        .hidden { display: none; }
-        h1 { color: #0056b3; }
-        p { color: #333; }
-        .turma-info, .join-turma-form { margin-top: 20px; }
-        input[type="text"] { width: 80%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
-        button { background-color: #007bff; color: white; padding: 12px 25px; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; transition: background-color 0.3s; }
-        button:hover { background-color: #0056b3; }
-        .error-message { color: red; font-weight: bold; margin-top: 10px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+        #loading {
+            font-size: 1.2em;
+            color: #333;
+            padding: 40px 0;
+        }
+        .hidden {
+            display: none;
+        }
+        h1 {
+            color: #003366;
+            margin-bottom: 30px;
+        }
+        p {
+            color: #333;
+            line-height: 1.6;
+        }
+        .main-action-box {
+            background-color: #eaf2ff;
+            border: 1px solid #b3d1ff;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .main-action-box h2 {
+            margin-top: 0;
+            color: #0052cc;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1.1em;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+         button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: #d93025;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .secondary-links a {
+            display: block;
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .secondary-links a:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div id="loading">
-            <p>Carregando informações do aluno...</p>
+            <p>A carregar as suas informações...</p>
         </div>
 
         <div id="content" class="hidden">
             <h1 id="welcome-message"></h1>
 
-            <div id="turma-dashboard" class="turma-info hidden">
-                <h2>Você está na Turma: <span id="turma-nome"></span></h2>
-                <p>Seu progresso está salvo. Continue de onde parou!</p>
-                <button onclick="location.href='rodada.html'">Iniciar / Continuar Rodada</button>
+            <!-- Bloco de Ação Principal: Entrar na Turma ou Iniciar Rodada -->
+            <div id="main-action" class="main-action-box">
+                <!-- Este conteúdo será preenchido pelo JavaScript -->
             </div>
 
-            <div id="join-turma-section" class="join-turma-form hidden">
-                <h2>Entrar em uma Turma</h2>
-                <p>Para começar, insira o código da sua turma fornecido pelo professor.</p>
-                <input type="text" id="turma-codigo-input" placeholder="Código da Turma" autocomplete="off">
-                <button id="join-turma-btn">Entrar na Turma</button>
-                <p id="error-message" class="error-message hidden"></p>
+            <!-- Links Secundários -->
+            <div class="secondary-links">
+                <a href="faq.html">Perguntas Frequentes (FAQ)</a>
+                <a href="perfil-investidor.html">Descubra o Seu Perfil de Gestor</a>
+                <a href="biblioteca.html">Biblioteca de Recursos Digitais</a>
+                <a href="mural-explorador.html">Mural do Explorador</a>
             </div>
         </div>
     </div>
 
+    <!-- SDKs do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 
     <script>
-        // SUA CONFIGURAÇÃO DO FIREBASE VAI AQUI
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
         };
 
-        // Inicializa o Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -67,112 +150,95 @@
         const loadingDiv = document.getElementById('loading');
         const contentDiv = document.getElementById('content');
         const welcomeMessage = document.getElementById('welcome-message');
-        const turmaDashboard = document.getElementById('turma-dashboard');
-        const joinTurmaSection = document.getElementById('join-turma-section');
-        const joinTurmaBtn = document.getElementById('join-turma-btn');
-        const turmaCodigoInput = document.getElementById('turma-codigo-input');
-        const errorMessage = document.getElementById('error-message');
+        const mainActionDiv = document.getElementById('main-action');
 
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // Usuário está logado
                 const userRef = db.collection('usuarios').doc(user.uid);
                 const userDoc = await userRef.get();
 
                 if (!userDoc.exists) {
-                    console.error("Documento do usuário não encontrado no Firestore!");
-                    // Opcional: redirecionar para uma página de erro ou logout
-                    auth.signOut();
+                    alert("Erro: Utilizador não encontrado na base de dados. A redirecionar para o login.");
                     window.location.href = '../login.html';
                     return;
                 }
 
                 const userData = userDoc.data();
-                welcomeMessage.textContent = `Olá, ${userData.nome || user.email}!`;
+                welcomeMessage.textContent = `Bem-vindo(a), ${userData.nome}!`;
+
+                if (userData.turmaId) {
+                    // Se o aluno JÁ ESTÁ numa turma, mostra o dashboard
+                    const turmaDoc = await db.collection('turmas').doc(userData.turmaId).get();
+                    const nomeDaTurma = turmaDoc.exists ? turmaDoc.data().nome : "Turma não encontrada";
+
+                    mainActionDiv.innerHTML = `
+                        <h2>A sua jornada na turma "${nomeDaTurma}" continua!</h2>
+                        <p>O seu progresso está guardado. Continue de onde parou para levar a sua empresa ao sucesso.</p>
+                        <button onclick="location.href='rodada.html'">Continuar Rodada</button>
+                    `;
+                } else {
+                    // Se o aluno NÃO ESTÁ numa turma, mostra o formulário para entrar
+                    mainActionDiv.innerHTML = `
+                        <h2>Entre numa Turma para Começar</h2>
+                        <p>Para iniciar a simulação, insira o código da sua turma fornecido pelo professor.</p>
+                        <input type="text" id="turma-codigo-input" placeholder="CÓDIGO DA TURMA" autocomplete="off">
+                        <button id="join-turma-btn">Entrar na Turma</button>
+                        <p id="error-message" class="error-message"></p>
+                    `;
+                    // Adiciona o 'listener' do evento ao botão que acabámos de criar
+                    document.getElementById('join-turma-btn').addEventListener('click', joinTurma);
+                }
 
                 loadingDiv.classList.add('hidden');
                 contentDiv.classList.remove('hidden');
 
-                if (userData.turmaId) {
-                    // Usuário já está em uma turma
-                    const turmaRef = db.collection('turmas').doc(userData.turmaId);
-                    const turmaDoc = await turmaRef.get();
-
-                    if(turmaDoc.exists) {
-                        document.getElementById('turma-nome').textContent = turmaDoc.data().nome;
-                    } else {
-                         document.getElementById('turma-nome').textContent = "Nome não encontrado";
-                    }
-
-                    turmaDashboard.classList.remove('hidden');
-                    joinTurmaSection.classList.add('hidden');
-
-                } else {
-                    // Usuário não está em uma turma, mostrar formulário
-                    joinTurmaSection.classList.remove('hidden');
-                    turmaDashboard.classList.add('hidden');
-                }
             } else {
-                // Usuário não está logado, redirecionar para login
                 window.location.href = '../login.html';
             }
         });
 
-        joinTurmaBtn.addEventListener('click', async () => {
+        async function joinTurma() {
+            const joinTurmaBtn = document.getElementById('join-turma-btn');
+            const turmaCodigoInput = document.getElementById('turma-codigo-input');
+            const errorMessage = document.getElementById('error-message');
+
             const codigoTurma = turmaCodigoInput.value.trim().toUpperCase();
             if (!codigoTurma) {
-                showError("Por favor, insira um código.");
+                errorMessage.textContent = "Por favor, insira um código.";
                 return;
             }
 
             joinTurmaBtn.disabled = true;
-            joinTurmaBtn.textContent = "Validando...";
-            errorMessage.classList.add('hidden');
+            joinTurmaBtn.textContent = "A validar...";
+            errorMessage.textContent = "";
 
             try {
                 const turmasRef = db.collection('turmas');
                 const snapshot = await turmasRef.where('codigo', '==', codigoTurma).get();
 
                 if (snapshot.empty) {
-                    showError("Código da turma inválido ou não encontrado.");
+                    errorMessage.textContent = "Código da turma inválido ou não encontrado.";
+                    joinTurmaBtn.disabled = false;
+                    joinTurmaBtn.textContent = "Entrar na Turma";
                     return;
                 }
 
-                // Pega a primeira turma encontrada com o código
                 const turmaDoc = snapshot.docs[0];
                 const turmaId = turmaDoc.id;
                 const user = auth.currentUser;
 
                 if (user) {
-                    // Atualiza o documento do usuário com o ID da turma
-                    await db.collection('usuarios').doc(user.uid).update({
-                        turmaId: turmaId
-                    });
-
-                    // Adiciona o UID do aluno no array 'alunos' da turma
-                    await db.collection('turmas').doc(turmaId).update({
-                        alunos: firebase.firestore.FieldValue.arrayUnion(user.uid)
-                    });
-
-                    // Sucesso! Recarrega a página para mostrar o dashboard da turma.
-                    window.location.reload();
+                    await db.collection('usuarios').doc(user.uid).update({ turmaId: turmaId });
+                    await db.collection('turmas').doc(turmaId).update({ alunos: firebase.firestore.FieldValue.arrayUnion(user.uid) });
+                    window.location.reload(); // Recarrega a página para mostrar o novo estado
                 }
-
             } catch (error) {
                 console.error("Erro ao entrar na turma: ", error);
-                showError("Ocorreu um erro. Tente novamente.");
-            } finally {
+                errorMessage.textContent = "Ocorreu um erro. Tente novamente.";
                 joinTurmaBtn.disabled = false;
                 joinTurmaBtn.textContent = "Entrar na Turma";
             }
-        });
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.remove('hidden');
         }
-
     </script>
-
 </body>
 </html>

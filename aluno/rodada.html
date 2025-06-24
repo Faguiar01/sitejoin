@@ -3,34 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciando Rodada...</title>
+    <title>A iniciar Rodada...</title>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f7f6; }
-        .loading-container { text-align: center; }
-        .loading-container h1 { color: #0056b3; }
-        .loading-container p { color: #333; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f7f6; text-align: center; }
+        .loading-container { color: #333; }
+        h1 { color: #0056b3; }
+
+        /* Estilos para a página de espera */
+        .wait-container { max-width: 800px; margin: auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .wait-container h1 { color: #28a745; border-bottom: 2px solid #a7d7b2; padding-bottom: 10px; }
+        .wait-container p { font-size: 1.2em; color: #333; line-height: 1.6; }
+        .wait-container .btn { display: inline-block; background-color: #007bff; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: background-color 0.3s; }
+        .wait-container .btn:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
 
     <div class="loading-container">
         <h1>InovaPlas</h1>
-        <p>Aguarde, estamos preparando sua próxima rodada...</p>
+        <p>Aguarde, estamos a preparar a sua próxima rodada...</p>
+        <p><em>Será redirecionado em breve.</em></p>
     </div>
 
+    <!-- Firebase SDKs (versão compatível) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 
     <script>
-        // SUA CONFIGURAÇÃO DO FIREBASE VAI AQUI
+        // Suas credenciais do Firebase
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.appspot.com",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
         };
 
         // Inicializa o Firebase
@@ -38,70 +47,88 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Mapeamento de rodadas para as páginas correspondentes
-        // ATENÇÃO: Ajuste os nomes dos arquivos .html para corresponder aos seus.
+        // Mapeamento de rodadas para as páginas de atividade corretas.
         const rodadaPaginas = {
-            1: 'biblioteca.html', // Rodada 1 - Nivelamento
-            2: 'perfil-investidor.html', // Rodada 2 - Fundação
-            3: 'roleta.html',       // Rodada 3 - Roleta
-            // Adicione as próximas rodadas aqui
-            // 4: 'rodada_4.html',
-            // 5: 'rodada_5.html'
+            1: 'rodada1-nivelamento.html',
+            2: 'rodada2-fundacao.html',
+            3: 'rodada3-operacoes.html',
+            4: 'simulador-producao.html',  
+            5: 'rodada5.html'
         };
+
+        const maxRodadas = 5;
 
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 try {
                     const userDoc = await db.collection('usuarios').doc(user.uid).get();
                     if (!userDoc.exists) {
-                        throw new Error("Usuário não encontrado no Firestore. Redirecionando...");
+                        throw new Error("Utilizador não encontrado no Firestore.");
                     }
 
                     const userData = userDoc.data();
-                    const alunoRodada = userData.rodadaAtual || 1; // Garante que o aluno comece na 1
-                    const turmaId = userData.turmaId;
+                    const alunoRodada = userData.rodadaAtual || 1;
 
+                    if (alunoRodada > maxRodadas) {
+                         document.body.innerHTML = `
+                            <div class="wait-container">
+                                <h1>Parabéns!</h1>
+                                <p>Você concluiu com sucesso todas as rodadas da simulação InovaPlas.</p>
+                                <a href="xperience.html" class="btn">Voltar ao Painel</a>
+                            </div>`;
+                         return;
+                    }
+
+                    const turmaId = userData.turmaId;
                     if (!turmaId) {
-                        // Se o aluno não tem turma, não pode jogar. Vai para a experience.
-                        alert("Você ainda não está em uma turma. Insira o código para começar.");
-                        window.location.href = 'xperience.html';
+                        alert("Você ainda não está numa turma. Insira o código para começar.");
+                        window.top.location.href = 'xperience.html';
                         return;
                     }
 
                     const turmaDoc = await db.collection('turmas').doc(turmaId).get();
                     if (!turmaDoc.exists) {
-                        throw new Error("Turma não encontrada. Contate seu professor.");
+                        throw new Error("Turma não encontrada. Contacte o seu professor.");
                     }
 
                     const turmaData = turmaDoc.data();
-                    const turmaRodadaTeto = turmaData.rodadaAtual;
+                    const turmaRodadaTeto = turmaData.rodadaAtual || 1; 
 
-                    // O aluno não pode avançar além do teto da turma
                     const rodadaParaAcessar = Math.min(alunoRodada, turmaRodadaTeto);
+
+                    if (alunoRodada > turmaRodadaTeto) {
+                        document.body.innerHTML = `
+                            <div class="wait-container">
+                                <h1>Bom trabalho!</h1>
+                                <p>Você está em dia com a sua turma. Aguarde o seu professor liberar a próxima rodada para continuar a sua jornada.</p>
+                                <a href="xperience.html" class="btn">Voltar ao Painel</a>
+                            </div>`;
+                        return;
+                    }
 
                     const paginaDestino = rodadaPaginas[rodadaParaAcessar];
 
                     if (paginaDestino) {
-                        window.location.href = paginaDestino;
+                        window.top.location.href = paginaDestino;
                     } else {
-                        // Rodada ainda não implementada
                         document.body.innerHTML = `
-                            <div class="loading-container">
+                            <div class="wait-container">
                                 <h1>Rodada ${rodadaParaAcessar} em Breve!</h1>
-                                <p>O conteúdo para esta rodada ainda não está disponível. Fale com seu professor.</p>
-                            </div>
-                        `;
+                                <p>O conteúdo para esta rodada ainda não está disponível no sistema.</p>
+                                <a href="xperience.html" class="btn">Voltar ao Painel</a>
+                            </div>`;
                     }
 
                 } catch (error) {
-                    console.error("Erro no roteador de rodadas: ", error);
-                    alert(error.message);
-                    // Em caso de erro, manda para a página de entrada
-                    window.location.href = 'xperience.html';
+                    alert("Ocorreu um erro ao carregar a sua rodada: " + error.message);
+                    window.top.location.href = 'xperience.html';
                 }
             } else {
-                // Usuário não logado
-                window.location.href = '../login.html';
+                setTimeout(() => {
+                    if (!auth.currentUser) {
+                         window.top.location.href = '../login.html';
+                    }
+                }, 500);
             }
         });
     </script>
