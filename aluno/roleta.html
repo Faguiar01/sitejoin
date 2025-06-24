@@ -3,180 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roleta de Cenários - Join Xperience</title>
+    <title>Roleta de Eventos - InovaPlas</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-info: #17a2b8; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; text-align: center; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav { display: flex; align-items: center; gap: 15px; }
-        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        main { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-
-        .roulette-wrapper { position: relative; width: 400px; height: 400px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
-        .roulette-pointer { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-bottom: 40px solid var(--cor-cinza-escuro); z-index: 10; }
-        #roulette-wheel { width: 100%; height: 100%; border-radius: 50%; border: 10px solid #ccc; background-image: conic-gradient( #ffc107 0% 10%, #dc3545 10% 20%, #17a2b8 20% 30%, #28a745 30% 40%, #6f42c1 40% 50%, #fd7e14 50% 60%, #20c997 60% 70%, #e83e8c 70% 80%, #6610f2 80% 90%, #007bff 90% 100% ); transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 10px rgba(0,0,0,0.2); }
-        .btn-spin { margin-top: 30px; padding: 15px 40px; font-size: 1.5em; cursor: pointer; border: none; border-radius: 10px; background-color: var(--cor-sucesso); color: var(--cor-branco); transition: background-color 0.3s; }
-        .btn-spin:disabled { background-color: #6c757d; cursor: not-allowed; }
-        .btn-spin:hover:not(:disabled) { background-color: #218838; }
-
-        .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; animation: backdropFadeIn 0.3s; }
-        @keyframes backdropFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal-content { background-color: #fefefe; margin: auto; padding: 0; width: 90%; max-width: 500px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: contentFadeIn 0.4s; overflow: hidden; }
-        @keyframes contentFadeIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-header { padding: 15px 20px; background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .modal-header h2 { margin: 0; font-size: 1.5em; }
-        .modal-body { padding: 25px; font-size: 1.1em; line-height: 1.6; }
-        .modal-body p { margin: 0; }
-        .modal-footer { padding: 15px 20px; text-align: right; background-color: #f8f9fa; display: flex; justify-content: flex-end; gap: 10px;}
-        .btn-modal { padding: 10px 25px; border: none; border-radius: 8px; color: var(--cor-branco); cursor: pointer; font-weight: bold; }
-        .btn-modal-close { background-color: var(--cor-primaria); }
-        .btn-modal-back { background-color: var(--cor-info); }
-
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; }
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        header h1 { text-align: center; color: #003366; }
+        .roleta-container { text-align: center; padding: 20px; }
+        .progresso-container { text-align: center; margin-bottom: 20px; font-size: 1.2em; }
+        #wheel-wrapper { position: relative; width: 350px; height: 350px; margin: 20px auto; }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; border: 10px solid #333; overflow: hidden; transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1); background-color: #eee; }
+        .segment { position: absolute; width: 50%; height: 50%; transform-origin: 100% 100%; }
+        #arrow { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid red; position: absolute; left: 50%; top: -20px; transform: translateX(-50%); z-index: 10; }
+        #spin-btn { background-color: #4CAF50; color: white; padding: 15px 30px; font-size: 1.5em; cursor: pointer; border: none; border-radius: 5px; margin-top: 20px; }
+        #spin-btn:disabled { cursor: not-allowed; background-color: #ccc; }
+        .resultado-modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+        .modal-content { background-color: #003366; color: white; margin: auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 500px; text-align: center; border-radius: 8px; }
+        .modal-content h2 { color: #ffc107; }
+        .modal-buttons { margin-top: 20px; }
+        .modal-buttons button { padding: 10px 20px; border: none; border-radius: 5px; font-size: 1em; text-decoration: none; color: #333; background-color: #f0f0f0; cursor: pointer; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <header class="main-header">
-        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
-        <nav>
-            <a href="xperience.html" class="btn btn-primary">Voltar ao Painel</a>
-            <a href="#" id="logout-button">Sair</a>
-        </nav>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Rodada 3: Roleta de Eventos</h1>
+        </header>
 
-    <main class="container">
-        <div>
-            <h1>Roleta de Cenários</h1>
-            <p>Gire a roleta para descobrir o evento deste mês!</p>
-            <div class="roulette-wrapper">
-                <div class="roulette-pointer"></div>
-                <div id="roulette-wheel"></div>
+        <main>
+            <div id="loading" class="progresso-container">
+                <p>Carregando dados da rodada...</p>
             </div>
-            <button id="spin-button" class="btn-spin">Girar a Roleta</button>
-        </div>
-    </main>
 
-    <div id="result-modal" class="modal-backdrop">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="modal-title">Resultado do Sorteio</h2></div>
-            <div class="modal-body"><p id="modal-description">Descrição do cenário aparecerá aqui.</p></div>
-            <div class="modal-footer">
-                <button id="modal-back-btn" class="btn-modal btn-modal-back">Voltar ao Painel</button>
-                <button id="modal-close-btn" class="btn-modal btn-modal-close">Girar Novamente</button>
+            <div id="game-content" class="hidden">
+                <div class="progresso-container">
+                    <p>Você precisa girar a roleta para simular eventos do dia a dia da empresa.</p>
+                    <p id="progresso-texto"><strong>Giros Realizados: 0 de 0</strong></p>
+                </div>
+                <div class="roleta-container">
+                    <div id="wheel-wrapper">
+                        <div id="arrow"></div>
+                        <div id="wheel"></div>
+                    </div>
+                    <button id="spin-btn" disabled>Carregando Cenários...</button>
+                </div>
+            </div>
+        </main>
+
+        <div id="resultado-modal" class="resultado-modal">
+            <div class="modal-content">
+                <h2 id="resultado-titulo"></h2>
+                <p id="resultado-descricao"></p>
+                <p id="resultado-impacto"></p>
+                <div class="modal-buttons">
+                    <button id="modal-action-btn"></button>
+                </div>
             </div>
         </div>
     </div>
 
-    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-
+    <script>
+        // SUA CONFIGURAÇÃO DO FIREBASE VAI AQUI
         const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
         };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
 
-        let scenarios = [];
-        const spinButton = document.getElementById('spin-button');
-        const wheel = document.getElementById('roulette-wheel');
-        const modal = document.getElementById('result-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalDescription = document.getElementById('modal-description');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-        const modalBackBtn = document.getElementById('modal-back-btn');
-        let currentRotation = 0;
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        onAuthStateChanged(auth, (user) => {
+        // Elementos da UI
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spin-btn');
+        const modal = document.getElementById('resultado-modal');
+        const modalActionBtn = document.getElementById('modal-action-btn');
+        const progressoTexto = document.getElementById('progresso-texto');
+        const loadingDiv = document.getElementById('loading');
+        const gameContentDiv = document.getElementById('game-content');
+
+        // Variáveis de Estado
+        let cenarios = [];
+        let currentUser = null;
+        let turmaId = null;
+        let girosNecessarios = 0;
+        let girosAtuais = 0;
+        let rotation = 0;
+
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
-                fetchScenarios(user);
+                currentUser = user;
+                await setupGame();
             } else {
                 window.location.href = '../login.html';
             }
         });
 
-        async function fetchScenarios(user) {
-            spinButton.disabled = true;
-            spinButton.textContent = "Carregando Cenários...";
-
-            const defaultQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "default"));
-            const customQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "custom"));
-
+        async function setupGame() {
             try {
-                const [defaultSnapshot, customSnapshot] = await Promise.all([getDocs(defaultQuery), getDocs(customQuery)]);
+                // 1. Obter dados do usuário, incluindo turmaId
+                const userRef = db.collection('usuarios').doc(currentUser.uid);
+                const userDoc = await userRef.get();
+                if (!userDoc.exists) throw new Error("Usuário não encontrado.");
+                const userData = userDoc.data();
+                turmaId = userData.turmaId;
+                if (!turmaId) throw new Error("Você não está em uma turma.");
 
-                const defaultScenarios = defaultSnapshot.docs.map(doc => doc.data());
-                const customScenarios = customSnapshot.docs.map(doc => doc.data());
+                // 2. Obter dados da turma, incluindo os giros necessários
+                const turmaRef = db.collection('turmas').doc(turmaId);
+                const turmaDoc = await turmaRef.get();
+                if (!turmaDoc.exists) throw new Error("Dados da turma não encontrados.");
+                girosNecessarios = turmaDoc.data().girosNecessarios_r3 || 5; // Padrão de 5 giros se não definido
 
-                scenarios = [...defaultScenarios, ...customScenarios];
+                // 3. Obter progresso atual do aluno
+                girosAtuais = (userData.girosRoleta && userData.girosRoleta[turmaId]) || 0;
 
-                if (scenarios.length > 0) {
-                    spinButton.disabled = false;
-                    spinButton.textContent = "Girar a Roleta";
-                } else {
-                    spinButton.textContent = "Nenhum cenário disponível";
-                    alert("Nenhum cenário foi encontrado no banco de dados. Peça para seu professor adicionar alguns!");
-                }
+                updateProgressoUI();
+
+                // 4. Carregar os cenários da roleta
+                await loadCenarios();
+                setupWheel();
+
+                loadingDiv.classList.add('hidden');
+                gameContentDiv.classList.remove('hidden');
+
             } catch (error) {
-                console.error("Erro ao buscar cenários:", error);
-                spinButton.textContent = "Erro ao carregar";
-                alert("Ocorreu um erro ao buscar os cenários. Verifique o console para mais detalhes.");
+                console.error("Erro ao configurar o jogo:", error);
+                alert(error.message);
             }
         }
 
-        spinButton.addEventListener('click', () => {
-            if (scenarios.length === 0) return;
-
-            spinButton.disabled = true;
-            const totalSpins = 5; 
-            const randomIndex = Math.floor(Math.random() * scenarios.length);
-            const selectedScenario = scenarios[randomIndex];
-
-            // Um ângulo para cada cenário possível
-            const segmentAngle = 360 / scenarios.length;
-            const stopAngle = (randomIndex * segmentAngle) + (segmentAngle / 2);
-
-            currentRotation += (totalSpins * 360) + stopAngle - (currentRotation % 360);
-
-            wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-            setTimeout(() => {
-                showResult(selectedScenario);
-            }, 4200); 
-        });
-
-        function showResult(scenario) {
-            const value = Math.floor(Math.random() * (scenario.valorMax - scenario.valorMin + 1)) + scenario.valorMin;
-            const finalDescription = scenario.descricao.replace('[VALOR]', value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
-
-            modalTitle.textContent = scenario.titulo;
-            modalDescription.textContent = finalDescription;
-            modal.style.display = 'flex';
+        function updateProgressoUI() {
+            progressoTexto.innerHTML = `<strong>Giros Realizados: ${girosAtuais} de ${girosNecessarios}</strong>`;
+            if (girosAtuais >= girosNecessarios) {
+                spinBtn.textContent = "Rodada Concluída";
+                spinBtn.disabled = true;
+                 setTimeout(() => {
+                    alert("Você já completou os giros desta rodada! Redirecionando...");
+                    avancarRodada();
+                }, 2000);
+            }
         }
 
-        modalCloseBtn.addEventListener('click', () => {
+        async function loadCenarios() {
+            const snapshot = await db.collection('roleta_cenarios').get();
+            if (snapshot.empty) throw new Error("Nenhum cenário encontrado para a roleta.");
+            snapshot.forEach(doc => cenarios.push({ id: doc.id, ...doc.data() }));
+            spinBtn.textContent = "Girar a Roleta";
+            spinBtn.disabled = false;
+        }
+
+        function setupWheel() {
+            const numSegments = cenarios.length;
+            if (numSegments === 0) return;
+            const deg = 360 / numSegments;
+            wheel.innerHTML = '';
+            const colors = ['#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107'];
+            for (let i = 0; i < numSegments; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'segment';
+                segment.style.transform = `rotate(${deg * i}deg)`;
+                // Usando clip-path para criar triângulos em um círculo
+                segment.style.clipPath = `polygon(0% 0%, 50% 100%, 100% 0%)`;
+                segment.style.transformOrigin = `50% 100%`;
+                segment.style.left = '25%';
+                segment.style.width = '50%';
+                segment.style.height = '50%';
+                segment.style.backgroundColor = colors[i % colors.length];
+                wheel.appendChild(segment);
+            }
+        }
+
+        spinBtn.addEventListener('click', async () => {
+            if (spinBtn.disabled) return;
+            spinBtn.disabled = true;
+
+            // Animação da Roleta
+            const numSegments = cenarios.length;
+            const degPerSegment = 360 / numSegments;
+            rotation += (5 * 360) + Math.floor(Math.random() * 360);
+            wheel.style.transform = `rotate(${rotation}deg)`;
+
+            const finalEffectiveRotation = rotation % 360;
+            const winningSegmentIndex = Math.floor((360 - finalEffectiveRotation + degPerSegment/2) % 360 / degPerSegment);
+            const cenarioVencedor = cenarios[winningSegmentIndex] || { titulo: "Erro", descricao: "Não foi possível carregar o cenário.", impacto: "Nenhum" };
+
+            // Incrementa o contador no Firestore
+            try {
+                const userRef = db.collection('usuarios').doc(currentUser.uid);
+                // Usando notação de ponto para atualizar um campo dentro de um mapa (objeto)
+                const updateData = {};
+                updateData[`girosRoleta.${turmaId}`] = firebase.firestore.FieldValue.increment(1);
+                await userRef.update(updateData);
+
+                girosAtuais++; // Atualiza o estado local
+
+            } catch (error) {
+                console.error("Erro ao salvar giro: ", error);
+                alert("Ocorreu um erro ao salvar seu progresso. Seu giro não foi contado. Por favor, tente novamente.");
+                spinBtn.disabled = false;
+                return;
+            }
+
+            // Exibe o resultado após a animação
+            setTimeout(() => {
+                document.getElementById('resultado-titulo').textContent = cenarioVencedor.titulo;
+                document.getElementById('resultado-descricao').textContent = cenarioVencedor.descricao;
+                document.getElementById('resultado-impacto').textContent = "Impacto: " + cenarioVencedor.impacto;
+
+                updateProgressoUI();
+
+                if (girosAtuais >= girosNecessarios) {
+                    modalActionBtn.textContent = "Finalizar Rodada e Avançar";
+                    modalActionBtn.onclick = avancarRodada;
+                } else {
+                    modalActionBtn.textContent = "Girar Novamente";
+                    modalActionBtn.onclick = fecharModal;
+                }
+
+                modal.style.display = 'flex';
+            }, 5100); // Tempo igual à transição do CSS
+        });
+
+        function fecharModal() {
             modal.style.display = 'none';
-            spinButton.disabled = false; // Permite girar novamente
-        });
+            if (girosAtuais < girosNecessarios) {
+                spinBtn.disabled = false;
+            }
+        }
 
-        modalBackBtn.addEventListener('click', () => {
-            window.location.href = 'xperience.html';
-        });
-
-        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+        async function avancarRodada() {
+            modalActionBtn.disabled = true;
+            modalActionBtn.textContent = "Avançando...";
+            try {
+                const userRef = db.collection('usuarios').doc(currentUser.uid);
+                await userRef.update({
+                    rodadaAtual: 4
+                });
+                alert("Parabéns! Rodada 3 concluída com sucesso!");
+                window.location.href = 'rodada.html'; // Volta ao roteador para ir para a próxima rodada
+            } catch (error) {
+                console.error("Erro ao avançar de rodada: ", error);
+                alert("Não foi possível salvar seu avanço. Por favor, tente novamente.");
+                modalActionBtn.disabled = false;
+                 if (girosAtuais >= girosNecessarios) {
+                    modalActionBtn.textContent = "Finalizar Rodada e Avançar";
+                 }
+            }
+        }
     </script>
 </body>
 </html>

@@ -20,6 +20,7 @@
         .extra-links { text-align: center; margin-top: 20px; }
         .extra-links a { color: var(--cor-primaria); text-decoration: none; display: block; margin-top: 10px; }
         .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
         .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
     </style>
 </head>
@@ -39,10 +40,14 @@
             </form>
         </div>
     </main>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+    <!-- Firebase SDKs (versão compatível para máxima robustez) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Suas credenciais do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -52,36 +57,68 @@
             appId: "1:140037739806:web:322493d72ca6149abce50f",
             measurementId: "G-V4SRK0FNBN"
         };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
         const loginForm = document.getElementById('login-form');
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('senha').value;
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                const userDocRef = doc(db, 'usuarios', user.uid);
-                const userDoc = await getDoc(userDocRef);
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData.perfil === 'professor') {
-                        window.location.href = 'professor/professor.html';
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('senha').value;
+                const loginButton = e.target.querySelector('button[type="submit"]');
+
+                loginButton.disabled = true;
+                loginButton.textContent = "Entrando...";
+
+                try {
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    const userDocRef = db.collection('usuarios').doc(user.uid);
+                    const userDoc = await userDocRef.get();
+
+                    // --- CORREÇÃO APLICADA AQUI ---
+                    // No SDK compatível, .exists é uma propriedade, não uma função.
+                    if (userDoc.exists) { 
+                        const userData = userDoc.data();
+                        if (userData.perfil === 'professor') {
+                            window.top.location.href = 'professor/professor.html';
+                        } else {
+                            window.top.location.href = 'aluno/xperience.html';
+                        }
                     } else {
-                        // ✅ LINHA CORRIGIDA ✅
-                        window.location.href = 'aluno/xperience.html';
+                        alert('Erro: Dados de perfil não encontrados para este usuário.');
+                        loginButton.disabled = false;
+                        loginButton.textContent = "Entrar";
                     }
-                } else {
-                    alert('Erro: Não foi possível encontrar dados de perfil.');
+                } catch (error) {
+                    let errorMessage = "Erro ao fazer login: E-mail ou senha inválidos.";
+                    console.error("Erro na autenticação:", error);
+                    if (error.code) {
+                       switch (error.code) {
+                           case 'auth/user-not-found':
+                           case 'auth/wrong-password':
+                           case 'auth/invalid-credential':
+                               errorMessage = "E-mail ou senha inválidos.";
+                               break;
+                           case 'auth/invalid-email':
+                               errorMessage = "O formato do e-mail é inválido.";
+                               break;
+                       }
+                    }
+                    alert(errorMessage);
+                    loginButton.disabled = false;
+                    loginButton.textContent = "Entrar";
                 }
-            } catch (error) {
-                alert("Erro ao fazer login: E-mail ou senha inválidos.");
-                console.error(error);
-            }
-        });
+            });
+        } else {
+            console.error("ERRO FATAL: O formulário de login com id 'login-form' não foi encontrado na página.");
+        }
     </script>
 </body>
 </html>
