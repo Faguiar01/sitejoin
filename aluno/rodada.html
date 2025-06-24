@@ -90,6 +90,10 @@
             background-color: #574fdc;
             color: white;
         }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
         .btn-secondary {
             background-color: #6c757d;
         }
@@ -125,7 +129,7 @@
         <div id="aguardando-professor-container" class="content-section">
             <h1>Parabéns por concluir a rodada!</h1>
             <div class="message-box success">
-                <p>Você finalizou suas tarefas. Aguarde o professor avançar a turma.</p>
+                <p>Você alcançou o progresso atual da turma! Aguarde o professor liberar a próxima rodada.</p>
             </div>
             <a href="xperience.html" class="btn btn-secondary">Voltar ao Painel</a>
         </div>
@@ -173,58 +177,31 @@
             </form>
         </div>
 
-    <div id="rodada3-container" class="content-section">
-
-        <style>
-            .passo { border-left: 3px solid #6c63ff; padding-left: 15px; margin-bottom: 25px; }
-            .instrucao-manual { background-color: #eef; padding: 10px; border-radius: 4px; font-weight: bold;}
-        </style>
-
-        <h1>Rodada 3: Primeira Demanda de Cliente!</h1>
-
-        <div class="message-box info">
-            <h3>Boas Notícias: Pedido Recebido!</h3>
-            <p>A rede de lojas de utilidades "OrganizaTudo" fez um pedido formal de <strong>800 unidades do produto "Caixas Organizadoras Médias"</strong>. Sua missão é planejar e executar a produção para atender a este primeiro grande cliente!</p>
+        <div id="rodada3-container" class="content-section">
+            <style>
+                .passo { border-left: 3px solid #6c63ff; padding-left: 15px; margin-bottom: 25px; }
+                .instrucao-manual { background-color: #eef; padding: 10px; border-radius: 4px; font-weight: bold;}
+            </style>
+            <h1>Rodada 3: Primeira Demanda de Cliente!</h1>
+            <div class="message-box info">
+                <h3>Boas Notícias: Pedido Recebido!</h3>
+                <p>A rede de lojas "OrganizaTudo" fez um pedido formal de <strong>800 unidades do produto "Caixas Organizadoras Médias"</strong>.</p>
+            </div>
+            <div id="roleta-section" class="message-box warning">
+                <h3>Cenário de Mercado Imprevisível</h3>
+                <p id="roleta-status">Você precisa girar a roleta para revelar eventos que afetarão sua empresa.</p>
+                <a id="roleta-link" href="#" target="_blank" class="btn">Girar a Roleta</a>
+            </div>
+            <h3>Seu Plano de Ação</h3>
+            <p>Siga os passos para organizar sua produção e registre as decisões em sua planilha.</p>
+            <div id="passos-rodada3">
+                </div>
+            <div>
+                <button id="btn-finalizar-rodada3" disabled>Finalizar Rodada 3 (Aguardando Giros da Roleta)</button>
+                <a href="xperience.html" class="btn btn-secondary" style="margin-left: 10px;">Voltar ao Painel</a>
+            </div>
         </div>
-
-        <h3>Seu Plano de Ação</h3>
-        <p>Siga os passos abaixo para organizar sua produção. Lembre-se de registrar cada decisão financeira em suas planilhas de controle (DRE e Balanço Patrimonial).</p>
-
-        <div id="passos-rodada3">
-
-            <div class="passo">
-                <h3>Passo 1: Planejamento de Matéria-Prima</h3>
-                <p>Para produzir 800 caixas, de quanta matéria-prima você precisa? Consulte a "receita" do produto e seu estoque atual (que provavelmente está zerado). Vá ao <a href="../catalogo_materias_primas.html" target="_blank">Catálogo de Matérias-Primas</a> para simular a compra.</p>
-                <p class="instrucao-manual">➡️ Anote o **Custo da Matéria-Prima** comprada no seu DRE e atualize seu Balanço (o Caixa diminui, o Estoque de Matéria-Prima aumenta).</p>
-            </div>
-
-            <div class="passo">
-                <h3>Passo 2: Planejamento de Pessoal (RH)</h3>
-                <p>Consulte a capacidade produtiva da máquina que você comprou na Rodada 2. Quantos dias de produção serão necessários para fabricar 800 caixas? Você precisa contratar funcionários para operar a máquina? Visite o <a href="../catalogo_rh.html" target="_blank">Catálogo de RH</a>.</p>
-                <p class="instrucao-manual">➡️ Anote o custo total com **Salários** como 'Despesa Operacional' no seu DRE.</p>
-            </div>
-
-            <div class="passo">
-                <h3>Passo 3: Produção e Marketing</h3>
-                <p>Com matéria-prima e equipe prontas, é hora de produzir! Ao mesmo tempo, quanto você investirá em marketing para fortalecer o relacionamento com a "OrganizaTudo" e garantir futuras vendas?</p>
-                <p class="instrucao-manual">➡️ Na sua planilha, mova o custo da matéria-prima usada para a produção. Anote o gasto com **Marketing** como 'Despesa de Venda' no DRE.</p>
-            </div>
-
-            <div class="passo">
-                <h3>Passo 4: Definição de Preço e Faturamento</h3>
-                <p>Com base em todos os seus custos (matéria-prima, salários, marketing), defina o preço de venda final para as 800 caixas. Calcule a Receita Total que este pedido irá gerar.</p>
-                <p class="instrucao-manual">➡️ Registre a **Receita Total** da venda no seu DRE.</p>
-            </div>
-
-            <div class="passo">
-                <h3>Passo 5: Fechamento Contábil da Rodada</h3>
-                <p>Revise suas planilhas. Calcule o Lucro ou Prejuízo da rodada no DRE. Atualize seu Balanço Patrimonial com o novo valor de Caixa e o Lucro/Prejuízo no Patrimônio Líquido. O Balanço está equilibrado?</p>
-                <p class="instrucao-manual">➡️ Quando tudo estiver preenchido e conferido, você pode finalizar a rodada.</p>
-            </div>
-
-        </div>
-        <button id="btn-finalizar-rodada3">Concluí meu planejamento e quero Finalizar a Rodada 3</button>
-    </div></div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -330,15 +307,12 @@
                 moldeSelect.innerHTML = '<option value="">-- Escolha um molde --</option>';
                 moldeSelect.disabled = true;
                 maquinaDetalhesExtraDiv.innerHTML = '';
-
                 if (!maquinaId) {
                     atualizarCustos();
                     return;
                 };
-
                 const maquinaSelecionada = catalogoMaquinas.find(m => m.id === maquinaId);
                 maquinaDetalhesExtraDiv.innerHTML = `<p style="font-style: italic; margin-top: 5px; color: #555;">${maquinaSelecionada.descricao}</p>`;
-
                 const moldesCompativeis = catalogoMoldes.filter(molde => maquinaSelecionada.tonelagem >= molde.tonelagemMinima);
                 moldesCompativeis.forEach(molde => {
                     const option = document.createElement('option');
@@ -346,7 +320,6 @@
                     option.textContent = `${molde.produtoFinal} (Custo: R$ ${molde.custo})`;
                     moldeSelect.appendChild(option);
                 });
-
                 moldeSelect.disabled = false;
                 atualizarCustos();
             });
@@ -363,6 +336,27 @@
                 const custoTotal = custoMaquina + custoMolde;
                 const capitalRestante = 480000 - custoTotal;
                 detalhesDiv.innerHTML = `<p><strong>Custo Total do Investimento:</strong> R$ ${custoTotal.toLocaleString('pt-BR')}</p><p><strong>Capital Restante (Caixa):</strong> R$ ${capitalRestante.toLocaleString('pt-BR')}</p>`;
+            }
+        }
+
+        function gerenciarInterfaceRoleta(rodada, girosFeitos) {
+            const girosObrigatorios = 3; 
+            const roletaStatus = document.getElementById('roleta-status');
+            const roletaLink = document.getElementById('roleta-link');
+            const finalizarBtn = document.getElementById('btn-finalizar-rodada3');
+            const girosRestantes = girosObrigatorios - girosFeitos;
+
+            if (girosRestantes > 0) {
+                roletaStatus.textContent = `Você ainda precisa girar a roleta ${girosRestantes} vez(es).`;
+                roletaLink.href = `roleta.html?turmaId=${turmaId}&rodada=${rodada}`;
+                roletaLink.style.display = 'inline-block';
+                finalizarBtn.disabled = true;
+                finalizarBtn.textContent = `Finalizar Rodada ${rodada} (Aguardando ${girosRestantes} Giros)`;
+            } else {
+                roletaStatus.textContent = `Você completou todos os giros da roleta para esta rodada!`;
+                roletaLink.style.display = 'none';
+                finalizarBtn.disabled = false;
+                finalizarBtn.textContent = `Concluí meu planejamento e quero Finalizar a Rodada ${rodada}`;
             }
         }
 
@@ -391,18 +385,26 @@
                      showSection('finalizado-container');
                      return;
                 }
-                if (rodadaAtualDaTurma > progressoDoAluno + 1) {
-                    showSection('bloqueado-container');
-                } else if (progressoDoAluno >= rodadaAtualDaTurma) {
-                    showSection('aguardando-professor-container');
-                } else if (rodadaAtualDaTurma === 1 && progressoDoAluno === 0) {
-                    showSection('rodada1-container');
-                    montarQuizAleatorio();
-                } else if (rodadaAtualDaTurma === 2 && progressoDoAluno === 1) {
-                    showSection('rodada2-container');
-                    popularSelecaoMaquinas();
-                } else if (rodadaAtualDaTurma === 3 && progressoDoAluno === 2) {
-                    showSection('rodada3-container');
+
+                const proximaRodadaDoAluno = progressoDoAluno + 1;
+
+                if (proximaRodadaDoAluno <= rodadaAtualDaTurma) {
+                    const containerId = `rodada${proximaRodadaDoAluno}-container`;
+                    showSection(containerId);
+
+                    switch (proximaRodadaDoAluno) {
+                        case 1:
+                            montarQuizAleatorio();
+                            break;
+                        case 2:
+                            popularSelecaoMaquinas();
+                            break;
+                        case 3:
+                            const chaveProgressoRoleta = `${turmaId}_R3`;
+                            const girosFeitos = (userDocData.girosRoleta && userDocData.girosRoleta[chaveProgressoRoleta]) ? userDocData.girosRoleta[chaveProgressoRoleta] : 0;
+                            gerenciarInterfaceRoleta(3, girosFeitos);
+                            break;
+                    }
                 } else {
                     showSection('aguardando-professor-container');
                 }
@@ -428,8 +430,11 @@
         }
 
         auth.onAuthStateChanged(user => {
-            if (user) carregarDadosDaRodada(user);
-            else window.location.href = '../login.html';
+            if (user) {
+                carregarDadosDaRodada(user);
+            } else {
+                window.location.href = '../login.html';
+            }
         });
 
         document.getElementById('form-rodada1').addEventListener('submit', e => {
@@ -442,16 +447,14 @@
             const maquinaId = document.getElementById('maquina-select').value;
             const moldeId = document.getElementById('molde-select').value;
             if (!maquinaId || !moldeId) {
-                alert("Por favor, selecione uma máquina e um molde compatível.");
-                return;
+                return alert("Por favor, selecione uma máquina e um molde compatível.");
             }
             const maquinaComprada = catalogoMaquinas.find(m => m.id === maquinaId);
             const moldeComprado = catalogoMoldes.find(m => m.id === moldeId);
             const custoTotal = maquinaComprada.custo + moldeComprado.custo;
 
             if (custoTotal > 480000) {
-                alert("Investimento excede o Capital Social de R$ 480.000,00!");
-                return;
+                return alert("Investimento excede o Capital Social de R$ 480.000,00!");
             }
             showSection('loading-container');
             try {
@@ -464,7 +467,6 @@
                     'balanco_inicial.capital_social': 480000,
                     [`progresso.${turmaId}`]: 2
                 });
-                console.log(`Combo comprado e progresso atualizado para a rodada 2`);
                 await carregarDadosDaRodada(currentUser);
             } catch (error) {
                 console.error("Erro ao finalizar a rodada 2:", error);
