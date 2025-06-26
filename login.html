@@ -187,19 +187,16 @@
                 if (userDocSnap.exists()) {
                     const userData = userDocSnap.data();
                     
-                     // SUBSTITUA O BLOCO IF/ELSE ANTIGO POR ESTE:
-
-if (userData.perfil === 'professor') {
-    const destinationURL = 'professor/index.html';
-    alert('VOU REDIRECIONAR PARA: ' + destinationURL); // Alerta para depuração
-    console.log('Tentando redirecionar para:', destinationURL);
-    window.location.href = destinationURL;
-} else {
-    const destinationURL = 'aluno/rodada3-operacoes.html';
-    alert('VOU REDIRECIONAR PARA: ' + destinationURL); // Alerta para depuração
-    console.log('Tentando redirecionar para:', destinationURL);
-    window.location.href = destinationURL;
-}
+                    if (userData.perfil === 'professor') {
+                        window.location.href = 'professor/index.html';
+                    } else {
+                        window.location.href = 'aluno/rodada3-operacoes.html';
+                    }
+                } else {
+                    alert('Erro: Dados de perfil não encontrados para este usuário.');
+                    loginButton.disabled = false;
+                    loginButton.textContent = "Entrar";
+                }
             } catch (error) {
                 console.error("Erro na autenticação:", error);
                 let errorMessage = "Erro ao fazer login: ";
