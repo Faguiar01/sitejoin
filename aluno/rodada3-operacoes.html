@@ -5,8 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rodada 3 - Operações | Xperience InovaPlas</title>
     <style>
-        /* Esconde a página até o script verificar o login para evitar piscar de conteúdo */
-        body { display: none; } 
+        body { font-family: sans-serif; line-height: 1.6; padding: 20px; display: none; }
+        header, main > div { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        select, button { padding: 8px; margin-top: 5px; font-size: 1em; }
+        button { cursor: pointer; }
+        #painel-configuracao h3, #painel-configuracao h4 { margin-top: 30px; border-bottom: 2px solid #eee; padding-bottom: 5px;}
+        #alerta-recursos { color: #D8000C; background-color: #FFD2D2; padding: 10px; border-radius: 5px; margin-top: 10px;}
+        #financeiro-lucro { font-size: 1.2em; font-weight: bold; }
+        #btn-confirmar-producao:disabled { background-color: #ccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -17,14 +24,61 @@
     </header>
 
     <main>
-        <p>Bem-vindo, aluno! Conteúdo da página de operações.</p>
+        <div id="modal-ordem-producao" style="display: none;">
+            <h2>Nova Ordem de Produção Recebida!</h2>
+            <p>A empresa <strong id="ordem-cliente"></strong> encomendou <strong id="ordem-quantidade"></strong> unidades do produto <strong id="ordem-produto"></strong>.</p>
+            <p>Preço de venda acordado: <strong id="ordem-preco-venda"></strong> por unidade.</p>
+            <button id="btn-aceitar-ordem">Aceitar Contrato</button>
+            <button id="btn-rejeitar-ordem">Rejeitar Contrato</button>
+        </div>
+
+        <div id="painel-configuracao" style="display: none;">
+            <h3>Configure a Linha de Produção</h3>
+            <div>
+                <label for="select-maquina">1. Selecione a Máquina Injetora:</label>
+                <select id="select-maquina"><option>Carregando...</option></select>
+            </div>
+            <div>
+                <label for="select-molde">2. Selecione o Molde:</label>
+                <select id="select-molde" disabled><option>Aguardando máquina...</option></select>
+            </div>
+            
+            <h4>Pré-Produção: Verificação de Recursos</h4>
+            <div id="resumo-recursos">
+                <p>Matéria-prima necessária: <strong id="recurso-necessario">--</strong> kg</p>
+                <p>Matéria-prima em stock: <strong id="recurso-disponivel">--</strong> kg</p>
+                <div id="alerta-recursos" style="display: none;">
+                    <p>Atenção! Matéria-prima insuficiente.</p>
+                    <button id="btn-comprar-materia-prima">Ir para Compras</button>
+                </div>
+            </div>
+
+            <h4>Análise Financeira da Produção</h4>
+            <div id="resumo-financeiro">
+                <p>Tempo de Produção Estimado: <strong id="financeiro-tempo">--</strong> horas</p>
+                <p>Custo Operacional (Energia + M.O.): <strong id="financeiro-custo-operacional">R$ --</strong></p>
+                <p>Custo da Matéria-Prima: <strong id="financeiro-custo-materia-prima">R$ --</strong></p>
+                <h3>Custo Total da Produção: <strong id="financeiro-custo-total">R$ --</strong></h3>
+                <p>Receita Bruta do Contrato: <strong id="financeiro-receita">R$ --</strong></p>
+                <h2 id="lucro-potencial-wrapper">Lucro Potencial: <strong id="financeiro-lucro">R$ --</strong></h2>
+            </div>
+            <hr style="margin-top: 30px;">
+            <button id="btn-confirmar-producao" disabled>Confirmar e Iniciar Produção</button>
+        </div>
+
+        <div id="modal-resultado" style="display: none;">
+            <h2 id="resultado-titulo">--</h2>
+            <p id="resultado-descricao">--</p>
+            <button id="btn-fechar-resultado">Ok, entendi.</button>
+        </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, doc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        // Configuração do Firebase
+        // --- CONFIGURAÇÃO FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -37,20 +91,155 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // --- GUARDA DE ROTA ---
+        // --- ESTADO DA PÁGINA ---
+        // Guarda todos os dados dinâmicos do jogo e das seleções do usuário
+        const estado = {
+            usuario: null,
+            dadosUsuario: {}, // Para guardar o inventário, máquinas, etc.
+            cenario: {
+                cliente: "Global Toys",
+                produtoNome: "Mini-Dinossauro de Plástico",
+                produtoId: "prod_dino_01",
+                quantidade: 10000,
+                precoVendaUnidade: 1.50
+            },
+            selecao: {
+                maquina: null,
+                molde: null,
+            },
+            calculos: {} // Para guardar resultados dos cálculos financeiros e de recursos
+        };
+
+        // --- ELEMENTOS DO DOM ---
+        // Guarda as referências aos elementos do HTML para não repetir document.getElementById
+        const DOM = {
+            modalOrdem: document.getElementById('modal-ordem-producao'),
+            ordemCliente: document.getElementById('ordem-cliente'),
+            ordemQuantidade: document.getElementById('ordem-quantidade'),
+            ordemProduto: document.getElementById('ordem-produto'),
+            ordemPrecoVenda: document.getElementById('ordem-preco-venda'),
+            btnAceitarOrdem: document.getElementById('btn-aceitar-ordem'),
+            btnRejeitarOrdem: document.getElementById('btn-rejeitar-ordem'),
+            painelConfiguracao: document.getElementById('painel-configuracao'),
+            selectMaquina: document.getElementById('select-maquina'),
+            selectMolde: document.getElementById('select-molde'),
+            resumoRecursos: document.getElementById('resumo-recursos'),
+            recursoNecessario: document.getElementById('recurso-necessario'),
+            recursoDisponivel: document.getElementById('recurso-disponivel'),
+            alertaRecursos: document.getElementById('alerta-recursos'),
+            resumoFinanceiro: document.getElementById('resumo-financeiro'),
+            financeiroTempo: document.getElementById('financeiro-tempo'),
+            financeiroCustoOperacional: document.getElementById('financeiro-custo-operacional'),
+            financeiroCustoMateriaPrima: document.getElementById('financeiro-custo-materia-prima'),
+            financeiroCustoTotal: document.getElementById('financeiro-custo-total'),
+            financeiroReceita: document.getElementById('financeiro-receita'),
+            financeiroLucro: document.getElementById('financeiro-lucro'),
+            lucroPotencialWrapper: document.getElementById('lucro-potencial-wrapper'),
+            btnConfirmarProducao: document.getElementById('btn-confirmar-producao')
+        };
+
+        // --- FUNÇÕES DE RENDERIZAÇÃO (Atualizam a tela) ---
+
+        function renderizarModalProposta() {
+            DOM.ordemCliente.textContent = estado.cenario.cliente;
+            DOM.ordemQuantidade.textContent = estado.cenario.quantidade.toLocaleString('pt-BR');
+            DOM.ordemProduto.textContent = estado.cenario.produtoNome;
+            DOM.ordemPrecoVenda.textContent = estado.cenario.precoVendaUnidade.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            DOM.modalOrdem.style.display = 'block';
+        }
+
+        function popularSeletorMaquinas() {
+            // TODO: Implementar a lógica para preencher o <select> com as máquinas do usuário
+            // Exemplo:
+            // const maquinas = estado.dadosUsuario.maquinas;
+            // maquinas.forEach(maq => { ... });
+            DOM.selectMaquina.innerHTML = '<option value="">Selecione uma máquina</option><option value="maq01">Injetora Alpha</option>';
+        }
+
+        function atualizarPainelFinanceiro() {
+            // TODO: Implementar a lógica que pega os dados de estado.calculos
+            // e atualiza os textContent dos elementos em DOM.resumoFinanceiro
+        }
+
+        // --- FUNÇÕES DE LÓGICA (Calculam os dados) ---
+        
+        function calcularCustos() {
+            // TODO: Aqui entra a sua lógica de negócio.
+            // Com base em estado.selecao.maquina e estado.selecao.molde,
+            // calcule os custos, tempo, etc., e guarde em estado.calculos.
+            console.log("Calculando custos para a máquina e molde selecionados...");
+            
+            // Depois de calcular, chame a função para atualizar a tela
+            atualizarPainelFinanceiro();
+        }
+
+        // --- HANDLERS DE EVENTOS (Respondem às ações do usuário) ---
+
+        function handleAceitarOrdem() {
+            DOM.modalOrdem.style.display = 'none';
+            DOM.painelConfiguracao.style.display = 'block';
+            popularSeletorMaquinas();
+        }
+
+        function handleSelecaoMaquina(event) {
+            const maquinaId = event.target.value;
+            if (maquinaId) {
+                estado.selecao.maquina = maquinaId;
+                DOM.selectMolde.disabled = false;
+                // TODO: Popular o seletor de moldes com base na máquina selecionada
+                DOM.selectMolde.innerHTML = '<option value="">Selecione um molde</option><option value="molde_dino">Molde de Dinossauro</option>';
+            } else {
+                estado.selecao.maquina = null;
+                DOM.selectMolde.disabled = true;
+                DOM.selectMolde.innerHTML = '<option>Aguardando máquina...</option>';
+            }
+            // Limpa os cálculos anteriores se a máquina mudar
+            estado.calculos = {};
+            atualizarPainelFinanceiro();
+        }
+        
+        function handleSelecaoMolde(event) {
+            const moldeId = event.target.value;
+            if (moldeId) {
+                estado.selecao.molde = moldeId;
+                // Quando o molde é selecionado, podemos calcular tudo
+                calcularCustos();
+            }
+        }
+        
+        async function init() {
+            // Função principal que começa o jogo nesta página
+            const userDocRef = doc(db, "usuarios", estado.usuario.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                estado.dadosUsuario = userDocSnap.data();
+                renderizarModalProposta();
+            } else {
+                alert("Erro crítico: Não foi possível carregar os dados do seu usuário.");
+                window.location.href = "../login.html"; // Volta se não achar o perfil
+            }
+        }
+
+        // --- GUARDA DE ROTA E PONTO DE ENTRADA ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Se o usuário está logado, mostra o conteúdo da página
-                console.log("Acesso permitido para:", user.uid);
                 document.body.style.display = 'block';
+                estado.usuario = user;
+                init(); // Inicia a lógica da página
             } else {
-                // Se o usuário NÃO está logado, redireciona para a página de login
-                console.log("Acesso negado. Redirecionando para login...");
-                // CORREÇÃO FINAL: Caminho relativo para voltar uma pasta e encontrar o login.html
                 window.location.href = '../login.html';
             }
         });
+
+        // --- REGISTRO DOS EVENTOS ---
+        DOM.btnAceitarOrdem.addEventListener('click', handleAceitarOrdem);
+        DOM.selectMaquina.addEventListener('change', handleSelecaoMaquina);
+        DOM.selectMolde.addEventListener('change', handleSelecaoMolde);
+        // DOM.btnConfirmarProducao.addEventListener('click', handleConfirmarProducao);
+
     </script>
 </body>
 </html>
