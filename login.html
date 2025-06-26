@@ -145,77 +145,74 @@
     </main>
 
     <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-    // Sua configuração do Firebase (não precisa mudar)
-    const firebaseConfig = {
-        apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-        authDomain: "joinxperience-site.firebaseapp.com",
-        projectId: "joinxperience-site",
-        storageBucket: "joinxperience-site.firebasestorage.app",
-        messagingSenderId: "140037739806",
-        appId: "1:140037739806:web:322493d72ca6149abce50f",
-        measurementId: "G-V4SRK0FNBN"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.firebasestorage.app",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            measurementId: "G-V4SRK0FNBN"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    const loginForm = document.getElementById('login-form');
+        const loginForm = document.getElementById('login-form');
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const senha = document.getElementById('senha').value;
-        const loginButton = e.target.querySelector('button[type="submit"]');
-        loginButton.disabled = true;
-        loginButton.textContent = "Verificando...";
-        
-        console.clear(); // Limpa a consola para um novo log
-        console.log('--- INICIANDO TENTATIVA DE LOGIN ---');
-        console.log('Email digitado:', email);
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        try {
-            console.log('Passo 1: Autenticando com o Firebase Auth...');
-            const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-            const user = userCredential.user;
-            console.log('%cSUCESSO na Autenticação!', 'color: green; font-weight: bold;', 'UID do usuário:', user.uid);
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const loginButton = e.target.querySelector('button[type="submit"]');
 
-            console.log('Passo 2: Buscando perfil no Firestore...');
-            const userDocRef = doc(db, "usuarios", user.uid);
-            const userDocSnap = await getDoc(userDocRef);
-            console.log('Busca no Firestore concluída.');
+            loginButton.disabled = true;
+            loginButton.textContent = "Entrando...";
 
-            if (userDocSnap.exists()) {
-                console.log('%cSUCESSO! Perfil encontrado no Firestore.', 'color: green; font-weight: bold;');
-                const userData = userDocSnap.data();
-                console.log('Dados do perfil:', userData);
-                alert('Login bem-sucedido! Redirecionando...');
-                if (userData.perfil === 'professor') {
-                    window.location.href = 'professor/professor.html';
+            try {
+                await setPersistence(auth, browserLocalPersistence);
+                const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+                const user = userCredential.user;
+                const userDocRef = doc(db, "usuarios", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    
+                    if (userData.perfil === 'professor') {
+                        // Este caminho está correto de acordo com a sua estrutura de ficheiros
+                        window.location.href = 'professor/professor.html';
+                    } else {
+                        // CORREÇÃO FINAL: Apontar para o ficheiro correto na pasta do aluno
+                        window.location.href = 'aluno/rodada3-operacoes.html';
+                    }
                 } else {
-                    window.location.href = 'aluno/rodada.html';
+                    alert('Erro: Dados de perfil não encontrados para este usuário.');
+                    loginButton.disabled = false;
+                    loginButton.textContent = "Entrar";
                 }
-            } else {
-                console.error('FALHA CRÍTICA: Autenticação funcionou, mas o perfil não foi encontrado no Firestore.');
-                alert('Erro: Seu usuário foi autenticado, mas não conseguimos encontrar seus dados de perfil. Contate o suporte.');
+            } catch (error) {
+                console.error("Erro na autenticação:", error);
+                let errorMessage = "Erro ao fazer login: ";
+
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    errorMessage += "E-mail ou senha inválidos.";
+                } else {
+                    errorMessage += "Tente novamente. Verifique a consola para mais detalhes.";
+                }
+
+                alert(errorMessage);
                 loginButton.disabled = false;
                 loginButton.textContent = "Entrar";
             }
-        } catch (error) {
-            console.error('--- ERRO CAPTURADO ---');
-            console.error('Código do Erro:', error.code);
-            console.error('Mensagem do Erro:', error.message);
-            console.error('Objeto de Erro Completo:', error);
-            alert('Ocorreu um erro no login. Por favor, verifique a consola para detalhes técnicos. Código: ' + error.code);
-            loginButton.disabled = false;
-            loginButton.textContent = "Entrar";
-        }
-    });
-</script>
+        });
+    </script>
 
 </body>
 </html>
