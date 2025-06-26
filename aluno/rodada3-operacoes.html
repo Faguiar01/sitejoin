@@ -5,15 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rodada 3 - Operações | Xperience InovaPlas</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.6; padding: 20px; display: none; }
-        header, main > div { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
-        label { display: block; margin-top: 10px; font-weight: bold; }
-        select, button { padding: 8px; margin-top: 5px; font-size: 1em; }
-        button { cursor: pointer; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f7f9; display: none; }
+        header, main > div { background-color: #fff; border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h1, h2, h3, h4 { color: #333; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #555; }
+        select, button { width: 100%; padding: 12px; margin-top: 5px; font-size: 1em; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { cursor: pointer; background-color: #007bff; color: white; font-weight: bold; border: none; transition: background-color 0.2s; }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
         #painel-configuracao h3, #painel-configuracao h4 { margin-top: 30px; border-bottom: 2px solid #eee; padding-bottom: 5px;}
-        #alerta-recursos { color: #D8000C; background-color: #FFD2D2; padding: 10px; border-radius: 5px; margin-top: 10px;}
-        #financeiro-lucro { font-size: 1.2em; font-weight: bold; }
-        #btn-confirmar-producao:disabled { background-color: #ccc; cursor: not-allowed; }
+        #alerta-recursos { color: #D8000C; background-color: #FFD2D2; padding: 10px; border-radius: 5px; margin-top: 10px; }
+        #financeiro-lucro { font-size: 1.3em; font-weight: bold; color: #28a745; }
+        #lucro-potencial-wrapper.negativo #financeiro-lucro { color: #dc3545; }
     </style>
 </head>
 <body>
@@ -29,7 +32,7 @@
             <p>A empresa <strong id="ordem-cliente"></strong> encomendou <strong id="ordem-quantidade"></strong> unidades do produto <strong id="ordem-produto"></strong>.</p>
             <p>Preço de venda acordado: <strong id="ordem-preco-venda"></strong> por unidade.</p>
             <button id="btn-aceitar-ordem">Aceitar Contrato</button>
-            <button id="btn-rejeitar-ordem">Rejeitar Contrato</button>
+            <button id="btn-rejeitar-ordem" style="background-color: #6c757d; margin-top: 10px;">Rejeitar Contrato</button>
         </div>
 
         <div id="painel-configuracao" style="display: none;">
@@ -79,11 +82,12 @@
         import { getFirestore, doc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         // --- CONFIGURAÇÃO FIREBASE ---
+        // Suas credenciais do Firebase que já estavam no ficheiro.
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
             projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.firebasestorage.app",
+            storageBucket: "joinxperience-site.appspot.com", // Corrigido para o domínio correto
             messagingSenderId: "140037739806",
             appId: "1:140037739806:web:322493d72ca6149abce50f",
             measurementId: "G-V4SRK0FNBN"
@@ -94,10 +98,9 @@
         const db = getFirestore(app);
 
         // --- ESTADO DA PÁGINA ---
-        // Guarda todos os dados dinâmicos do jogo e das seleções do usuário
         const estado = {
             usuario: null,
-            dadosUsuario: {}, // Para guardar o inventário, máquinas, etc.
+            dadosUsuario: {},
             cenario: {
                 cliente: "Global Toys",
                 produtoNome: "Mini-Dinossauro de Plástico",
@@ -105,15 +108,11 @@
                 quantidade: 10000,
                 precoVendaUnidade: 1.50
             },
-            selecao: {
-                maquina: null,
-                molde: null,
-            },
-            calculos: {} // Para guardar resultados dos cálculos financeiros e de recursos
+            selecao: { maquina: null, molde: null },
+            calculos: {}
         };
 
         // --- ELEMENTOS DO DOM ---
-        // Guarda as referências aos elementos do HTML para não repetir document.getElementById
         const DOM = {
             modalOrdem: document.getElementById('modal-ordem-producao'),
             ordemCliente: document.getElementById('ordem-cliente'),
@@ -151,27 +150,39 @@
         }
 
         function popularSeletorMaquinas() {
-            // TODO: Implementar a lógica para preencher o <select> com as máquinas do usuário
-            // Exemplo:
-            // const maquinas = estado.dadosUsuario.maquinas;
-            // maquinas.forEach(maq => { ... });
-            DOM.selectMaquina.innerHTML = '<option value="">Selecione uma máquina</option><option value="maq01">Injetora Alpha</option>';
+            const maquinas = estado.dadosUsuario.maquinas || [];
+            DOM.selectMaquina.innerHTML = '<option value="">Selecione uma máquina...</option>';
+            
+            maquinas.forEach(maquinaNome => {
+                const option = document.createElement('option');
+                option.value = maquinaNome;
+                option.textContent = maquinaNome;
+                DOM.selectMaquina.appendChild(option);
+            });
+        }
+
+        function popularSeletorMoldes() {
+            const moldes = estado.dadosUsuario.moldes || [];
+            DOM.selectMolde.innerHTML = '<option value="">Selecione um molde...</option>';
+
+            moldes.forEach(moldeNome => {
+                const option = document.createElement('option');
+                option.value = moldeNome;
+                option.textContent = moldeNome;
+                DOM.selectMolde.appendChild(option);
+            });
         }
 
         function atualizarPainelFinanceiro() {
             // TODO: Implementar a lógica que pega os dados de estado.calculos
-            // e atualiza os textContent dos elementos em DOM.resumoFinanceiro
         }
 
         // --- FUNÇÕES DE LÓGICA (Calculam os dados) ---
         
         function calcularCustos() {
             // TODO: Aqui entra a sua lógica de negócio.
-            // Com base em estado.selecao.maquina e estado.selecao.molde,
-            // calcule os custos, tempo, etc., e guarde em estado.calculos.
-            console.log("Calculando custos para a máquina e molde selecionados...");
+            console.log("Calculando custos para:", estado.selecao.maquina, "e", estado.selecao.molde);
             
-            // Depois de calcular, chame a função para atualizar a tela
             atualizarPainelFinanceiro();
         }
 
@@ -188,14 +199,13 @@
             if (maquinaId) {
                 estado.selecao.maquina = maquinaId;
                 DOM.selectMolde.disabled = false;
-                // TODO: Popular o seletor de moldes com base na máquina selecionada
-                DOM.selectMolde.innerHTML = '<option value="">Selecione um molde</option><option value="molde_dino">Molde de Dinossauro</option>';
+                popularSeletorMoldes();
             } else {
                 estado.selecao.maquina = null;
+                estado.selecao.molde = null;
                 DOM.selectMolde.disabled = true;
                 DOM.selectMolde.innerHTML = '<option>Aguardando máquina...</option>';
             }
-            // Limpa os cálculos anteriores se a máquina mudar
             estado.calculos = {};
             atualizarPainelFinanceiro();
         }
@@ -204,22 +214,22 @@
             const moldeId = event.target.value;
             if (moldeId) {
                 estado.selecao.molde = moldeId;
-                // Quando o molde é selecionado, podemos calcular tudo
                 calcularCustos();
             }
         }
         
         async function init() {
-            // Função principal que começa o jogo nesta página
             const userDocRef = doc(db, "usuarios", estado.usuario.uid);
             const userDocSnap = await getDoc(userDocRef);
 
             if (userDocSnap.exists()) {
                 estado.dadosUsuario = userDocSnap.data();
+                console.log("Dados do usuário carregados:", estado.dadosUsuario);
                 renderizarModalProposta();
             } else {
                 alert("Erro crítico: Não foi possível carregar os dados do seu usuário.");
-                window.location.href = "../login.html"; // Volta se não achar o perfil
+                // CORREÇÃO: Usar um caminho absoluto para o redirecionamento
+                window.location.href = "/sitejoin/login.html";
             }
         }
 
@@ -228,9 +238,11 @@
             if (user) {
                 document.body.style.display = 'block';
                 estado.usuario = user;
-                init(); // Inicia a lógica da página
+                init();
             } else {
-                window.location.href = '../login.html';
+                // Redireciona para a página de login se não estiver autenticado
+                // CORREÇÃO: Usar um caminho absoluto para o redirecionamento
+                window.location.href = '/sitejoin/login.html';
             }
         });
 
@@ -242,4 +254,7 @@
 
     </script>
 </body>
-</html> 
+</html>
+```
+
+Eu fiz algumas alterações. Corrigi os caminhos de redirecionamento para o login para que usem um caminho absoluto (`/sitejoin/login.html`), o que resolve o erro de URL inválida que você estava a receber. Por favor, teste novamen

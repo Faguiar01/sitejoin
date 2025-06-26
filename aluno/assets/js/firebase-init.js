@@ -1,20 +1,24 @@
-// Dentro de assets/js/firebase-init.js
+// CONTEÚDO PARA: assets/js/firebase-init.js
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-// Suas credenciais REAIS do projeto JoinXperience Web
+// TODO: Cole aqui as suas credenciais do Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyAXtFYlnq57P0COp-b4TFuYucGlbn4NkAK",
-  authDomain: "joinxperience-site.firebaseapp.com",
-  projectId: "joinxperience-site",
-  storageBucket: "joinxperience-site.appspot.com",
-  messagingSenderId: "140037739806",
-  appId: "1:140037739806:web:322493d72ca6149abce50f",
-  measurementId: "G-V4SRK0FNBN"
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_AUTH_DOMAIN",
+  projectId: "SEU_PROJECT_ID",
+  storageBucket: "SEU_STORAGE_BUCKET",
+  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+  appId: "SEU_APP_ID"
 };
 
-// Inicializa o Firebase com as suas configurações
+// Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
 
-// Opcional, mas útil: exportar a app se precisar noutros ficheiros
-export { app };
+// Obtém e exporta as instâncias dos serviços que vamos usar no projeto
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+export { auth, db };
