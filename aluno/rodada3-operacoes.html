@@ -82,12 +82,11 @@
         import { getFirestore, doc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         // --- CONFIGURAÇÃO FIREBASE ---
-        // Suas credenciais do Firebase que já estavam no ficheiro.
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
             projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com", // Corrigido para o domínio correto
+            storageBucket: "joinxperience-site.appspot.com",
             messagingSenderId: "140037739806",
             appId: "1:140037739806:web:322493d72ca6149abce50f",
             measurementId: "G-V4SRK0FNBN"
@@ -228,8 +227,8 @@
                 renderizarModalProposta();
             } else {
                 alert("Erro crítico: Não foi possível carregar os dados do seu usuário.");
-                // CORREÇÃO: Usar um caminho absoluto para o redirecionamento
-                window.location.href = "/sitejoin/login.html";
+                // CORREÇÃO FINAL: Usar a URL completa e absoluta
+                window.location.href = "https://faguiar01.github.io/sitejoin/login.html";
             }
         }
 
@@ -241,8 +240,8 @@
                 init();
             } else {
                 // Redireciona para a página de login se não estiver autenticado
-                // CORREÇÃO: Usar um caminho absoluto para o redirecionamento
-                window.location.href = '/sitejoin/login.html';
+                // CORREÇÃO FINAL: Usar a URL completa e absoluta
+                window.location.href = 'https://faguiar01.github.io/sitejoin/login.html';
             }
         });
 
