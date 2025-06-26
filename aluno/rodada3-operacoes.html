@@ -149,9 +149,18 @@
         }
 
         function popularSeletorMaquinas() {
-            const maquinas = estado.dadosUsuario.maquinas || [];
-            DOM.selectMaquina.innerHTML = '<option value="">Selecione uma máquina...</option>';
+            // NOVO: Adicionado log para diagnóstico
+            console.log("Tentando popular seletor de máquinas. Dados do usuário:", estado.dadosUsuario);
             
+            const maquinas = estado.dadosUsuario.maquinas;
+
+            if (!maquinas || !Array.isArray(maquinas) || maquinas.length === 0) {
+                console.warn("AVISO: O campo 'maquinas' não foi encontrado, não é um array ou está vazio nos dados do usuário.");
+                DOM.selectMaquina.innerHTML = '<option value="">Nenhuma máquina disponível</option>';
+                return;
+            }
+            
+            DOM.selectMaquina.innerHTML = '<option value="">Selecione uma máquina...</option>';
             maquinas.forEach(maquinaNome => {
                 const option = document.createElement('option');
                 option.value = maquinaNome;
@@ -161,9 +170,18 @@
         }
 
         function popularSeletorMoldes() {
-            const moldes = estado.dadosUsuario.moldes || [];
-            DOM.selectMolde.innerHTML = '<option value="">Selecione um molde...</option>';
+             // NOVO: Adicionado log para diagnóstico
+            console.log("Tentando popular seletor de moldes. Dados do usuário:", estado.dadosUsuario);
 
+            const moldes = estado.dadosUsuario.moldes;
+
+            if (!moldes || !Array.isArray(moldes) || moldes.length === 0) {
+                console.warn("AVISO: O campo 'moldes' não foi encontrado, não é um array ou está vazio nos dados do usuário.");
+                DOM.selectMolde.innerHTML = '<option value="">Nenhum molde disponível</option>';
+                return;
+            }
+
+            DOM.selectMolde.innerHTML = '<option value="">Selecione um molde...</option>';
             moldes.forEach(moldeNome => {
                 const option = document.createElement('option');
                 option.value = moldeNome;
@@ -223,11 +241,12 @@
 
             if (userDocSnap.exists()) {
                 estado.dadosUsuario = userDocSnap.data();
-                console.log("Dados do usuário carregados:", estado.dadosUsuario);
+                // NOVO: Log mais importante para diagnóstico.
+                console.log("DADOS COMPLETOS RECEBIDOS DO FIRESTORE:", estado.dadosUsuario);
                 renderizarModalProposta();
             } else {
+                console.error("ERRO: Documento do usuário não encontrado no Firestore para o UID:", estado.usuario.uid);
                 alert("Erro crítico: Não foi possível carregar os dados do seu usuário.");
-                // CORREÇÃO FINAL: Usar a URL completa e absoluta
                 window.location.href = "https://faguiar01.github.io/sitejoin/login.html";
             }
         }
@@ -239,8 +258,6 @@
                 estado.usuario = user;
                 init();
             } else {
-                // Redireciona para a página de login se não estiver autenticado
-                // CORREÇÃO FINAL: Usar a URL completa e absoluta
                 window.location.href = 'https://faguiar01.github.io/sitejoin/login.html';
             }
         });
