@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rodada 3 - Operações | Xperience InovaPlas</title>
-
     <style>
-        /* Esconde o corpo da página até que o script de autenticação decida se o usuário pode vê-la */
-        body { display: none; }
+        /* Esconde a página até o script verificar o login para evitar piscar de conteúdo */
+        body { display: none; } 
     </style>
 </head>
 <body>
@@ -18,62 +17,16 @@
     </header>
 
     <main>
-        <div id="modal-ordem-producao" style="display: none;">
-            <h2>Nova Ordem de Produção Recebida!</h2>
-            <p>A empresa <strong id="ordem-cliente"></strong> encomendou <strong id="ordem-quantidade"></strong> unidades do produto <strong id="ordem-produto"></strong>.</p>
-            <p>Preço de venda acordado: <strong id="ordem-preco-venda"></strong> por unidade.</p>
-            <button id="btn-aceitar-ordem">Aceitar Contrato</button>
-            <button id="btn-rejeitar-ordem">Rejeitar Contrato</button>
-        </div>
-
-        <div id="painel-configuracao" style="display: none;">
-            <h3>Configure a Linha de Produção</h3>
-            <div>
-                <label for="select-maquina">1. Selecione a Máquina Injetora:</label>
-                <select id="select-maquina"><option>Carregando máquinas...</option></select>
-            </div>
-            <div>
-                <label for="select-molde">2. Selecione o Molde:</label>
-                <select id="select-molde"><option>Aguardando seleção da máquina...</option></select>
-            </div>
-            <hr>
-            <h4>Pré-Produção: Verificação de Recursos</h4>
-            <div id="resumo-recursos">
-                <p>Matéria-prima necessária: <strong id="recurso-necessario">--</strong> kg.</p>
-                <p>Matéria-prima em stock: <strong id="recurso-disponivel">--</strong> kg.</p>
-                <div id="alerta-recursos" style="display: none; color: red;">
-                    <p>Atenção! Matéria-prima insuficiente.</p>
-                    <button id="btn-comprar-materia-prima">Ir para Compras</button>
-                </div>
-            </div>
-            <hr>
-            <h4>Análise Financeira da Produção</h4>
-            <div id="resumo-financeiro">
-                <p>Tempo de Produção Estimado: <strong id="financeiro-tempo">--</strong> horas.</p>
-                <p>Custo Operacional (Energia + M.O.): <strong id="financeiro-custo-operacional">$ --</strong></p>
-                <p>Custo da Matéria-Prima: <strong id="financeiro-custo-materia-prima">$ --</strong></p>
-                <h3>Custo Total da Produção: <strong id="financeiro-custo-total">$ --</strong></h3>
-                <p>Receita Bruta do Contrato: <strong id="financeiro-receita">$ --</strong></p>
-                <h2>Lucro Potencial: <strong id="financeiro-lucro">$ --</strong></h2>
-            </div>
-            <button id="btn-confirmar-producao" disabled>Confirmar e Iniciar Produção</button>
-        </div>
-
-        <div id="modal-resultado" style="display: none;">
-            <h2 id="resultado-titulo">--</h2>
-            <p id="resultado-descricao">--</p>
-            <button id="btn-fechar-resultado">Ok, entendi.</button>
-        </div>
+        <p>Bem-vindo, aluno! Conteúdo da página de operações.</p>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getFirestore, doc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
-        // --- CONFIGURAÇÃO ---
+        // Configuração do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57P0COp-b4TFuYucGlbn4NkAk", // A correção no Google Cloud fará esta chave funcionar
+            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
             projectId: "joinxperience-site",
             storageBucket: "joinxperience-site.firebasestorage.app",
@@ -82,133 +35,22 @@
             measurementId: "G-V4SRK0FNBN"
         };
 
-        // --- INICIALIZAÇÃO FIREBASE ---
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- ESTADO DA PÁGINA ---
-        // Centraliza todos os dados dinâmicos aqui. Facilita o debug e a gestão.
-        const estado = {
-            usuario: null,
-            dadosUsuario: null,
-            ordemDeProducao: {
-                cliente: "Global Toys",
-                produtoNome: "Mini-Dinossauro de Plástico",
-                produtoId: "prod_dino_01",
-                quantidade: 10000,
-                precoVenda: 1.50
-            },
-            maquinaSelecionada: null,
-            moldeSelecionado: null,
-            analiseFinanceira: {}
-        };
-
-        // --- ELEMENTOS DO DOM ---
-        // Centraliza todas as referências ao HTML. Fácil de encontrar e manter.
-        const DOM = {
-            modalOrdem: document.getElementById('modal-ordem-producao'),
-            painelConfiguracao: document.getElementById('painel-configuracao'),
-            // Modal Ordem
-            ordemCliente: document.getElementById('ordem-cliente'),
-            ordemQuantidade: document.getElementById('ordem-quantidade'),
-            ordemProduto: document.getElementById('ordem-produto'),
-            ordemPrecoVenda: document.getElementById('ordem-preco-venda'),
-            btnAceitarOrdem: document.getElementById('btn-aceitar-ordem'),
-            btnRejeitarOrdem: document.getElementById('btn-rejeitar-ordem'),
-            // Painel Configuração
-            selectMaquina: document.getElementById('select-maquina'),
-            selectMolde: document.getElementById('select-molde'),
-            // ... (adicionar outros elementos do painel conforme necessário)
-        };
-
-        // --- FUNÇÕES DE LÓGICA / REGRAS DE NEGÓCIO ---
-
-        async function carregarDadosDoUsuario(uid) {
-            const userDocRef = doc(db, "usuarios", uid);
-            const userDoc = await getDoc(userDocRef);
-            if (userDoc.exists()) {
-                estado.dadosUsuario = userDoc.data();
-                console.log("Dados do utilizador carregados:", estado.dadosUsuario);
-            } else {
-                console.error("Documento do utilizador não encontrado!");
-                alert("Erro crítico: não foi possível carregar os dados do seu usuário.");
-            }
-        }
-
-        // --- FUNÇÕES DE RENDERIZAÇÃO / ATUALIZAÇÃO DA UI ---
-
-        function renderizarModalOrdem() {
-            const { cliente, quantidade, produtoNome, precoVenda } = estado.ordemDeProducao;
-            DOM.ordemCliente.textContent = cliente;
-            DOM.ordemQuantidade.textContent = quantidade.toLocaleString('pt-BR');
-            DOM.ordemProduto.textContent = produtoNome;
-            DOM.ordemPrecoVenda.textContent = precoVenda.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            DOM.modalOrdem.style.display = 'block';
-        }
-
-        function popularSeletorMaquinas() {
-            DOM.selectMaquina.innerHTML = '';
-            const defaultOption = document.createElement('option');
-            defaultOption.value = "";
-            defaultOption.textContent = "Selecione uma máquina";
-            DOM.selectMaquina.appendChild(defaultOption);
-
-            const maquinas = estado.dadosUsuario?.maquinas;
-            if (maquinas && maquinas.length > 0) {
-                maquinas.forEach(maquina => {
-                    const option = document.createElement('option');
-                    option.value = maquina.id;
-                    option.textContent = maquina.nome;
-                    DOM.selectMaquina.appendChild(option);
-                });
-            } else {
-                defaultOption.textContent = "Nenhuma máquina encontrada";
-            }
-        }
-
-        // --- HANDLERS DE EVENTOS ---
-
-        async function handleAceitarOrdem() {
-            DOM.modalOrdem.style.display = 'none';
-            DOM.painelConfiguracao.style.display = 'block';
-            if (!estado.dadosUsuario) {
-                await carregarDadosDoUsuario(estado.usuario.uid);
-            }
-            popularSeletorMaquinas();
-        }
-
-        function handleRejeitarOrdem() {
-            alert("Você rejeitou o contrato. Esta decisão não poderá ser alterada nesta rodada.");
-            DOM.btnAceitarOrdem.disabled = true;
-            DOM.btnRejeitarOrdem.disabled = true;
-        }
-
-        // --- PONTO DE ENTRADA E GUARDA DE ROTA ---
-
-        onAuthStateChanged(auth, async (user) => {
+        // --- GUARDA DE ROTA ---
+        onAuthStateChanged(auth, (user) => {
             if (user) {
-                // O observador permanece ativo para maior segurança.
-                // A página só é exibida quando temos certeza que o usuário está logado.
+                // Se o usuário está logado, mostra o conteúdo da página
+                console.log("Acesso permitido para:", user.uid);
                 document.body.style.display = 'block';
-                estado.usuario = user;
-
-                // Inicia o fluxo da página
-                renderizarModalOrdem();
-
             } else {
-                console.log("Acesso negado. Usuário não autenticado. Redirecionando para login...");
-                window.location.href = "/login.html";
+                // Se o usuário NÃO está logado, redireciona para a página de login
+                console.log("Acesso negado. Redirecionando para login...");
+                // CORREÇÃO FINAL: Caminho relativo para voltar uma pasta e encontrar o login.html
+                window.location.href = '../login.html';
             }
         });
-
-        // --- REGISTRO DE EVENTOS ---
-        // Mantém todos os addEventListener juntos para maior clareza.
-        DOM.btnAceitarOrdem.addEventListener('click', handleAceitarOrdem);
-        DOM.btnRejeitarOrdem.addEventListener('click', handleRejeitarOrdem);
-        // Futuro: DOM.selectMaquina.addEventListener('change', handleSelecaoMaquina);
-
     </script>
-
 </body>
 </html>
