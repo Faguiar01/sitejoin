@@ -186,10 +186,9 @@
                     const userData = userDocSnap.data();
                     
                     if (userData.perfil === 'professor') {
-                        // Este caminho está correto de acordo com a sua estrutura de ficheiros
                         window.location.href = 'professor/professor.html';
                     } else {
-                        // CORREÇÃO FINAL: Apontar para o ficheiro correto na pasta do aluno
+                        // Confirme que o ficheiro com este nome exato existe na pasta 'aluno'
                         window.location.href = 'aluno/rodada3-operacoes.html';
                     }
                 } else {
