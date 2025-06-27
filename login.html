@@ -74,72 +74,49 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        /**
-         * Busca os dados do usuário e o redireciona para a página correta.
-         * @param {string} uid - O ID do usuário do Firebase.
-         */
         async function redirecionarPorPerfil(uid) {
-            console.log(`[DEBUG] Iniciando redirecionamento para o UID: ${uid}`);
             const userDocRef = doc(db, "usuarios", uid);
             const userDocSnap = await getDoc(userDocRef);
 
             if (userDocSnap.exists()) {
                 const userData = userDocSnap.data();
-                console.log("[DEBUG] Dados do usuário encontrados no Firestore:", userData); // LOG DOS DADOS
-
                 const perfil = userData.perfil;
-                console.log(`[DEBUG] Perfil lido do banco de dados: '${perfil}'`); // LOG DO PERFIL
-
                 let destino = '';
 
                 if (perfil === 'professor') {
-                    console.log("[DEBUG] Condição 'professor' é VERDADEIRA. Redirecionando para a página do professor.");
                     destino = './professor/professor.html';
                 } else if (perfil === 'aluno') {
-                    console.log("[DEBUG] Condição 'aluno' é VERDADEIRA. Verificando rodada...");
                     const rodadaAtual = userData.rodadaAtual;
-                    console.log(`[DEBUG] Rodada atual lida do banco de dados: ${rodadaAtual}`);
-                    
                     if (!userData.turmaId) {
-                        console.log("[DEBUG] Aluno sem turmaId. Redirecionando para xperience.html.");
                         destino = './aluno/xperience.html';
                     } else {
                         switch (rodadaAtual) {
                             case 1: destino = './aluno/rodada1-nivelamento.html'; break;
                             case 2: destino = './aluno/rodada2-fundacao.html'; break;
                             case 3: destino = './aluno/rodada3-operacoes.html'; break;
-                            default: destino = './aluno/xperience.html'; // Segurança
+                            default: destino = './aluno/xperience.html';
                         }
-                        console.log(`[DEBUG] Aluno na rodada ${rodadaAtual}. Destino definido para: ${destino}`);
                     }
                 }
-
+                
                 if (destino) {
-                    console.log(`[DEBUG] Redirecionamento final para: ${destino}`);
                     window.location.href = destino;
-                } else {
-                    console.error("[DEBUG] Perfil de usuário desconhecido ou sem destino definido. Nenhum redirecionamento será feito.");
                 }
             } else {
-                console.error(`[DEBUG] ERRO: Documento para o usuário com UID: ${uid} não foi encontrado na coleção 'usuarios'.`);
-                // Opcional: deslogar o usuário se os dados não existirem.
-                // await auth.signOut();
+                alert("Erro: Dados de perfil não encontrados. Contacte o suporte.");
+                auth.signOut();
             }
         }
 
-        // VERIFICAÇÃO INICIAL: Se o usuário já estiver logado, redireciona imediatamente.
-        onAuthStateChanged(auth, (user) => {
+        const unsub = onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log("Usuário já está logado. Verificando perfil para redirecionamento...");
                 redirecionarPorPerfil(user.uid);
             } else {
-                // Se não há usuário, mostra a página de login.
-                console.log("Nenhum usuário logado. Exibindo formulário de login.");
                 document.body.style.display = 'flex';
+                unsub();
             }
         });
 
-        // LÓGICA DO FORMULÁRIO DE LOGIN
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -152,20 +129,10 @@
 
             try {
                 await setPersistence(auth, browserLocalPersistence);
-                const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-                // O onAuthStateChanged é acionado automaticamente após o sucesso do login,
-                // que por sua vez chama a função redirecionarPorPerfil.
-                // Não é necessário fazer mais nada aqui.
-                console.log("Login bem-sucedido. Aguardando o redirecionamento pelo onAuthStateChanged...");
+                await signInWithEmailAndPassword(auth, email, senha);
+                // O onAuthStateChanged irá tratar do redirecionamento.
             } catch (error) {
-                console.error("Erro na autenticação:", error);
-                let errorMessage = "Erro ao fazer login. ";
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    errorMessage += "E-mail ou senha inválidos.";
-                } else {
-                    errorMessage += "Por favor, tente novamente.";
-                }
-                alert(errorMessage);
+                alert("E-mail ou senha inválidos. Tente novamente.");
                 loginButton.disabled = false;
                 loginButton.textContent = "Entrar";
             }
