@@ -79,20 +79,30 @@
          * @param {string} uid - O ID do usuário do Firebase.
          */
         async function redirecionarPorPerfil(uid) {
+            console.log(`[DEBUG] Iniciando redirecionamento para o UID: ${uid}`);
             const userDocRef = doc(db, "usuarios", uid);
             const userDocSnap = await getDoc(userDocRef);
 
             if (userDocSnap.exists()) {
                 const userData = userDocSnap.data();
+                console.log("[DEBUG] Dados do usuário encontrados no Firestore:", userData); // LOG DOS DADOS
+
                 const perfil = userData.perfil;
+                console.log(`[DEBUG] Perfil lido do banco de dados: '${perfil}'`); // LOG DO PERFIL
+
                 let destino = '';
 
                 if (perfil === 'professor') {
+                    console.log("[DEBUG] Condição 'professor' é VERDADEIRA. Redirecionando para a página do professor.");
                     destino = './professor/professor.html';
                 } else if (perfil === 'aluno') {
+                    console.log("[DEBUG] Condição 'aluno' é VERDADEIRA. Verificando rodada...");
                     const rodadaAtual = userData.rodadaAtual;
+                    console.log(`[DEBUG] Rodada atual lida do banco de dados: ${rodadaAtual}`);
+                    
                     if (!userData.turmaId) {
-                        destino = './aluno/xperience.html'; // Aluno sem turma
+                        console.log("[DEBUG] Aluno sem turmaId. Redirecionando para xperience.html.");
+                        destino = './aluno/xperience.html';
                     } else {
                         switch (rodadaAtual) {
                             case 1: destino = './aluno/rodada1-nivelamento.html'; break;
@@ -100,16 +110,18 @@
                             case 3: destino = './aluno/rodada3-operacoes.html'; break;
                             default: destino = './aluno/xperience.html'; // Segurança
                         }
+                        console.log(`[DEBUG] Aluno na rodada ${rodadaAtual}. Destino definido para: ${destino}`);
                     }
                 }
 
                 if (destino) {
+                    console.log(`[DEBUG] Redirecionamento final para: ${destino}`);
                     window.location.href = destino;
                 } else {
-                    console.error("Perfil de usuário desconhecido ou sem destino definido.");
+                    console.error("[DEBUG] Perfil de usuário desconhecido ou sem destino definido. Nenhum redirecionamento será feito.");
                 }
             } else {
-                console.error("Dados do usuário não encontrados no Firestore.");
+                console.error(`[DEBUG] ERRO: Documento para o usuário com UID: ${uid} não foi encontrado na coleção 'usuarios'.`);
                 // Opcional: deslogar o usuário se os dados não existirem.
                 // await auth.signOut();
             }
@@ -118,10 +130,11 @@
         // VERIFICAÇÃO INICIAL: Se o usuário já estiver logado, redireciona imediatamente.
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log("Usuário já está logado. Redirecionando...");
+                console.log("Usuário já está logado. Verificando perfil para redirecionamento...");
                 redirecionarPorPerfil(user.uid);
             } else {
                 // Se não há usuário, mostra a página de login.
+                console.log("Nenhum usuário logado. Exibindo formulário de login.");
                 document.body.style.display = 'flex';
             }
         });
@@ -140,8 +153,10 @@
             try {
                 await setPersistence(auth, browserLocalPersistence);
                 const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-                // O onAuthStateChanged já terá sido acionado e fará o redirecionamento.
-                // Não precisamos fazer mais nada aqui.
+                // O onAuthStateChanged é acionado automaticamente após o sucesso do login,
+                // que por sua vez chama a função redirecionarPorPerfil.
+                // Não é necessário fazer mais nada aqui.
+                console.log("Login bem-sucedido. Aguardando o redirecionamento pelo onAuthStateChanged...");
             } catch (error) {
                 console.error("Erro na autenticação:", error);
                 let errorMessage = "Erro ao fazer login. ";
@@ -158,12 +173,3 @@
     </script>
 </body>
 </html>
-```
-
-### Resumo da Correção
-
-* **Autossuficiente:** O ficheiro `login.html` agora contém toda a lógica necessária e não depende mais de ficheiros externos que não estavam a ser encontrados.
-* **Redirecionamento Automático:** Se você já estiver logado e acidentalmente voltar à página de login, o script irá detetar isso e redirecioná-lo para a sua página correta sem que você precise de fazer nada.
-* **Lógica de Login Mantida:** A funcionalidade de entrar com e-mail e senha continua a mesma, mas agora, após o sucesso, o redirecionamento é feito de forma dinâmica e correta.
-
-Por favor, atualize o seu ficheiro `login.html` com este novo código. Isto deve resolver o problema do login e permitir que o fluxo do seu projeto funcione como espera
