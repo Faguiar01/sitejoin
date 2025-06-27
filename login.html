@@ -145,7 +145,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -161,9 +161,12 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        
-        // O novo auth-guard.js irá lidar com o redirecionamento se o usuário já estiver logado.
-        // Apenas precisamos garantir que o formulário de login seja exibido.
+
+        // Incluir o auth-guard para redirecionar usuários já logados
+        // O script auth-guard.js agora é o responsável por verificar se o usuário já está logado
+        // e redirecioná-lo antes mesmo da página de login carregar completamente.
+        // Certifique-se que o auth-guard.js está sendo importado.
+        // Para esta página, vamos apenas garantir que o formulário apareça.
         document.body.style.display = 'flex';
 
         const loginForm = document.getElementById('login-form');
@@ -177,24 +180,50 @@
             loginButton.textContent = "Entrando...";
 
             try {
+                // Define a persistência da sessão
                 await setPersistence(auth, browserLocalPersistence);
                 const userCredential = await signInWithEmailAndPassword(auth, email, senha);
                 const user = userCredential.user;
+
+                // Após o login, busca os dados do usuário para decidir para onde redirecionar
                 const userDocRef = doc(db, "usuarios", user.uid);
                 const userDocSnap = await getDoc(userDocRef);
 
                 if (userDocSnap.exists()) {
                     const userData = userDocSnap.data();
-                    
-                    // LÓGICA DE REDIRECIONAMENTO SIMPLIFICADA
-                    // O auth-guard.js fará o trabalho de direcionar para a rodada correta.
-                    // Nós apenas o enviamos para a "porta de entrada" do seu painel.
-                    if (userData.perfil === 'professor') {
-                        window.location.href = 'professor/index.html'; // URL relativa para a pasta do professor
-                    } else {
-                        // Enviamos o aluno para uma página genérica. O auth-guard.js fará o resto.
-                        window.location.href = 'aluno/xperience.html'; // URL relativa para a pasta do aluno
+                    const perfil = userData.perfil;
+                    const urlBase = "https://faguiar01.github.io/sitejoin";
+
+                    let urlDestino = `${urlBase}/login.html`; // URL padrão em caso de erro
+
+                    if (perfil === 'professor') {
+                        urlDestino = `${urlBase}/professor/index.html`;
+                    } else if (perfil === 'aluno') {
+                        const rodadaAtual = userData.rodadaAtual;
+
+                        // Se o aluno não tem turma/rodada, precisa ser tratado.
+                        // Por agora, vamos assumir que ele deve ir para a rodada 1 ou uma página de espera.
+                        // Se rodadaAtual for null ou undefined, vamos para a rodada 1 como padrão.
+                        switch (rodadaAtual) {
+                            case 1:
+                                urlDestino = `${urlBase}/aluno/rodada1-nivelamento.html`;
+                                break;
+                            case 2:
+                                urlDestino = `${urlBase}/aluno/rodada2-fundacao.html`;
+                                break;
+                            case 3:
+                                urlDestino = `${urlBase}/aluno/rodada3-operacoes.html`;
+                                break;
+                            default:
+                                // Se a rodada for null, 0, ou um número não esperado, envia para uma página inicial de aluno.
+                                // Esta página (xperience.html) deve explicar que ele precisa entrar em uma turma.
+                                urlDestino = `${urlBase}/aluno/xperience.html`;
+                                break;
+                        }
                     }
+                    
+                    window.location.href = urlDestino;
+
                 } else {
                     alert('Erro: Dados de perfil não encontrados para este usuário.');
                     loginButton.disabled = false;
@@ -218,9 +247,12 @@
 </html>
 ```
 
-### O que foi alterado:
+### O Que Esta Correção Faz:
 
-1.  **Redirecionamento do Aluno:** A linha `window.location.href = 'aluno/rodada3-operacoes.html';` foi alterada para `window.location.href = 'aluno/xperience.html';`.
-2.  **Lógica Centralizada:** Agora, quando um aluno fizer login, ele será enviado para a página `xperience.html`. O nosso novo `auth-guard.js` (que deve ser incluído em todas as páginas de aluno e professor) irá então verificar a `rodadaAtual` e, se necessário, redirecioná-lo para a página da rodada correta.
+* **Lógica no Login:** Agora, a página `login.html` é responsável por verificar o perfil e a `rodadaAtual` do utilizador **logo após o login**.
+* **Redirecionamento Dinâmico:** Ela constrói a URL correta com base nesses dados e envia o utilizador para o sítio certo.
+* **Caso Padrão:** Se um aluno não tiver uma `rodadaAtual` (como o "João", que tem `null`), ele será enviado para a página `aluno/xperience.html`. Esta página pode servir como uma "sala de espera" onde você pode instruí-lo a pedir o código da turma ao professor.
 
-Isso resolve o problema de forma definitiva. Se um aluno estiver na rodada 1, ele será enviado para a página da rodada 1. Se estiver na 2, para a 2, e assim por dian
+Depois de aplicar esta mudança, por favor, teste novamente o login. Um utilizador com `rodadaAtual: 1` deve ir para a página da rodada 1. O utilizador "João" (com `rodadaAtual: null`) deverá ir para `xperience.html`.
+
+Quando confirmar que isto está a funcionar, o nosso próximo passo será corrigir a página `cadastro.html` para que novos alunos sejam obrigados a inserir um código de tur
