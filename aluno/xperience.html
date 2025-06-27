@@ -3,61 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xperience InovaPlas - Simulação</title>
-
+    <title>Aguardando Início - Xperience InovaPlas</title>
     <style>
         body { 
-            display: none; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f7f6; 
+            margin: 0; 
+            padding: 20px; 
+            display: none; /* Oculto por padrão, o auth-guard irá mostrar */
+            text-align: center;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
+        .container { 
+            max-width: 600px; 
+            background: #fff; 
+            padding: 40px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+        h1 { color: #003366; }
+        p { font-size: 1.1em; line-height: 1.6; }
+        a { color: #0052CC; text-decoration: none; font-weight: bold; }
     </style>
+    <!-- Importa o nosso roteador inteligente. O caminho ../ sobe uma pasta. -->
+    <script type="module" src="../assets/js/auth-guard.js"></script>
 </head>
-
 <body>
-
-    <header>
-        <h1>Bem-vindo ao Xperience InovaPlas</h1>
-    </header>
-
-    <main>
-        <h2>Painel de Simulação</h2>
-        <p>Este é o conteúdo protegido que apenas utilizadores logados podem ver.</p>
-    </main>
-
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js" type="module"></script>
+    <div class="container">
+        <h1>Quase lá!</h1>
+        <p>O seu cadastro foi realizado com sucesso.</p>
+        <p>Agora, você precisa aguardar o seu professor iniciar a simulação para a sua turma.</p>
+        <p>Se você ainda não informou o seu e-mail ao professor, por favor, faça-o para que ele possa adicioná-lo à turma correta.</p>
+        <br>
+        <p><a href="../login.html" id="logout-link">Sair</a></p>
+    </div>
 
     <script type="module">
-        // --- CONTEÚDO DO 'firebase-init.js' ---
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        // Este script é apenas para o botão de logout
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { auth } from '../assets/js/firebase-init.js';
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyAXtFYlnq57P0COp-b4TFuYucGlbn4NkAK",
-          authDomain: "joinxperience-site.firebaseapp.com",
-          projectId: "joinxperience-site",
-          storageBucket: "joinxperience-site.appspot.com",
-          messagingSenderId: "140037739806",
-          appId: "1:140037739806:web:322493d72ca6149abce50f",
-          measurementId: "G-V4SRK0FNBN"
-        };
-
-        const app = initializeApp(firebaseConfig);
-
-        // --- CONTEÚDO DO 'auth-guard.js' ---
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-
-        const auth = getAuth();
-
-        onAuthStateChanged(auth, (user) => {
-          if (user) {
-            console.log("Acesso autorizado. A exibir página.");
-            document.body.style.display = 'block';
-          } else {
-            console.error("Acesso negado. A redirecionar...");
-            // LINHA CORRIGIDA: Usando caminho relativo para subir uma pasta
-            window.location.href = "../login.html"; 
-          }
+        const logoutLink = document.getElementById('logout-link');
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => {
+                window.location.href = '../login.html';
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+            });
         });
     </script>
-
 </body>
 </html>

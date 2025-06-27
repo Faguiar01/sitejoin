@@ -7,6 +7,7 @@
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 // Importa as variáveis 'auth' e 'db' do seu ficheiro de inicialização.
+// VERIFIQUE SE O CAMINHO PARA O SEU FICHEIRO ESTÁ CORRETO.
 import { auth, db } from './firebase-init.js';
 
 /**
@@ -16,13 +17,11 @@ import { auth, db } from './firebase-init.js';
  */
 function getTargetURL(userData) {
     const perfil = userData.perfil;
-    // IMPORTANTE: Esta é a URL base do seu projeto no GitHub Pages.
-    const urlBase = "https://faguiar01.github.io/sitejoin"; 
+    const urlBase = "https://faguiar01.github.io/sitejoin";
 
     if (perfil === 'aluno') {
         const rodadaAtual = userData.rodadaAtual;
         
-        // Se o aluno não tem turmaId, ele deve ser enviado para uma página de espera.
         if (!userData.turmaId) {
             return `${urlBase}/aluno/xperience.html`;
         }
@@ -31,16 +30,13 @@ function getTargetURL(userData) {
             case 1: return `${urlBase}/aluno/rodada1-nivelamento.html`;
             case 2: return `${urlBase}/aluno/rodada2-fundacao.html`;
             case 3: return `${urlBase}/aluno/rodada3-operacoes.html`;
-            // Adicione outras rodadas aqui no futuro
             default:
-                // Se a rodada for inválida, envia para a página de espera.
                 return `${urlBase}/aluno/xperience.html`;
         }
     } else if (perfil === 'professor') {
-        return `${urlBase}/professor/professor.html`; // Página principal do professor
+        return `${urlBase}/professor/professor.html`;
     }
 
-    // Se o perfil for desconhecido, envia para o login como segurança
     return `${urlBase}/login.html`;
 }
 
@@ -49,18 +45,24 @@ onAuthStateChanged(auth, async (user) => {
     const urlBase = "https://faguiar01.github.io/sitejoin";
     const urlLogin = `${urlBase}/login.html`;
     const urlCadastro = `${urlBase}/cadastro.html`;
-    const paginaAtual = window.location.href.split('?')[0]; // Ignora parâmetros de URL
+    
+    // Normaliza a URL atual para evitar problemas com ou sem '/' no final
+    const paginaAtual = window.location.href.split('?')[0].replace(/\/$/, "");
 
     // Se não há utilizador logado...
     if (!user) {
         // ...e a página atual NÃO é a de login nem a de cadastro...
-        if (paginaAtual !== urlLogin && paginaAtual !== urlCadastro) {
+        const paginasPublicas = [urlLogin, urlCadastro, `${urlBase}/`, `${urlBase}/index.html`];
+        if (!paginasPublicas.includes(paginaAtual)) {
             // ...redireciona para o login.
             console.log("Acesso não autorizado. Redirecionando para o login...");
             window.location.href = urlLogin;
         } else {
-            // Se já está na página de login ou cadastro, apenas mostra o conteúdo.
+            // Se já está numa página pública, apenas mostra o conteúdo.
             document.body.style.display = 'block';
+            if (document.body.style.flexDirection) { // Mantém o estilo flex para login/cadastro
+                 document.body.style.display = 'flex';
+            }
         }
         return;
     }
@@ -72,21 +74,46 @@ onAuthStateChanged(auth, async (user) => {
 
         if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
-            const urlDestino = getTargetURL(userData);
+            const urlDestino = getTargetURL(userData).replace(/\/$/, "");
 
             // Se o utilizador está numa página que não é a correta para ele, redireciona.
             if (paginaAtual !== urlDestino) {
-                // Exceção: não redirecionar se já estiver a ir para o destino
-                // Isto previne loops infinitos.
+                // Exceção para páginas de login/cadastro, para evitar loop se já estiver logado
+                if (paginaAtual === urlLogin || paginaAtual === urlCadastro) {
+                     window.location.href = urlDestino;
+                     return;
+                }
+                
+                // Exceção para páginas comuns que todos podem acessar
+                const paginasComuns = [
+                    'xperience.html',
+                    'mural-explorador.html',
+                    'perfil-investidor.html',
+                    'biblioteca.html',
+                    'faq.html'
+                ];
+                const nomePaginaAtual = paginaAtual.split('/').pop();
+                if (userData.perfil === 'aluno' && paginasComuns.includes(nomePaginaAtual)) {
+                     document.body.style.display = 'block'; // Permite o acesso
+                     if (document.body.style.flexDirection) {
+                        document.body.style.display = 'flex';
+                     }
+                     return;
+                }
+
+
                 console.log(`Página atual (${paginaAtual}) é diferente do destino (${urlDestino}). Redirecionando...`);
                 window.location.href = urlDestino;
             } else {
-                // Se chegou aqui, o utilizador está logado e na página correta.
-                document.body.style.display = 'block';
+                // Se já está na página correta, apenas mostra o conteúdo.
+                console.log("Já está na página correta. Exibindo conteúdo.");
+                 document.body.style.display = 'block';
+                 if (document.body.style.flexDirection) {
+                    document.body.style.display = 'flex';
+                 }
             }
 
         } else {
-            // Caso de segurança: utilizador autenticado mas sem registro no Firestore.
             console.error("Erro: Utilizador autenticado mas não encontrado no Firestore. UID:", user.uid);
             window.location.href = urlLogin;
         }
