@@ -41,7 +41,7 @@
                     <label><input type="radio" name="perfil" value="professor"> Sou Professor</label>
                 </div>
 
-                <!-- O campo de código da turma foi removido da lógica principal -->
+                <!-- Campo de código da turma removido da lógica -->
                 <div class="form-group" id="campo-codigo-turma">
                     <label for="codigo-turma">Código da Turma</label>
                     <input type="text" id="codigo-turma" placeholder="Este campo não é mais necessário">
@@ -74,15 +74,8 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Oculta/mostra o campo de código da turma (agora desnecessário, mas mantido para não quebrar o HTML)
-        const campoCodigoTurma = document.getElementById('campo-codigo-turma');
-        document.querySelectorAll('input[name="perfil"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                // O campo de código de turma não é mais usado no cadastro de aluno.
-                campoCodigoTurma.style.display = 'none';
-            });
-        });
-        campoCodigoTurma.style.display = 'none'; // Garante que começa oculto
+        // Garante que o campo de código da turma esteja sempre oculto
+        document.getElementById('campo-codigo-turma').style.display = 'none';
 
         const cadastroForm = document.getElementById("cadastro-form");
         cadastroForm.addEventListener("submit", async (e) => {
@@ -101,7 +94,7 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
                 const user = userCredential.user;
 
-                // 2. Prepara os dados para salvar no Firestore
+                // 2. Prepara os dados do usuário para salvar no Firestore
                 const userData = {
                     nome: nome,
                     email: email,
@@ -111,11 +104,11 @@
                 
                 // Se for aluno, define os valores iniciais.
                 if (perfil === 'aluno') {
-                    userData.turmaId = null; // O aluno começa sem turma
+                    userData.turmaId = null; // O aluno começa SEM TURMA
                     userData.rodadaAtual = 1;   // Começa na rodada 1 por padrão
                 }
 
-                // 3. Salva os dados do novo usuário no Firestore
+                // 3. Salva os dados do novo usuário na coleção 'usuarios'
                 await setDoc(doc(db, "usuarios", user.uid), userData);
 
                 alert("Cadastro realizado com sucesso! Você será redirecionado para a página de login.");
