@@ -5,112 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Join Xperience</title>
     <style>
-        :root {
-            --cor-primaria: #0052CC;
-            --cor-secundaria: #FF4400;
-            --cor-texto: #333;
-            --cor-fundo: #f4f7f6;
-            --cor-branco: #fff;
-        }
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--cor-fundo);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        header.main-header {
-            background-color: var(--cor-branco);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        header.main-header .logo-container {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: var(--cor-texto);
-            font-weight: 600;
-        }
-        header.main-header .logo-container img {
-            height: 50px;
-            margin-right: 15px;
-        }
-        header.main-header nav a {
-            color: var(--cor-texto);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .main-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 50px 20px;
-        }
-        .form-card {
-            background-color: var(--cor-branco);
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 450px;
-        }
-        .form-card h2 {
-            text-align: center;
-            font-size: 2em;
-            margin-top: 0;
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 1em;
-            box-sizing: border-box;
-        }
-        .extra-links {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .extra-links a {
-            color: var(--cor-primaria);
-            text-decoration: none;
-            display: block;
-            margin-top: 10px;
-        }
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 700;
-            text-align: center;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1.1em;
-        }
-        .btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        .btn-primary {
-            background-color: var(--cor-primaria);
-            color: var(--cor-branco);
-        }
+        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: none; flex-direction: column; min-height: 100vh; }
+        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
+        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
+        header.main-header nav a { color: var(--cor-texto); text-decoration: none; font-weight: 500; }
+        .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 50px 20px; }
+        .form-card { background-color: var(--cor-branco); padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        .form-card h2 { text-align: center; font-size: 2em; margin-top: 0; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
+        .extra-links { text-align: center; margin-top: 20px; }
+        .extra-links a { color: var(--cor-primaria); text-decoration: none; display: block; margin-top: 10px; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
     </style>
+    <!-- Adiciona o auth-guard para que ele possa redirecionar um usuário que já tenha sessão ativa -->
+    <script type="module" src="./assets/js/auth-guard.js"></script>
 </head>
 <body>
     <header class="main-header">
@@ -162,13 +76,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Incluir o auth-guard para redirecionar usuários já logados
-        // O script auth-guard.js agora é o responsável por verificar se o usuário já está logado
-        // e redirecioná-lo antes mesmo da página de login carregar completamente.
-        // Certifique-se que o auth-guard.js está sendo importado.
-        // Para esta página, vamos apenas garantir que o formulário apareça.
-        document.body.style.display = 'flex';
-
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -180,7 +87,6 @@
             loginButton.textContent = "Entrando...";
 
             try {
-                // Define a persistência da sessão
                 await setPersistence(auth, browserLocalPersistence);
                 const userCredential = await signInWithEmailAndPassword(auth, email, senha);
                 const user = userCredential.user;
@@ -191,39 +97,34 @@
 
                 if (userDocSnap.exists()) {
                     const userData = userDocSnap.data();
-                    const perfil = userData.perfil;
-                    const urlBase = "https://faguiar01.github.io/sitejoin";
-
-                    let urlDestino = `${urlBase}/login.html`; // URL padrão em caso de erro
-
-                    if (perfil === 'professor') {
-                        urlDestino = `${urlBase}/professor/index.html`;
-                    } else if (perfil === 'aluno') {
-                        const rodadaAtual = userData.rodadaAtual;
-
-                        // Se o aluno não tem turma/rodada, precisa ser tratado.
-                        // Por agora, vamos assumir que ele deve ir para a rodada 1 ou uma página de espera.
-                        // Se rodadaAtual for null ou undefined, vamos para a rodada 1 como padrão.
-                        switch (rodadaAtual) {
-                            case 1:
-                                urlDestino = `${urlBase}/aluno/rodada1-nivelamento.html`;
-                                break;
-                            case 2:
-                                urlDestino = `${urlBase}/aluno/rodada2-fundacao.html`;
-                                break;
-                            case 3:
-                                urlDestino = `${urlBase}/aluno/rodada3-operacoes.html`;
-                                break;
-                            default:
-                                // Se a rodada for null, 0, ou um número não esperado, envia para uma página inicial de aluno.
-                                // Esta página (xperience.html) deve explicar que ele precisa entrar em uma turma.
-                                urlDestino = `${urlBase}/aluno/xperience.html`;
-                                break;
-                        }
-                    }
                     
-                    window.location.href = urlDestino;
+                    // LÓGICA DE REDIRECIONAMENTO CORRIGIDA
+                    if (userData.perfil === 'professor') {
+                        window.location.href = './professor/professor.html';
+                    } else {
+                        const rodada = userData.rodadaAtual;
+                        let destinoAluno = './aluno/xperience.html'; // Página padrão se não tiver turma/rodada
 
+                        if (userData.turmaId) {
+                            switch (rodada) {
+                                case 1:
+                                    destinoAluno = './aluno/rodada1-nivelamento.html';
+                                    break;
+                                case 2:
+                                    destinoAluno = './aluno/rodada2-fundacao.html';
+                                    break;
+                                case 3:
+                                    destinoAluno = './aluno/rodada3-operacoes.html';
+                                    break;
+                                // Adicione mais rodadas aqui se necessário
+                                default:
+                                    // Se a rodada for um número inesperado, vai para a página de espera
+                                    destinoAluno = './aluno/xperience.html';
+                                    break;
+                            }
+                        }
+                        window.location.href = destinoAluno;
+                    }
                 } else {
                     alert('Erro: Dados de perfil não encontrados para este usuário.');
                     loginButton.disabled = false;
@@ -245,14 +146,3 @@
     </script>
 </body>
 </html>
-```
-
-### O Que Esta Correção Faz:
-
-* **Lógica no Login:** Agora, a página `login.html` é responsável por verificar o perfil e a `rodadaAtual` do utilizador **logo após o login**.
-* **Redirecionamento Dinâmico:** Ela constrói a URL correta com base nesses dados e envia o utilizador para o sítio certo.
-* **Caso Padrão:** Se um aluno não tiver uma `rodadaAtual` (como o "João", que tem `null`), ele será enviado para a página `aluno/xperience.html`. Esta página pode servir como uma "sala de espera" onde você pode instruí-lo a pedir o código da turma ao professor.
-
-Depois de aplicar esta mudança, por favor, teste novamente o login. Um utilizador com `rodadaAtual: 1` deve ir para a página da rodada 1. O utilizador "João" (com `rodadaAtual: null`) deverá ir para `xperience.html`.
-
-Quando confirmar que isto está a funcionar, o nosso próximo passo será corrigir a página `cadastro.html` para que novos alunos sejam obrigados a inserir um código de tur
