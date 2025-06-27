@@ -20,8 +20,10 @@
         .profile-selection { display: flex; gap: 20px; margin-bottom: 25px; justify-content: center; flex-wrap: wrap; }
         .login-link { text-align: center; margin-top: 20px; }
         .login-link a { color: var(--cor-primaria); text-decoration: none; }
-        .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; }
+        .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; transition: background-color 0.2s; }
         .btn-secondary { background-color: var(--cor-secundaria); color: var(--cor-branco); }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        #campo-codigo-turma { display: block; } /* Aluno é o padrão, então começa visível */
     </style>
 </head>
 <body>
@@ -37,18 +39,28 @@
                     <label><input type="radio" name="perfil" value="aluno" checked> Sou Aluno</label>
                     <label><input type="radio" name="perfil" value="professor"> Sou Professor</label>
                 </div>
+
+                <!-- CAMPO CÓDIGO DA TURMA (SÓ PARA ALUNOS) -->
+                <div class="form-group" id="campo-codigo-turma">
+                    <label for="codigo-turma">Código da Turma</label>
+                    <input type="text" id="codigo-turma" placeholder="Peça ao seu professor">
+                </div>
+
                 <div class="form-group"><label for="nome">Seu Nome Completo</label><input type="text" id="nome" required></div>
                 <div class="form-group"><label for="email">Seu E-mail (será seu login)</label><input type="email" id="email" required></div>
-                <div class="form-group"><label for="senha">Crie uma Senha</label><input type="password" id="senha" required></div>
+                <div class="form-group"><label for="senha">Crie uma Senha (mínimo 6 caracteres)</label><input type="password" id="senha" required></div>
                 <button type="submit" class="btn btn-secondary">Cadastrar</button>
                 <p class="login-link">Já tem uma conta? <a href="login.html">Faça login</a></p>
             </form>
         </div>
     </main>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDocs, collection, query, where, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        // --- CONFIGURAÇÃO FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -62,46 +74,131 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- LÓGICA DE VISIBILIDADE DO CAMPO DE CÓDIGO ---
+        const campoCodigoTurma = document.getElementById('campo-codigo-turma');
+        const inputCodigoTurma = document.getElementById('codigo-turma');
+        document.querySelectorAll('input[name="perfil"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'aluno') {
+                    campoCodigoTurma.style.display = 'block';
+                    inputCodigoTurma.required = true;
+                } else {
+                    campoCodigoTurma.style.display = 'none';
+                    inputCodigoTurma.required = false;
+                }
+            });
+        });
+        // Garante o estado inicial correto
+        inputCodigoTurma.required = true;
+
+        // --- LÓGICA DE SUBMISSÃO DO FORMULÁRIO ---
         const cadastroForm = document.getElementById("cadastro-form");
         cadastroForm.addEventListener("submit", async (e) => {
             e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = "Aguarde...";
+
             const nome = document.getElementById("nome").value;
             const email = document.getElementById("email").value;
             const senha = document.getElementById("senha").value;
             const perfil = document.querySelector('input[name="perfil"]:checked').value;
+            const codigoTurma = document.getElementById("codigo-turma").value.trim().toUpperCase();
 
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-                const user = userCredential.user;
+            // --- LÓGICA PARA PROFESSOR ---
+            if (perfil === 'professor') {
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+                    const user = userCredential.user;
+                    
+                    await setDoc(doc(db, "usuarios", user.uid), {
+                        nome: nome,
+                        email: email,
+                        perfil: 'professor',
+                        uid: user.uid,
+                    });
 
-                // Objeto salvo no banco, agora sem a turma
-                await setDoc(doc(db, "usuarios", user.uid), {
-                    nome: nome,
-                    email: email,
-                    perfil: perfil,
-                    uid: user.uid,
-                    rodadaAtual: 1,
-                    turmaId: null
-                });
-
-                alert("Cadastro realizado com sucesso! Você será redirecionado.");
-
-                if (perfil === 'professor') {
-                    window.location.href = 'professor/professor.html';
-                } else {
-                    window.location.href = 'aluno/xperience.html';
+                    alert("Cadastro de professor realizado com sucesso!");
+                    window.location.href = './professor/index.html'; // Redireciona para o painel do professor
+                } catch (error) {
+                    handleAuthError(error, submitButton);
                 }
-            } catch (error) {
-                let errorMessage = "Ocorreu um erro desconhecido.";
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = "Este e-mail já está cadastrado.";
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = "A senha é muito fraca. Use pelo menos 6 caracteres.";
+                return; // Encerra a função aqui para professor
+            }
+
+            // --- LÓGICA PARA ALUNO ---
+            if (perfil === 'aluno') {
+                if (!codigoTurma) {
+                    alert('Por favor, insira o código da turma.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Cadastrar";
+                    return;
                 }
-                alert(`Erro ao cadastrar: ${errorMessage}`);
-                console.error(error);
+
+                submitButton.textContent = "Verificando turma...";
+                // 1. Encontrar a turma pelo código
+                const turmasRef = collection(db, "turmas");
+                const q = query(turmasRef, where("codigo", "==", codigoTurma));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    alert("Código da turma inválido ou não encontrado. Verifique com seu professor.");
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Cadastrar";
+                    return;
+                }
+                
+                // Pega a primeira turma encontrada com esse código
+                const turmaDoc = querySnapshot.docs[0];
+                const turmaData = turmaDoc.data();
+                const turmaId = turmaDoc.id;
+
+                submitButton.textContent = "Criando sua conta...";
+                try {
+                    // 2. Criar o usuário na autenticação
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+                    const user = userCredential.user;
+
+                    // 3. Criar o documento do usuário no Firestore com os dados da turma
+                    await setDoc(doc(db, "usuarios", user.uid), {
+                        nome: nome,
+                        email: email,
+                        perfil: 'aluno',
+                        uid: user.uid,
+                        turmaId: turmaId, // Associa o ID da turma
+                        rodadaAtual: turmaData.rodadaAtual // Pega a rodada atual da turma
+                    });
+
+                    // 4. Adicionar o aluno na lista da turma
+                    await updateDoc(doc(db, "turmas", turmaId), {
+                        alunos: arrayUnion(user.uid)
+                    });
+
+                    alert("Cadastro realizado com sucesso! Você será redirecionado para o jogo.");
+                    // Redireciona para a página de login, que por sua vez vai redirecionar para a rodada certa
+                    window.location.href = 'login.html';
+
+                } catch (error) {
+                    handleAuthError(error, submitButton);
+                }
             }
         });
+
+        function handleAuthError(error, button) {
+            let errorMessage = "Ocorreu um erro desconhecido.";
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage = "Este e-mail já está cadastrado.";
+            } else if (error.code === 'auth/weak-password') {
+                errorMessage = "A senha é muito fraca. Use pelo menos 6 caracteres.";
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage = "O formato do e-mail é inválido.";
+            }
+            console.error("Erro no cadastro:", error);
+            alert(`Erro ao cadastrar: ${errorMessage}`);
+            button.disabled = false;
+            button.textContent = "Cadastrar";
+        }
+
     </script>
 </body>
 </html>
