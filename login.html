@@ -6,7 +6,7 @@
     <title>Login - Join Xperience</title>
     <style>
         :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: none; flex-direction: column; min-height: 100vh; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
         header.main-header .logo-container img { height: 50px; margin-right: 15px; }
@@ -57,7 +57,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -74,6 +74,59 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        /**
+         * Busca os dados do usuário e o redireciona para a página correta.
+         * @param {string} uid - O ID do usuário do Firebase.
+         */
+        async function redirecionarPorPerfil(uid) {
+            const userDocRef = doc(db, "usuarios", uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const perfil = userData.perfil;
+                let destino = '';
+
+                if (perfil === 'professor') {
+                    destino = './professor/professor.html';
+                } else if (perfil === 'aluno') {
+                    const rodadaAtual = userData.rodadaAtual;
+                    if (!userData.turmaId) {
+                        destino = './aluno/xperience.html'; // Aluno sem turma
+                    } else {
+                        switch (rodadaAtual) {
+                            case 1: destino = './aluno/rodada1-nivelamento.html'; break;
+                            case 2: destino = './aluno/rodada2-fundacao.html'; break;
+                            case 3: destino = './aluno/rodada3-operacoes.html'; break;
+                            default: destino = './aluno/xperience.html'; // Segurança
+                        }
+                    }
+                }
+
+                if (destino) {
+                    window.location.href = destino;
+                } else {
+                    console.error("Perfil de usuário desconhecido ou sem destino definido.");
+                }
+            } else {
+                console.error("Dados do usuário não encontrados no Firestore.");
+                // Opcional: deslogar o usuário se os dados não existirem.
+                // await auth.signOut();
+            }
+        }
+
+        // VERIFICAÇÃO INICIAL: Se o usuário já estiver logado, redireciona imediatamente.
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("Usuário já está logado. Redirecionando...");
+                redirecionarPorPerfil(user.uid);
+            } else {
+                // Se não há usuário, mostra a página de login.
+                document.body.style.display = 'flex';
+            }
+        });
+
+        // LÓGICA DO FORMULÁRIO DE LOGIN
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -87,44 +140,8 @@
             try {
                 await setPersistence(auth, browserLocalPersistence);
                 const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-                const user = userCredential.user;
-
-                const userDocRef = doc(db, "usuarios", user.uid);
-                const userDocSnap = await getDoc(userDocRef);
-
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    const perfil = userData.perfil;
-                    
-                    let destino = '';
-
-                    if (perfil === 'professor') {
-                        destino = './professor/professor.html';
-                    } else if (perfil === 'aluno') {
-                        const rodadaAtual = userData.rodadaAtual;
-                        if (!userData.turmaId) {
-                            // Aluno sem turma, vai para a página de espera
-                            destino = './aluno/xperience.html';
-                        } else {
-                            // Aluno com turma, vai para a rodada correta
-                            switch (rodadaAtual) {
-                                case 1: destino = './aluno/rodada1-nivelamento.html'; break;
-                                case 2: destino = './aluno/rodada2-fundacao.html'; break;
-                                case 3: destino = './aluno/rodada3-operacoes.html'; break;
-                                default: destino = './aluno/xperience.html'; // Segurança
-                            }
-                        }
-                    }
-
-                    if (destino) {
-                        window.location.href = destino;
-                    } else {
-                         throw new Error("Perfil de usuário desconhecido.");
-                    }
-
-                } else {
-                    throw new Error("Dados de perfil não encontrados para este usuário.");
-                }
+                // O onAuthStateChanged já terá sido acionado e fará o redirecionamento.
+                // Não precisamos fazer mais nada aqui.
             } catch (error) {
                 console.error("Erro na autenticação:", error);
                 let errorMessage = "Erro ao fazer login. ";
@@ -145,7 +162,8 @@
 
 ### Resumo da Correção
 
-* **Autossuficiente:** A página `login.html` agora contém toda a lógica de que precisa. Ela não depende mais do ficheiro `auth-guard.js`, o que evita o erro 404 que estava a acontecer.
-* **Redirecionamento Dinâmico:** O código dentro do `login.html` irá buscar o perfil e a `rodadaAtual` do utilizador no Firestore e redirecioná-lo para a página correta.
+* **Autossuficiente:** O ficheiro `login.html` agora contém toda a lógica necessária e não depende mais de ficheiros externos que não estavam a ser encontrados.
+* **Redirecionamento Automático:** Se você já estiver logado e acidentalmente voltar à página de login, o script irá detetar isso e redirecioná-lo para a sua página correta sem que você precise de fazer nada.
+* **Lógica de Login Mantida:** A funcionalidade de entrar com e-mail e senha continua a mesma, mas agora, após o sucesso, o redirecionamento é feito de forma dinâmica e correta.
 
 Por favor, atualize o seu ficheiro `login.html` com este novo código. Isto deve resolver o problema do login e permitir que o fluxo do seu projeto funcione como espera
