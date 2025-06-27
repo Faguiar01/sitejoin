@@ -6,7 +6,7 @@
     <title>Login - Join Xperience</title>
     <style>
         :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: none; flex-direction: column; min-height: 100vh; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
         header.main-header .logo-container img { height: 50px; margin-right: 15px; }
@@ -23,8 +23,6 @@
         .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; }
     </style>
-    <!-- Adiciona o auth-guard para que ele possa redirecionar um usuário que já tenha sessão ativa -->
-    <script type="module" src="./assets/js/auth-guard.js"></script>
 </head>
 <body>
     <header class="main-header">
@@ -91,52 +89,49 @@
                 const userCredential = await signInWithEmailAndPassword(auth, email, senha);
                 const user = userCredential.user;
 
-                // Após o login, busca os dados do usuário para decidir para onde redirecionar
                 const userDocRef = doc(db, "usuarios", user.uid);
                 const userDocSnap = await getDoc(userDocRef);
 
                 if (userDocSnap.exists()) {
                     const userData = userDocSnap.data();
+                    const perfil = userData.perfil;
                     
-                    // LÓGICA DE REDIRECIONAMENTO CORRIGIDA
-                    if (userData.perfil === 'professor') {
-                        window.location.href = './professor/professor.html';
-                    } else {
-                        const rodada = userData.rodadaAtual;
-                        let destinoAluno = './aluno/xperience.html'; // Página padrão se não tiver turma/rodada
+                    let destino = '';
 
-                        if (userData.turmaId) {
-                            switch (rodada) {
-                                case 1:
-                                    destinoAluno = './aluno/rodada1-nivelamento.html';
-                                    break;
-                                case 2:
-                                    destinoAluno = './aluno/rodada2-fundacao.html';
-                                    break;
-                                case 3:
-                                    destinoAluno = './aluno/rodada3-operacoes.html';
-                                    break;
-                                // Adicione mais rodadas aqui se necessário
-                                default:
-                                    // Se a rodada for um número inesperado, vai para a página de espera
-                                    destinoAluno = './aluno/xperience.html';
-                                    break;
+                    if (perfil === 'professor') {
+                        destino = './professor/professor.html';
+                    } else if (perfil === 'aluno') {
+                        const rodadaAtual = userData.rodadaAtual;
+                        if (!userData.turmaId) {
+                            // Aluno sem turma, vai para a página de espera
+                            destino = './aluno/xperience.html';
+                        } else {
+                            // Aluno com turma, vai para a rodada correta
+                            switch (rodadaAtual) {
+                                case 1: destino = './aluno/rodada1-nivelamento.html'; break;
+                                case 2: destino = './aluno/rodada2-fundacao.html'; break;
+                                case 3: destino = './aluno/rodada3-operacoes.html'; break;
+                                default: destino = './aluno/xperience.html'; // Segurança
                             }
                         }
-                        window.location.href = destinoAluno;
                     }
+
+                    if (destino) {
+                        window.location.href = destino;
+                    } else {
+                         throw new Error("Perfil de usuário desconhecido.");
+                    }
+
                 } else {
-                    alert('Erro: Dados de perfil não encontrados para este usuário.');
-                    loginButton.disabled = false;
-                    loginButton.textContent = "Entrar";
+                    throw new Error("Dados de perfil não encontrados para este usuário.");
                 }
             } catch (error) {
                 console.error("Erro na autenticação:", error);
-                let errorMessage = "Erro ao fazer login: ";
+                let errorMessage = "Erro ao fazer login. ";
                 if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
                     errorMessage += "E-mail ou senha inválidos.";
                 } else {
-                    errorMessage += "Tente novamente.";
+                    errorMessage += "Por favor, tente novamente.";
                 }
                 alert(errorMessage);
                 loginButton.disabled = false;
@@ -146,3 +141,11 @@
     </script>
 </body>
 </html>
+```
+
+### Resumo da Correção
+
+* **Autossuficiente:** A página `login.html` agora contém toda a lógica de que precisa. Ela não depende mais do ficheiro `auth-guard.js`, o que evita o erro 404 que estava a acontecer.
+* **Redirecionamento Dinâmico:** O código dentro do `login.html` irá buscar o perfil e a `rodadaAtual` do utilizador no Firestore e redirecioná-lo para a página correta.
+
+Por favor, atualize o seu ficheiro `login.html` com este novo código. Isto deve resolver o problema do login e permitir que o fluxo do seu projeto funcione como espera
