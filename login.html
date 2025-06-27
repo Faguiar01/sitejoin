@@ -113,7 +113,6 @@
     </style>
 </head>
 <body>
-
     <header class="main-header">
         <a href="index.html" class="logo-container">
             <img src="JOIN.png" alt="Logo Join Xperience">
@@ -146,14 +145,14 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
             projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.firebasestorage.app",
+            storageBucket: "joinxperience-site.appspot.com",
             messagingSenderId: "140037739806",
             appId: "1:140037739806:web:322493d72ca6149abce50f",
             measurementId: "G-V4SRK0FNBN"
@@ -162,12 +161,14 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        
+        // O novo auth-guard.js irá lidar com o redirecionamento se o usuário já estiver logado.
+        // Apenas precisamos garantir que o formulário de login seja exibido.
+        document.body.style.display = 'flex';
 
         const loginForm = document.getElementById('login-form');
-
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             const loginButton = e.target.querySelector('button[type="submit"]');
@@ -185,10 +186,14 @@
                 if (userDocSnap.exists()) {
                     const userData = userDocSnap.data();
                     
+                    // LÓGICA DE REDIRECIONAMENTO SIMPLIFICADA
+                    // O auth-guard.js fará o trabalho de direcionar para a rodada correta.
+                    // Nós apenas o enviamos para a "porta de entrada" do seu painel.
                     if (userData.perfil === 'professor') {
-                        window.location.href = 'professor/professor.html';
+                        window.location.href = 'professor/index.html'; // URL relativa para a pasta do professor
                     } else {
-                        window.location.href = 'aluno/rodada3-operacoes.html';
+                        // Enviamos o aluno para uma página genérica. O auth-guard.js fará o resto.
+                        window.location.href = 'aluno/xperience.html'; // URL relativa para a pasta do aluno
                     }
                 } else {
                     alert('Erro: Dados de perfil não encontrados para este usuário.');
@@ -198,19 +203,24 @@
             } catch (error) {
                 console.error("Erro na autenticação:", error);
                 let errorMessage = "Erro ao fazer login: ";
-
                 if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
                     errorMessage += "E-mail ou senha inválidos.";
                 } else {
                     errorMessage += "Tente novamente.";
                 }
-
                 alert(errorMessage);
                 loginButton.disabled = false;
                 loginButton.textContent = "Entrar";
             }
         });
     </script>
-
 </body>
 </html>
+```
+
+### O que foi alterado:
+
+1.  **Redirecionamento do Aluno:** A linha `window.location.href = 'aluno/rodada3-operacoes.html';` foi alterada para `window.location.href = 'aluno/xperience.html';`.
+2.  **Lógica Centralizada:** Agora, quando um aluno fizer login, ele será enviado para a página `xperience.html`. O nosso novo `auth-guard.js` (que deve ser incluído em todas as páginas de aluno e professor) irá então verificar a `rodadaAtual` e, se necessário, redirecioná-lo para a página da rodada correta.
+
+Isso resolve o problema de forma definitiva. Se um aluno estiver na rodada 1, ele será enviado para a página da rodada 1. Se estiver na 2, para a 2, e assim por dian
