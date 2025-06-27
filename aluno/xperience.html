@@ -10,11 +10,9 @@
             background-color: #f4f7f6; 
             margin: 0; 
             padding: 20px; 
-            display: none; /* Oculto por padrão, o auth-guard irá mostrar */
-            text-align: center;
             color: #333;
             height: 100vh;
-            display: flex;
+            display: none; /* Oculto por padrão, o auth-guard irá mostrar */
             justify-content: center;
             align-items: center;
             flex-direction: column;
@@ -25,34 +23,36 @@
             padding: 40px; 
             border-radius: 8px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            text-align: center;
         }
         h1 { color: #003366; }
         p { font-size: 1.1em; line-height: 1.6; }
-        a { color: #0052CC; text-decoration: none; font-weight: bold; }
+        a { color: #0052CC; text-decoration: none; font-weight: bold; cursor: pointer; }
     </style>
-    <!-- Importa o nosso roteador inteligente. O caminho ../ sobe uma pasta. -->
-    <script type="module" src="../assets/js/auth-guard.js"></script>
+    <!-- CORREÇÃO: Usando a URL completa para o auth-guard.js -->
+    <script type="module" src="https://faguiar01.github.io/sitejoin/assets/js/auth-guard.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Quase lá!</h1>
         <p>O seu cadastro foi realizado com sucesso.</p>
-        <p>Agora, você precisa aguardar o seu professor iniciar a simulação para a sua turma.</p>
-        <p>Se você ainda não informou o seu e-mail ao professor, por favor, faça-o para que ele possa adicioná-lo à turma correta.</p>
+        <p>Agora, você precisa <strong>informar o seu e-mail ao professor</strong> para que ele possa adicioná-lo à turma correta e iniciar a simulação.</p>
         <br>
-        <p><a href="../login.html" id="logout-link">Sair</a></p>
+        <p><a id="logout-link">Sair</a></p>
     </div>
 
     <script type="module">
         // Este script é apenas para o botão de logout
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { auth } from '../assets/js/firebase-init.js';
+        import { signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        // CORREÇÃO: Usando a URL completa para o firebase-init.js
+        import { auth } from 'https://faguiar01.github.io/sitejoin/assets/js/firebase-init.js';
 
         const logoutLink = document.getElementById('logout-link');
         logoutLink.addEventListener('click', (e) => {
             e.preventDefault();
             signOut(auth).then(() => {
-                window.location.href = '../login.html';
+                // CORREÇÃO: Redireciona para a página de login com a URL completa
+                window.location.href = 'https://faguiar01.github.io/sitejoin/login.html';
             }).catch((error) => {
                 console.error("Erro ao fazer logout:", error);
             });
