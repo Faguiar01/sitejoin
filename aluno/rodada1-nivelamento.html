@@ -5,18 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rodada 1: Nivelamento - InovaPlas</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: none; /* Oculto por padrão, auth-guard irá mostrar */ }
         .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         h1 { color: #003366; border-bottom: 2px solid #b3d1ff; padding-bottom: 10px; }
         #quiz-container p { font-size: 1.1em; line-height: 1.6; }
         fieldset { border: none; padding: 0; margin-bottom: 25px; }
         legend { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; color: #333; }
-        label { display: block; background-color: #f8f9fa; padding: 12px; margin-bottom: 8px; border-radius: 5px; cursor: pointer; border: 1px solid #ddd; }
+        label { display: block; background-color: #f8f9fa; padding: 12px; margin-bottom: 8px; border-radius: 5px; cursor: pointer; border: 1px solid #ddd; transition: background-color 0.2s; }
+        label:hover { background-color: #e9ecef; }
         input[type="radio"] { margin-right: 10px; }
-        button { background-color: #007bff; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
+        button { background-color: #007bff; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; width: 100%; }
         button:hover { background-color: #0056b3; }
         button:disabled { background-color: #ccc; cursor: not-allowed; }
     </style>
+    <!-- CORREÇÃO: Usando a URL completa para o auth-guard.js -->
+    <script type="module" src="https://faguiar01.github.io/sitejoin/assets/js/auth-guard.js"></script>
 </head>
 <body>
 
@@ -32,62 +35,39 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+    <script type="module">
+        // Importa as funções que vamos usar
+        import { getFirestore, collection, getDocs, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        
+        // CORREÇÃO: Usando a URL completa para o firebase-init.js
+        import { auth, db } from 'https://faguiar01.github.io/sitejoin/assets/js/firebase-init.js';
 
         const loadingQuiz = document.getElementById('loading-quiz');
         const formRodada1 = document.getElementById('form-rodada1');
         const quizQuestionsDiv = document.getElementById('quiz-questions');
         const submitBtn = document.getElementById('submit-btn');
+        let perguntasSorteadas = [];
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                montarQuiz(user);
-            } else {
-                alert("Sessão expirada. A redirecionar para o login.");
-                window.top.location.href = '../login.html';
-            }
-        });
-
-        async function montarQuiz(user) {
+        async function montarQuiz() {
             try {
-                const snapshot = await db.collection('banco_questoes_r1').get();
-                if (snapshot.empty) throw new Error("Banco de questões não encontrado.");
+                const snapshot = await getDocs(collection(db, 'banco_questoes_r1'));
+                if (snapshot.empty) throw new Error("Banco de questões 'banco_questoes_r1' não encontrado ou vazio.");
 
                 let todasAsPerguntas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                // Embaralha o array para garantir perguntas aleatórias
                 for (let i = todasAsPerguntas.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [todasAsPerguntas[i], todasAsPerguntas[j]] = [todasAsPerguntas[j], todasAsPerguntas[i]];
                 }
-
-                const perguntasSorteadas = todasAsPerguntas.slice(0, 5);
+                perguntasSorteadas = todasAsPerguntas.slice(0, 5);
 
                 let quizHTML = '';
                 perguntasSorteadas.forEach((pergunta, index) => {
-                    quizHTML += `<fieldset><legend>${index + 1}. ${pergunta.enunciado}</legend>`;
+                    quizHTML += `<fieldset data-question-id="${pergunta.id}"><legend>${index + 1}. ${pergunta.enunciado}</legend>`;
                     if (pergunta.opcoes && pergunta.opcoes.length > 0) {
-                        pergunta.opcoes.forEach((opcao, i) => {
+                        const opcoesEmbaralhadas = [...pergunta.opcoes].sort(() => Math.random() - 0.5);
+                        opcoesEmbaralhadas.forEach((opcao, i) => {
                             const optionId = `q${index}_opt${i}`;
-                            quizHTML += `<div><label for="${optionId}"><input type="radio" id="${optionId}" name="pergunta_${index}" value="${i}" required> ${opcao}</label></div>`;
+                            quizHTML += `<div><label for="${optionId}"><input type="radio" id="${optionId}" name="pergunta_${index}" value="${opcao}" required> ${opcao}</label></div>`;
                         });
                     }
                     quizHTML += `</fieldset>`;
@@ -99,7 +79,7 @@
 
             } catch (error) {
                 console.error("Erro ao montar o quiz:", error);
-                loadingQuiz.textContent = "Ocorreu um erro ao carregar o questionário. Verifique se a coleção 'banco_questoes_r1' existe.";
+                loadingQuiz.textContent = "Ocorreu um erro ao carregar o questionário. Tente recarregar a página.";
                 loadingQuiz.style.color = 'red';
             }
         }
@@ -109,22 +89,45 @@
             submitBtn.disabled = true;
             submitBtn.textContent = "A guardar o seu progresso...";
 
-            try {
-                const user = auth.currentUser;
-                if (user) {
-                    const userRef = db.collection('usuarios').doc(user.uid);
-                    await userRef.update({ rodadaAtual: 2 }); // Avança o aluno para a rodada 2
+            const user = auth.currentUser;
+            if (!user) {
+                alert("Sessão inválida. Por favor, faça login novamente.");
+                window.location.href = 'https://faguiar01.github.io/sitejoin/login.html';
+                return;
+            }
 
-                    alert("Nivelamento concluído com sucesso! Será agora redirecionado.");
-                    window.top.location.href = 'rodada.html'; // Volta para o roteador para ir para a próxima rodada
-                }
+            try {
+                const respostas = {};
+                perguntasSorteadas.forEach((pergunta, index) => {
+                    const respostaSelecionada = formRodada1.querySelector(`input[name="pergunta_${index}"]:checked`);
+                    if (respostaSelecionada) {
+                        respostas[pergunta.id] = respostaSelecionada.value;
+                    }
+                });
+
+                const respostasRef = doc(db, "usuarios", user.uid, "respostas", "rodada1");
+                await setDoc(respostasRef, {
+                    respostas: respostas,
+                    finalizadoEm: new Date()
+                });
+
+                const userRef = doc(db, "usuarios", user.uid);
+                await updateDoc(userRef, { rodadaAtual: 2 });
+
+                alert("Nivelamento concluído com sucesso! A avançar para a próxima fase...");
+                
+                // CORREÇÃO: Redireciona para a próxima rodada com a URL completa
+                window.location.href = 'https://faguiar01.github.io/sitejoin/aluno/rodada2-fundacao.html';
+
             } catch (error) {
-                 console.error("Erro ao finalizar a rodada 1:", error);
-                 alert("Ocorreu um erro ao guardar o seu progresso. Tente novamente.");
-                 submitBtn.disabled = false;
-                 submitBtn.textContent = "Finalizar Nivelamento e Avançar para a Rodada 2";
+                console.error("Erro ao finalizar a rodada 1:", error);
+                alert("Ocorreu um erro ao guardar o seu progresso. Por favor, tente novamente.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Finalizar Nivelamento e Avançar para a Rodada 2";
             }
         });
+
+        montarQuiz();
 
     </script>
 </body>
