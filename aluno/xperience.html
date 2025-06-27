@@ -29,8 +29,8 @@
         p { font-size: 1.1em; line-height: 1.6; }
         a { color: #0052CC; text-decoration: none; font-weight: bold; cursor: pointer; }
     </style>
-    <!-- CORREÇÃO: Usando a URL completa para o auth-guard.js -->
-    <script type="module" src="https://faguiar01.github.io/sitejoin/assets/js/auth-guard.js"></script>
+    <!-- CORREÇÃO: Usando a URL completa e correta para o auth-guard.js -->
+    <script type="module" src="https://faguiar01.github.io/sitejoin/aluno/assets/js/auth-guard.js"></script>
 </head>
 <body>
     <div class="container">
@@ -44,8 +44,8 @@
     <script type="module">
         // Este script é apenas para o botão de logout
         import { signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        // CORREÇÃO: Usando a URL completa para o firebase-init.js
-        import { auth } from 'https://faguiar01.github.io/sitejoin/assets/js/firebase-init.js';
+        // CORREÇÃO: Usando a URL completa e correta para o firebase-init.js
+        import { auth } from 'https://faguiar01.github.io/sitejoin/aluno/assets/js/firebase-init.js';
 
         const logoutLink = document.getElementById('logout-link');
         logoutLink.addEventListener('click', (e) => {
