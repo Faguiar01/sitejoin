@@ -52,13 +52,13 @@
         #student-list li { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 5px; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
     </style>
-    <!-- CORREÇÃO: Usando a URL completa para o auth-guard.js -->
-    <script type="module" src="https://faguiar01.github.io/sitejoin/assets/js/auth-guard.js"></script>
+    <!-- CORREÇÃO: Caminho relativo correto para o auth-guard.js -->
+    <script type="module" src="../assets/js/auth-guard.js"></script>
 </head>
 <body>
     <header class="main-header">
-        <!-- CORREÇÃO: Usando a URL completa para a imagem e o link -->
-        <a href="https://faguiar01.github.io/sitejoin/index.html" class="logo-container"><img src="https://faguiar01.github.io/sitejoin/JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <!-- CORREÇÃO: Caminho relativo correto para a imagem e o link -->
+        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
         <nav><a href="#" id="logout-button">Sair</a></nav>
     </header>
 
@@ -126,8 +126,8 @@
 
     <script type="module">
         import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-        // CORREÇÃO: Usando a URL completa para o firebase-init.js
-        import { auth, db } from 'https://faguiar01.github.io/sitejoin/assets/js/firebase-init.js';
+        // CORREÇÃO: Usando caminho relativo para o firebase-init.js
+        import { auth, db } from '../assets/js/firebase-init.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
         let currentUser;
@@ -164,7 +164,10 @@
 
         document.getElementById('logout-button').addEventListener('click', (e) => {
             e.preventDefault();
-            signOut(auth).catch(error => console.error("Erro ao sair:", error));
+            signOut(auth).then(() => {
+                // CORREÇÃO: Caminho relativo para o logout
+                window.location.href = '../login.html';
+            }).catch(error => console.error("Erro ao sair:", error));
         });
 
         function generateJoinCode() {
@@ -216,11 +219,11 @@
                     return;
                 }
 
-                querySnapshot.forEach((doc) => {
-                    const turma = doc.data();
+                querySnapshot.forEach((docRef) => {
+                    const turma = docRef.data();
                     const card = document.createElement('div');
                     card.className = 'turma-card';
-                    card.dataset.turmaId = doc.id;
+                    card.dataset.turmaId = docRef.id;
                     card.dataset.turmaName = turma.nome;
 
                     const rodadaAtual = turma.rodadaAtual || 1;
