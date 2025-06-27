@@ -119,7 +119,8 @@
                     });
 
                     alert("Cadastro de professor realizado com sucesso!");
-                    window.location.href = './professor/index.html'; // Redireciona para o painel do professor
+                    // CORREÇÃO: Apontar para professor.html em vez de index.html
+                    window.location.href = './professor/professor.html'; 
                 } catch (error) {
                     handleAuthError(error, submitButton);
                 }

@@ -7,7 +7,6 @@
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 // Importa as variáveis 'auth' e 'db' do seu ficheiro de inicialização.
-// VERIFIQUE SE O CAMINHO PARA O SEU FICHEIRO ESTÁ CORRETO.
 import { auth, db } from './firebase-init.js';
 
 /**
@@ -17,19 +16,28 @@ import { auth, db } from './firebase-init.js';
  */
 function getTargetURL(userData) {
     const perfil = userData.perfil;
-    const urlBase = "https://faguiar01.github.io/sitejoin"; // Base do seu site no GitHub Pages
+    // IMPORTANTE: Esta é a URL base do seu projeto no GitHub Pages.
+    const urlBase = "https://faguiar01.github.io/sitejoin"; 
 
     if (perfil === 'aluno') {
-        const rodadaAtual = userData.rodadaAtual || 1;
+        const rodadaAtual = userData.rodadaAtual;
+        
+        // Se o aluno não tem turmaId, ele deve ser enviado para uma página de espera.
+        if (!userData.turmaId) {
+            return `${urlBase}/aluno/xperience.html`;
+        }
+
         switch (rodadaAtual) {
             case 1: return `${urlBase}/aluno/rodada1-nivelamento.html`;
             case 2: return `${urlBase}/aluno/rodada2-fundacao.html`;
             case 3: return `${urlBase}/aluno/rodada3-operacoes.html`;
             // Adicione outras rodadas aqui no futuro
-            default: return `${urlBase}/aluno/rodada1-nivelamento.html`;
+            default:
+                // Se a rodada for inválida, envia para a página de espera.
+                return `${urlBase}/aluno/xperience.html`;
         }
     } else if (perfil === 'professor') {
-        return `${urlBase}/professor/index.html`; // Página principal do professor
+        return `${urlBase}/professor/professor.html`; // Página principal do professor
     }
 
     // Se o perfil for desconhecido, envia para o login como segurança
@@ -38,9 +46,10 @@ function getTargetURL(userData) {
 
 // --- PONTO DE ENTRADA DO SCRIPT ---
 onAuthStateChanged(auth, async (user) => {
-    const urlLogin = 'https://faguiar01.github.io/sitejoin/login.html';
-    const urlCadastro = 'https://faguiar01.github.io/sitejoin/cadastro.html';
-    const paginaAtual = window.location.href;
+    const urlBase = "https://faguiar01.github.io/sitejoin";
+    const urlLogin = `${urlBase}/login.html`;
+    const urlCadastro = `${urlBase}/cadastro.html`;
+    const paginaAtual = window.location.href.split('?')[0]; // Ignora parâmetros de URL
 
     // Se não há utilizador logado...
     if (!user) {
@@ -65,39 +74,16 @@ onAuthStateChanged(auth, async (user) => {
             const userData = userDocSnap.data();
             const urlDestino = getTargetURL(userData);
 
-            // Se o utilizador está na página de login/cadastro, mas já está logado, redireciona.
-            if (paginaAtual === urlLogin || paginaAtual === urlCadastro) {
-                window.location.href = urlDestino;
-                return;
-            }
-
             // Se o utilizador está numa página que não é a correta para ele, redireciona.
-            // Ex: Aluno da rodada 1 tentando aceder a URL da rodada 3 diretamente.
             if (paginaAtual !== urlDestino) {
-                 // Exceção: Permitir que o aluno aceda a páginas comuns como 'xperience.html' ou 'mural-explorador.html'
-                 // Adicione aqui outras páginas "comuns" que não devem causar redirecionamento.
-                const paginasPermitidasSempre = [
-                    'xperience.html',
-                    'mural-explorador.html',
-                    'perfil-investidor.html',
-                    'biblioteca.html',
-                    'faq.html'
-                ];
-
-                const nomePaginaAtual = paginaAtual.split('/').pop();
-                if (paginasPermitidasSempre.includes(nomePaginaAtual)) {
-                    document.body.style.display = 'block'; // Permite o acesso
-                    return;
-                }
-
-                // Se não for uma página permitida, e não for a página correta da rodada, redireciona.
-                console.log(`Página incorreta. Redirecionando para: ${urlDestino}`);
+                // Exceção: não redirecionar se já estiver a ir para o destino
+                // Isto previne loops infinitos.
+                console.log(`Página atual (${paginaAtual}) é diferente do destino (${urlDestino}). Redirecionando...`);
                 window.location.href = urlDestino;
-                return;
+            } else {
+                // Se chegou aqui, o utilizador está logado e na página correta.
+                document.body.style.display = 'block';
             }
-
-            // Se chegou até aqui, o utilizador está logado e na página correta.
-            document.body.style.display = 'block';
 
         } else {
             // Caso de segurança: utilizador autenticado mas sem registro no Firestore.
@@ -109,15 +95,3 @@ onAuthStateChanged(auth, async (user) => {
         window.location.href = urlLogin;
     }
 });
-```
-
-### Resumo da Correção
-
-Este novo `auth-guard.js` é muito mais completo:
-
-1.  **Identifica o Perfil:** Sabe se o utilizador é `aluno` ou `professor`.
-2.  **Lê a Rodada Atual:** Para alunos, ele verifica o campo `rodadaAtual` no Firestore.
-3.  **Calcula o Destino Certo:** Determina qual é a página correta para aquele utilizador (`rodada1-nivelamento.html`, `professor/index.html`, etc.).
-4.  **Redireciona Sempre que Necessário:** Se o utilizador tentar aceder a uma página errada (ou à página de login quando já está logado), ele é automaticamente corrigido e enviado para o local certo.
-
-Com este ficheiro implementado em todas as páginas, o seu sistema de navegação ficará correto e seguro. Por favor, teste e me diga se agora funciona como espera
