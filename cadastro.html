@@ -23,7 +23,8 @@
         .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; transition: background-color 0.2s; }
         .btn-secondary { background-color: var(--cor-secundaria); color: var(--cor-branco); }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        #campo-codigo-turma { display: block; } /* Aluno é o padrão, então começa visível */
+        /* O campo de código da turma agora é sempre oculto */
+        #campo-codigo-turma { display: none; }
     </style>
 </head>
 <body>
@@ -40,10 +41,10 @@
                     <label><input type="radio" name="perfil" value="professor"> Sou Professor</label>
                 </div>
 
-                <!-- CAMPO CÓDIGO DA TURMA (SÓ PARA ALUNOS) -->
+                <!-- O campo de código da turma foi removido da lógica principal -->
                 <div class="form-group" id="campo-codigo-turma">
                     <label for="codigo-turma">Código da Turma</label>
-                    <input type="text" id="codigo-turma" placeholder="Peça ao seu professor">
+                    <input type="text" id="codigo-turma" placeholder="Este campo não é mais necessário">
                 </div>
 
                 <div class="form-group"><label for="nome">Seu Nome Completo</label><input type="text" id="nome" required></div>
@@ -58,9 +59,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDocs, collection, query, where, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        // --- CONFIGURAÇÃO FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -74,24 +74,16 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- LÓGICA DE VISIBILIDADE DO CAMPO DE CÓDIGO ---
+        // Oculta/mostra o campo de código da turma (agora desnecessário, mas mantido para não quebrar o HTML)
         const campoCodigoTurma = document.getElementById('campo-codigo-turma');
-        const inputCodigoTurma = document.getElementById('codigo-turma');
         document.querySelectorAll('input[name="perfil"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
-                if (e.target.value === 'aluno') {
-                    campoCodigoTurma.style.display = 'block';
-                    inputCodigoTurma.required = true;
-                } else {
-                    campoCodigoTurma.style.display = 'none';
-                    inputCodigoTurma.required = false;
-                }
+                // O campo de código de turma não é mais usado no cadastro de aluno.
+                campoCodigoTurma.style.display = 'none';
             });
         });
-        // Garante o estado inicial correto
-        inputCodigoTurma.required = true;
+        campoCodigoTurma.style.display = 'none'; // Garante que começa oculto
 
-        // --- LÓGICA DE SUBMISSÃO DO FORMULÁRIO ---
         const cadastroForm = document.getElementById("cadastro-form");
         cadastroForm.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -103,85 +95,34 @@
             const email = document.getElementById("email").value;
             const senha = document.getElementById("senha").value;
             const perfil = document.querySelector('input[name="perfil"]:checked').value;
-            const codigoTurma = document.getElementById("codigo-turma").value.trim().toUpperCase();
 
-            // --- LÓGICA PARA PROFESSOR ---
-            if (perfil === 'professor') {
-                try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-                    const user = userCredential.user;
-                    
-                    await setDoc(doc(db, "usuarios", user.uid), {
-                        nome: nome,
-                        email: email,
-                        perfil: 'professor',
-                        uid: user.uid,
-                    });
+            try {
+                // 1. Cria o usuário na autenticação do Firebase
+                const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+                const user = userCredential.user;
 
-                    alert("Cadastro de professor realizado com sucesso!");
-                    // CORREÇÃO: Apontar para professor.html em vez de index.html
-                    window.location.href = './professor/professor.html'; 
-                } catch (error) {
-                    handleAuthError(error, submitButton);
-                }
-                return; // Encerra a função aqui para professor
-            }
-
-            // --- LÓGICA PARA ALUNO ---
-            if (perfil === 'aluno') {
-                if (!codigoTurma) {
-                    alert('Por favor, insira o código da turma.');
-                    submitButton.disabled = false;
-                    submitButton.textContent = "Cadastrar";
-                    return;
-                }
-
-                submitButton.textContent = "Verificando turma...";
-                // 1. Encontrar a turma pelo código
-                const turmasRef = collection(db, "turmas");
-                const q = query(turmasRef, where("codigo", "==", codigoTurma));
-                const querySnapshot = await getDocs(q);
-
-                if (querySnapshot.empty) {
-                    alert("Código da turma inválido ou não encontrado. Verifique com seu professor.");
-                    submitButton.disabled = false;
-                    submitButton.textContent = "Cadastrar";
-                    return;
-                }
+                // 2. Prepara os dados para salvar no Firestore
+                const userData = {
+                    nome: nome,
+                    email: email,
+                    perfil: perfil,
+                    uid: user.uid,
+                };
                 
-                // Pega a primeira turma encontrada com esse código
-                const turmaDoc = querySnapshot.docs[0];
-                const turmaData = turmaDoc.data();
-                const turmaId = turmaDoc.id;
-
-                submitButton.textContent = "Criando sua conta...";
-                try {
-                    // 2. Criar o usuário na autenticação
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-                    const user = userCredential.user;
-
-                    // 3. Criar o documento do usuário no Firestore com os dados da turma
-                    await setDoc(doc(db, "usuarios", user.uid), {
-                        nome: nome,
-                        email: email,
-                        perfil: 'aluno',
-                        uid: user.uid,
-                        turmaId: turmaId, // Associa o ID da turma
-                        rodadaAtual: turmaData.rodadaAtual // Pega a rodada atual da turma
-                    });
-
-                    // 4. Adicionar o aluno na lista da turma
-                    await updateDoc(doc(db, "turmas", turmaId), {
-                        alunos: arrayUnion(user.uid)
-                    });
-
-                    alert("Cadastro realizado com sucesso! Você será redirecionado para o jogo.");
-                    // Redireciona para a página de login, que por sua vez vai redirecionar para a rodada certa
-                    window.location.href = 'login.html';
-
-                } catch (error) {
-                    handleAuthError(error, submitButton);
+                // Se for aluno, define os valores iniciais.
+                if (perfil === 'aluno') {
+                    userData.turmaId = null; // O aluno começa sem turma
+                    userData.rodadaAtual = 1;   // Começa na rodada 1 por padrão
                 }
+
+                // 3. Salva os dados do novo usuário no Firestore
+                await setDoc(doc(db, "usuarios", user.uid), userData);
+
+                alert("Cadastro realizado com sucesso! Você será redirecionado para a página de login.");
+                window.location.href = 'login.html';
+
+            } catch (error) {
+                handleAuthError(error, submitButton);
             }
         });
 
@@ -199,7 +140,6 @@
             button.disabled = false;
             button.textContent = "Cadastrar";
         }
-
     </script>
 </body>
 </html>
