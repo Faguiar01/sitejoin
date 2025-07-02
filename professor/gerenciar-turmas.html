@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Turmas - Join Xperience</title>
+    <title>Gerir Turmas - Join Xperience</title>
     <!-- Biblioteca para gerar QR Code -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
@@ -73,17 +73,17 @@
 </head>
 <body>
     <header class="main-header">
-        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <a href="/sitejoin/index.html" class="logo-container"><img src="/sitejoin/JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
         <nav><a href="#" id="logout-button">Sair</a></nav>
     </header>
 
     <main class="container">
         <div class="page-header">
-            <h1>Gerenciamento de Turmas</h1>
+            <h1>Gestão de Turmas</h1>
             <button id="open-create-turma-modal" class="btn btn-success">Criar Nova Turma</button>
         </div>
         <div id="turmas-grid" class="turmas-grid">
-            <p id="loading-message">Verificando autenticação...</p>
+            <p id="loading-message">A verificar autenticação...</p>
         </div>
     </main>
 
@@ -99,30 +99,30 @@
             <form id="create-turma-form">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="turma-name">Nome da Turma / Equipe</label>
+                        <label for="turma-name">Nome da Turma / Equipa</label>
                         <input type="text" id="turma-name" required>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary close-button">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Salvar Turma</button>
+                    <button type="submit" class="btn btn-success">Guardar Turma</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal para Gerenciar Alunos -->
+    <!-- Modal para Gerir Alunos -->
     <div id="manage-students-modal" class="modal-backdrop">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="manage-students-title">Gerenciar Alunos</h2>
+                <h2 id="manage-students-title">Gerir Alunos</h2>
                 <span class="close-button">&times;</span>
             </div>
             <div class="modal-body">
                 <form id="add-student-form">
                     <div class="form-group">
                         <label for="student-email">E-mail do Aluno</label>
-                        <input type="email" id="student-email" placeholder="Digite o e-mail do aluno para adicioná-lo" required>
+                        <input type="email" id="student-email" placeholder="Digite o e-mail do aluno para o adicionar" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Adicionar Aluno</button>
                 </form>
@@ -150,8 +150,8 @@
     </div>
 
     <script type="module">
-        // Importa os serviços do Firebase de forma segura a partir da pasta raiz
-        import { auth, db } from '../assets/js/firebase-init.js';
+        // FIX: Changed to an absolute path from the project root (/sitejoin/) to resolve the module error.
+        import { auth, db } from '/sitejoin/assets/js/firebase-init.js';
         
         // Importa todas as funções do Firestore e Auth que vamos usar
         import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc, arrayUnion, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
@@ -167,13 +167,13 @@
         // --- CONTROLE DE AUTENTICAÇÃO ---
         onAuthStateChanged(auth, user => {
             if (user) {
-                // Usuário está logado, então exibimos o corpo da página
+                // Utilizador está autenticado, então exibimos o corpo da página
                 document.body.style.display = 'flex';
                 currentUser = user;
                 loadTurmas();
             } else {
-                // Se não houver usuário, redireciona para o login
-                window.location.href = '../login.html';
+                // Se não houver utilizador, redireciona para o login
+                window.location.href = '/sitejoin/login.html';
             }
         });
         
@@ -192,7 +192,7 @@
 
         document.getElementById('logout-button').addEventListener('click', (e) => {
             e.preventDefault();
-            signOut(auth).then(() => { window.location.href = '../login.html'; });
+            signOut(auth).then(() => { window.location.href = '/sitejoin/login.html'; });
         });
 
         // --- LÓGICA DE TURMAS ---
@@ -230,7 +230,7 @@
 
         async function loadTurmas() {
             if (!currentUser) return;
-            turmasGrid.innerHTML = '<p id="loading-message">Carregando turmas...</p>';
+            turmasGrid.innerHTML = '<p id="loading-message">A carregar turmas...</p>';
             
             const q = query(collection(db, "turmas"), where("professorId", "==", currentUser.uid));
             
@@ -273,7 +273,7 @@
                         </div>
                         <div class="turma-card-footer">
                             ${roundHtml}
-                            <button class="btn btn-primary btn-sm manage-students-btn">Gerenciar Alunos</button>
+                            <button class="btn btn-primary btn-sm manage-students-btn">Gerir Alunos</button>
                         </div>`;
                     turmasGrid.appendChild(card);
                 });
@@ -300,13 +300,13 @@
             }
             else if (e.target.classList.contains('start-round-btn')) {
                 const roundToStart = e.target.dataset.round;
-                if (confirm(`Tem certeza que deseja INICIAR a Rodada ${roundToStart} para a turma "${turmaName}"?`)) {
+                if (confirm(`Tem a certeza que deseja INICIAR a Rodada ${roundToStart} para a turma "${turmaName}"?`)) {
                     await updateRoundStatus(turmaId, roundToStart, 'iniciada');
                 }
             }
             else if (e.target.classList.contains('end-round-btn')) {
                 const roundToEnd = e.target.dataset.round;
-                if (confirm(`Tem certeza que deseja FINALIZAR a Rodada ${roundToEnd} para a turma "${turmaName}"?`)) {
+                if (confirm(`Tem a certeza que deseja FINALIZAR a Rodada ${roundToEnd} para a turma "${turmaName}"?`)) {
                     await updateRoundStatus(turmaId, roundToEnd, 'finalizada');
                 }
             }
@@ -335,7 +335,7 @@
         async function openManageStudentsModal(turmaId, turmaName) {
             document.getElementById('manage-students-title').textContent = `Alunos da Turma: ${turmaName}`;
             const studentList = document.getElementById('student-list');
-            studentList.innerHTML = '<li>Carregando...</li>';
+            studentList.innerHTML = '<li>A carregar...</li>';
             
             const form = document.getElementById('add-student-form');
             form.dataset.turmaId = turmaId;
@@ -376,7 +376,7 @@
             if (!email || !turmaId) return;
 
             addButton.disabled = true;
-            addButton.textContent = 'Adicionando...';
+            addButton.textContent = 'A adicionar...';
 
             try {
                 const q = query(collection(db, "usuarios"), where("email", "==", email), where("perfil", "==", "aluno"));
@@ -421,7 +421,7 @@
             updates[`statusRodada${round}`] = newStatus;
 
             try {
-                // Se estamos finalizando uma rodada, avançamos a rodada atual da turma
+                // Se estamos a finalizar uma rodada, avançamos a rodada atual da turma
                 if (newStatus === 'finalizada') {
                     updates.rodadaAtual = parseInt(round) + 1;
                 }

@@ -6,7 +6,19 @@
     <title>Painel do Professor - Join Xperience</title>
     <style>
         :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-sucesso: #28a745; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); color: var(--cor-texto); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* A página começa escondida para esperar a verificação de login */
+        body { 
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--cor-fundo); 
+            color: var(--cor-texto); 
+            line-height: 1.6; 
+            display: none; /* A página só será exibida pelo script após o login */
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
@@ -16,106 +28,101 @@
         .dashboard-header { text-align: center; padding: 40px 20px; background-color: var(--cor-branco); border-bottom: 1px solid #ddd; }
         .dashboard-header h1 { margin: 0; font-size: 2.8em; color: var(--cor-cinza-escuro); }
         .dashboard-header p { font-size: 1.2em; color: #666; max-width: 600px; margin: 10px auto 0 auto; }
-        .dashboard-header .actions { margin-top: 20px; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 40px 0; }
         .card { background-color: var(--cor-branco); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding: 25px; text-decoration: none; color: var(--cor-texto); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
         .card .icon { font-size: 3em; margin-bottom: 15px; color: var(--cor-primaria); text-align: center; }
         .card h3 { margin: 0 0 10px 0; font-size: 1.5em; text-align: center; }
         .card p { flex-grow: 1; margin: 0 0 20px 0; color: #555; text-align: center; }
-        .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 0; width: 80%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
-        @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
-        .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; }
-        .modal-header h2 { margin: 0; }
-        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .modal-body { padding: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; font-family: inherit; }
-        .form-group textarea { resize: vertical; min-height: 120px; }
-        .modal-footer { padding: 15px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #dee2e6; background-color: #f8f9fa; gap: 10px; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; transition: background-color 0.3s ease; }
+        .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
     </style>
 </head>
 <body>
-    <header class="main-header"><a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a><nav><a href="#" id="logout-button">Sair</a></nav></header>
+    <header class="main-header">
+        <!-- FIX: Changed to an absolute path from the project root -->
+        <a href="/sitejoin/index.html" class="logo-container"><img src="/sitejoin/JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
+        <nav><a href="#" id="logout-button">Sair</a></nav>
+    </header>
     <main>
         <div class="dashboard-header">
             <h1 id="welcome-title">Painel do Professor</h1>
-            <p id="welcome-message">Carregando informações...</p>
-            <div class="actions">
-                <button id="open-post-modal-btn" class="btn btn-success">📰 Nova Postagem no Mural</button>
+            <p id="welcome-message">A verificar autenticação...</p>
+            <div class="actions" style="margin-top: 20px;">
+                <button id="open-post-modal-btn" class="btn btn-success" title="Funcionalidade em desenvolvimento">📰 Nova Postagem no Mural</button>
             </div>
         </div>
         <div class="container">
             <div class="dashboard-grid" id="dashboard-grid">
-                <a href="bussola.html" class="card"><div class="icon">🧭</div><h3>Bússola</h3><p>Acesse o glossário de termos e conceitos do jogo.</p></a>
-                <a href="gerenciar-turmas.html" class="card"><div class="icon">👥</div><h3>Gerenciar Turmas</h3><p>Crie, organize e acompanhe o progresso de suas turmas.</p></a>
-                <a href="relatorios.html" class="card"><div class="icon">📊</div><h3>Relatórios</h3><p>Visualize relatórios detalhados e insights sobre as rodadas.</p></a>
+                <!-- FIX: Changed to absolute paths from the project root -->
+                <a href="/sitejoin/professor/bussola.html" class="card"><div class="icon">🧭</div><h3>Bússola</h3><p>Aceda ao glossário de termos e conceitos do jogo.</p></a>
+                <a href="/sitejoin/professor/gerenciar-turmas.html" class="card"><div class="icon">👥</div><h3>Gerir Turmas</h3><p>Crie, organize e acompanhe o progresso das suas turmas.</p></a>
+                <a href="/sitejoin/professor/relatorios.html" class="card"><div class="icon">📊</div><h3>Relatórios</h3><p>Visualize relatórios detalhados e insights sobre as rodadas.</p></a>
             </div>
         </div>
     </main>
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
-    <div id="post-modal" class="modal-backdrop">
-        </div>
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Lógica dos modais e logout (como estava antes)
-        // ...
+        // FIX: Changed to an absolute path from the project root (/sitejoin/) to resolve the module error.
+        import { auth, db } from '/sitejoin/assets/js/firebase-init.js';
+        
+        // Importa apenas as funções que esta página utiliza
+        import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                // Se o utilizador está autenticado, mostra a página
+                document.body.style.display = 'flex';
+
                 const welcomeTitle = document.getElementById('welcome-title');
                 const welcomeMessage = document.getElementById('welcome-message');
                 const userDocRef = doc(db, "usuarios", user.uid);
-                const userDoc = await getDoc(userDocRef);
+                
+                try {
+                    const userDoc = await getDoc(userDocRef);
 
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    welcomeTitle.textContent = `Bem-vindo(a), ${userData.nome || 'Professor(a)'}!`;
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        welcomeTitle.textContent = `Bem-vindo(a), ${userData.nome || 'Professor(a)'}!`;
 
-                    if (userData.isAdmin === true) {
-                        const grid = document.getElementById('dashboard-grid');
-
-                        // Link para o NOVO painel de admin centralizado
-                        const adminPanelCard = `
-                            <a href="../adm/index.html" class="card">
-                                <div class="icon">👑</div>
-                                <h3>Painel do Administrador</h3>
-                                <p>Acesse as ferramentas de gerenciamento do jogo (Catálogo, Cenários, etc).</p>
-                            </a>`;
-
-                        grid.insertAdjacentHTML('beforeend', adminPanelCard);
+                        // Mostra o painel de Admin se o utilizador for um administrador
+                        if (userData.isAdmin === true) {
+                            const grid = document.getElementById('dashboard-grid');
+                            const adminPanelCard = `
+                                <!-- FIX: Changed to an absolute path from the project root -->
+                                <a href="/sitejoin/adm/index.html" class="card">
+                                    <div class="icon">👑</div>
+                                    <h3>Painel do Administrador</h3>
+                                    <p>Aceda às ferramentas de gestão do jogo (Catálogo, Cenários, etc.).</p>
+                                </a>`;
+                            grid.insertAdjacentHTML('beforeend', adminPanelCard);
+                        }
+                    } else {
+                        welcomeTitle.textContent = 'Painel do Professor';
                     }
-                } else {
-                    welcomeTitle.textContent = 'Painel do Professor';
+                    welcomeMessage.textContent = 'Use as ferramentas abaixo para gerir o jogo, acompanhar as suas turmas e ver relatórios.';
+
+                } catch (error) {
+                    console.error("Erro ao carregar dados do professor:", error);
+                    welcomeMessage.textContent = "Não foi possível carregar os seus dados.";
                 }
-                welcomeMessage.textContent = 'Use as ferramentas abaixo para gerenciar o jogo, acompanhar suas turmas e ver relatórios.';
+
             } else {
-                window.location.href = '../login.html';
+                // Se não houver utilizador autenticado, redireciona para a página de login
+                // FIX: Changed to an absolute path from the project root
+                window.location.href = '/sitejoin/login.html';
             }
         });
 
         document.getElementById('logout-button').addEventListener('click', (e) => {
             e.preventDefault();
-            signOut(auth).then(() => { window.location.href = '../index.html'; });
+            signOut(auth).then(() => { 
+                // FIX: Changed to an absolute path from the project root
+                window.location.href = '/sitejoin/login.html'; 
+            });
         });
     </script>
 </body>

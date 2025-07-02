@@ -23,8 +23,6 @@
         .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; transition: background-color 0.2s; }
         .btn-secondary { background-color: var(--cor-secundaria); color: var(--cor-branco); }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        /* O campo de código da turma agora é sempre oculto */
-        #campo-codigo-turma { display: none; }
     </style>
 </head>
 <body>
@@ -40,13 +38,6 @@
                     <label><input type="radio" name="perfil" value="aluno" checked> Sou Aluno</label>
                     <label><input type="radio" name="perfil" value="professor"> Sou Professor</label>
                 </div>
-
-                <!-- Campo de código da turma removido da lógica -->
-                <div class="form-group" id="campo-codigo-turma">
-                    <label for="codigo-turma">Código da Turma</label>
-                    <input type="text" id="codigo-turma" placeholder="Este campo não é mais necessário">
-                </div>
-
                 <div class="form-group"><label for="nome">Seu Nome Completo</label><input type="text" id="nome" required></div>
                 <div class="form-group"><label for="email">Seu E-mail (será seu login)</label><input type="email" id="email" required></div>
                 <div class="form-group"><label for="senha">Crie uma Senha (mínimo 6 caracteres)</label><input type="password" id="senha" required></div>
@@ -57,27 +48,15 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Garante que o campo de código da turma esteja sempre oculto
-        document.getElementById('campo-codigo-turma').style.display = 'none';
+        // CORREÇÃO: Importa 'auth' e 'db' do arquivo centralizado.
+        import { auth, db } from './assets/js/firebase-init.js';
+        
+        // Importa as funções que esta página precisa
+        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
         const cadastroForm = document.getElementById("cadastro-form");
+
         cadastroForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const submitButton = e.target.querySelector('button[type="submit"]');
@@ -105,7 +84,7 @@
                 // Se for aluno, define os valores iniciais.
                 if (perfil === 'aluno') {
                     userData.turmaId = null; // O aluno começa SEM TURMA
-                    userData.rodadaAtual = 1;   // Começa na rodada 1 por padrão
+                    userData.rodadaAtual = 1;  // Começa na rodada 1 por padrão
                 }
 
                 // 3. Salva os dados do novo usuário na coleção 'usuarios'
@@ -115,24 +94,21 @@
                 window.location.href = 'login.html';
 
             } catch (error) {
-                handleAuthError(error, submitButton);
+                let errorMessage = "Ocorreu um erro desconhecido.";
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = "Este e-mail já está cadastrado.";
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = "A senha é muito fraca. Use pelo menos 6 caracteres.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "O formato do e-mail é inválido.";
+                }
+                console.error("Erro no cadastro:", error);
+                alert(`Erro ao cadastrar: ${errorMessage}`);
+                
+                submitButton.disabled = false;
+                submitButton.textContent = "Cadastrar";
             }
         });
-
-        function handleAuthError(error, button) {
-            let errorMessage = "Ocorreu um erro desconhecido.";
-            if (error.code === 'auth/email-already-in-use') {
-                errorMessage = "Este e-mail já está cadastrado.";
-            } else if (error.code === 'auth/weak-password') {
-                errorMessage = "A senha é muito fraca. Use pelo menos 6 caracteres.";
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage = "O formato do e-mail é inválido.";
-            }
-            console.error("Erro no cadastro:", error);
-            alert(`Erro ao cadastrar: ${errorMessage}`);
-            button.disabled = false;
-            button.textContent = "Cadastrar";
-        }
     </script>
 </body>
 </html>

@@ -6,7 +6,7 @@
     <title>Login - Join Xperience</title>
     <style>
         :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: none; flex-direction: column; min-height: 100vh; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: none; /* A página só aparece quando o script confirma que não há usuário logado */ flex-direction: column; min-height: 100vh; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
         header.main-header .logo-container img { height: 50px; margin-right: 15px; }
@@ -34,7 +34,6 @@
             <a href="cadastro.html">Criar uma conta</a>
         </nav>
     </header>
-
     <main class="main-container">
         <div class="form-card">
             <h2>Acesse sua Conta</h2>
@@ -56,81 +55,80 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        // CORREÇÃO: Importa 'auth' e 'db' do arquivo centralizado.
+        // O caminho 'assets/js/...' funciona porque login.html está na raiz.
+        import { auth, db } from './assets/js/firebase-init.js';
+        
+        // Importa as funções que esta página precisa
+        import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
+        // Função para redirecionar o usuário após o login
         async function redirecionarPorPerfil(uid) {
             const userDocRef = doc(db, "usuarios", uid);
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (userDocSnap.exists()) {
-                const userData = userDocSnap.data();
-                const perfil = userData.perfil;
-                let destino = '';
-
-                if (perfil === 'professor') {
-                    destino = './professor/professor.html';
-                } else if (perfil === 'aluno') {
-                    const rodadaAtual = userData.rodadaAtual;
-                    if (!userData.turmaId) {
-                        destino = './aluno/xperience.html';
-                    } else {
-                        switch (rodadaAtual) {
-                            case 1: destino = './aluno/rodada1-nivelamento.html'; break;
-                            case 2: destino = './aluno/rodada2-fundacao.html'; break;
-                            case 3: destino = './aluno/rodada3-operacoes.html'; break;
-                            default: destino = './aluno/xperience.html';
+            try {
+                const userDocSnap = await getDoc(userDocRef);
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    const perfil = userData.perfil;
+                    
+                    if (perfil === 'professor') {
+                        window.location.href = './professor/professor.html';
+                    } else if (perfil === 'aluno') {
+                        // Se o aluno não tem turma, vai para a sala de espera.
+                        if (!userData.turmaId) {
+                            window.location.href = './aluno/xperience.html';
+                        } else {
+                            // Se tem turma, vai para a rodada correta.
+                            const rodada = userData.rodadaAtual || 1;
+                            switch (rodada) {
+                                case 1: window.location.href = './aluno/rodada1-nivelamento.html'; break;
+                                case 2: window.location.href = './aluno/rodada2-fundacao.html'; break;
+                                case 3: window.location.href = './aluno/rodada3-operacoes.html'; break;
+                                default: window.location.href = './aluno/xperience.html';
+                            }
                         }
                     }
+                } else {
+                    alert("Erro: Dados de perfil não encontrados. Contacte o suporte.");
+                    auth.signOut();
                 }
-                
-                if (destino) {
-                    window.location.href = destino;
-                }
-            } else {
-                alert("Erro: Dados de perfil não encontrados. Contacte o suporte.");
-                auth.signOut();
+            } catch (error) {
+                console.error("Erro ao buscar dados do usuário:", error);
+                alert("Ocorreu um erro ao carregar seus dados.");
             }
         }
 
+        // Verifica se o usuário JÁ ESTÁ LOGADO ao carregar a página
         const unsub = onAuthStateChanged(auth, (user) => {
             if (user) {
+                // Se já está logado, redireciona imediatamente
                 redirecionarPorPerfil(user.uid);
             } else {
+                // Se não está logado, mostra a página de login
                 document.body.style.display = 'flex';
-                unsub();
+                unsub(); // Para de ouvir para não redirecionar de novo
             }
         });
 
+        // Adiciona o evento de submit ao formulário
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             const loginButton = e.target.querySelector('button[type="submit"]');
-
+            
             loginButton.disabled = true;
             loginButton.textContent = "Entrando...";
 
             try {
+                // Define a persistência para manter o usuário logado
                 await setPersistence(auth, browserLocalPersistence);
-                await signInWithEmailAndPassword(auth, email, senha);
-                // O onAuthStateChanged irá tratar do redirecionamento.
+                const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+                // A função onAuthStateChanged (que agora está sempre ativa) cuidará do redirecionamento.
+                // A linha abaixo é uma garantia caso o onAuthStateChanged demore.
+                await redirecionarPorPerfil(userCredential.user.uid);
             } catch (error) {
                 alert("E-mail ou senha inválidos. Tente novamente.");
                 loginButton.disabled = false;
