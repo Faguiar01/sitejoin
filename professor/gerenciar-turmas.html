@@ -4,10 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Turmas - Join Xperience</title>
+    <!-- Biblioteca para gerar QR Code -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-aviso: #ffc107; --cor-info: #17a2b8; --cor-perigo: #dc3545; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: none; /* Protegido pelo auth-guard */ flex-direction: column; min-height: 100vh; }
+        :root {
+            --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-aviso: #ffc107;
+            --cor-info: #17a2b8; --cor-perigo: #dc3545; --cor-texto: #333;
+            --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40;
+        }
+        
+        /* A página começa escondida para esperar a verificação de login */
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cor-fundo);
+            display: none; /* A página só será exibida pelo script após o login */
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
         header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
@@ -18,11 +33,11 @@
         .page-header h1 { margin: 0; font-size: 2.2em; }
         .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
         .btn-sm { padding: 8px 12px; font-size: 0.9em; }
-        .btn-primary, .btn-info { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn-secondary { background-color: #6c757d; color: var(--cor-branco); }
+        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
         .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
+        .btn-secondary { background-color: #6c757d; color: var(--cor-branco); }
         .btn-warning { background-color: var(--cor-aviso); color: #212529; }
-        .btn:hover:not(:disabled) { opacity: 0.85; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .btn:disabled { background-color: #ccc; cursor: not-allowed; }
         .turmas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 25px; margin-top: 30px; }
         .turma-card { background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
@@ -30,34 +45,34 @@
         .turma-card-header h3 { margin: 0; }
         .turma-card-body { padding: 20px; flex-grow: 1; }
         .turma-card-body p { margin: 0 0 15px 0; color: #666; }
-        .turma-code { background-color: #e9ecef; padding: 10px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 1.4em; text-align: center; letter-spacing: 2px; }
+        .turma-code { background-color: #e9ecef; padding: 10px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 1.4em; text-align: center; letter-spacing: 2px; cursor: pointer; }
+        .turma-code:hover { background-color: #dce3e8; }
         .round-status { text-align: center; padding: 10px; border-radius: 5px; font-weight: bold; margin-bottom: 15px; }
-        .status-not-started { background-color: #f8d7da; color: #721c24; }
-        .status-in-progress { background-color: #fff3cd; color: #856404; }
-        .status-finished { background-color: #d4edda; color: #155724; }
+        .status-nao_iniciada { background-color: #f8d7da; color: #721c24; }
+        .status-iniciada { background-color: #fff3cd; color: #856404; }
+        .status-finalizada { background-color: #d4edda; color: #155724; }
         .turma-card-footer { padding: 15px 20px; background-color: #f8f9fa; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
-        #loading-message { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
-        .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 0; width: 90%; max-width: 700px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
+        #loading-message { text-align: center; padding: 40px; font-size: 1.2em; color: #666; width: 100%; }
+        .modal-backdrop { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+        .modal-content { background-color: #fefefe; padding: 0; width: 90%; max-width: 600px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; overflow: hidden; }
         @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
-        .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; background-color: #f8f9fa; }
-        .modal-header h2 { margin: 0; font-size: 1.5rem; }
+        .modal-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; }
+        .modal-header h2 { margin: 0; }
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-body { padding: 20px; max-height: 70vh; overflow-y: auto; }
         .modal-footer { padding: 15px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #dee2e6; background-color: #f8f9fa; gap: 10px; }
-        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
         .form-group input { width: 100%; padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        #student-list { list-style-type: none; padding: 0; margin-top: 20px; }
-        #student-list li { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 5px; }
+        #student-list { list-style-type: none; padding: 0; }
+        #student-list li { background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        #qrcode-container { padding: 20px; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        #qrcode-container p { font-family: monospace; font-size: 2em; margin-top: 15px; background-color: #eee; padding: 5px 10px; border-radius: 5px; }
         footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
     </style>
-    <!-- CORREÇÃO: Caminho relativo correto para o auth-guard.js -->
-    <script type="module" src="../assets/js/auth-guard.js"></script>
 </head>
 <body>
     <header class="main-header">
-        <!-- CORREÇÃO: Caminho relativo correto para a imagem e o link -->
         <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
         <nav><a href="#" id="logout-button">Sair</a></nav>
     </header>
@@ -68,7 +83,7 @@
             <button id="open-create-turma-modal" class="btn btn-success">Criar Nova Turma</button>
         </div>
         <div id="turmas-grid" class="turmas-grid">
-            <p id="loading-message">Carregando turmas...</p>
+            <p id="loading-message">Verificando autenticação...</p>
         </div>
     </main>
 
@@ -113,10 +128,7 @@
                 </form>
                 <hr style="margin: 20px 0;">
                 <h3>Alunos na Turma</h3>
-                <ul id="student-list">
-                    <!-- Lista de alunos será populada aqui -->
-                    <li>Nenhum aluno adicionado ainda.</li>
-                </ul>
+                <ul id="student-list"></ul>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary close-button">Fechar</button>
@@ -124,52 +136,66 @@
         </div>
     </div>
 
+    <!-- Modal para exibir o QR Code -->
+    <div id="qrcode-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="qrcode-title">Código da Turma</h2>
+                <span class="close-button">&times;</span>
+            </div>
+            <div class="modal-body" id="qrcode-container">
+                <!-- O QR Code e o texto serão gerados aqui -->
+            </div>
+        </div>
+    </div>
+
     <script type="module">
-        import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-        // CORREÇÃO: Usando caminho relativo para o firebase-init.js
+        // Importa os serviços do Firebase de forma segura a partir da pasta raiz
         import { auth, db } from '../assets/js/firebase-init.js';
-        import { signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        
+        // Importa todas as funções do Firestore e Auth que vamos usar
+        import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, updateDoc, arrayUnion, getDoc, writeBatch } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
+        // --- VARIÁVEIS GLOBAIS ---
         let currentUser;
-
-        // --- Elementos dos Modais ---
+        const turmasGrid = document.getElementById('turmas-grid');
         const createTurmaModal = document.getElementById('create-turma-modal');
         const manageStudentsModal = document.getElementById('manage-students-modal');
-        const turmasGrid = document.getElementById('turmas-grid');
+        const qrcodeModal = document.getElementById('qrcode-modal');
 
-        // Função para fechar todos os modais
+        // --- CONTROLE DE AUTENTICAÇÃO ---
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                // Usuário está logado, então exibimos o corpo da página
+                document.body.style.display = 'flex';
+                currentUser = user;
+                loadTurmas();
+            } else {
+                // Se não houver usuário, redireciona para o login
+                window.location.href = '../login.html';
+            }
+        });
+        
+        // --- FUNÇÕES GERAIS E EVENTOS ---
         const closeAllModals = () => {
             document.querySelectorAll('.modal-backdrop').forEach(modal => modal.style.display = 'none');
         };
 
-        // Adiciona eventos aos botões de fechar
         document.querySelectorAll('.close-button').forEach(btn => {
             btn.addEventListener('click', closeAllModals);
         });
 
-        // Abre o modal de criar turma
         document.getElementById('open-create-turma-modal').addEventListener('click', () => {
-            createTurmaModal.style.display = 'block';
-        });
-        
-        // --- Lógica Principal ---
-        
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                loadTurmas();
-            }
-            // O auth-guard.js já trata o caso de não haver usuário
+            createTurmaModal.style.display = 'flex';
         });
 
         document.getElementById('logout-button').addEventListener('click', (e) => {
             e.preventDefault();
-            signOut(auth).then(() => {
-                // CORREÇÃO: Caminho relativo para o logout
-                window.location.href = '../login.html';
-            }).catch(error => console.error("Erro ao sair:", error));
+            signOut(auth).then(() => { window.location.href = '../login.html'; });
         });
 
+        // --- LÓGICA DE TURMAS ---
         function generateJoinCode() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
             let result = '';
@@ -183,7 +209,6 @@
             e.preventDefault();
             const turmaName = document.getElementById('turma-name').value;
             if (!turmaName.trim() || !currentUser) return;
-
             try {
                 await addDoc(collection(db, "turmas"), {
                     nome: turmaName,
@@ -193,8 +218,6 @@
                     alunos: [],
                     rodadaAtual: 1,
                     statusRodada1: 'nao_iniciada',
-                    statusRodada2: 'nao_iniciada',
-                    statusRodada3: 'nao_iniciada'
                 });
                 closeAllModals();
                 document.getElementById('create-turma-form').reset();
@@ -215,7 +238,7 @@
                 const querySnapshot = await getDocs(q);
                 turmasGrid.innerHTML = '';
                 if (querySnapshot.empty) {
-                    turmasGrid.innerHTML = '<p id="loading-message">Nenhuma turma criada ainda.</p>';
+                    turmasGrid.innerHTML = '<p id="loading-message">Nenhuma turma criada ainda. Clique em "Criar Nova Turma" para começar.</p>';
                     return;
                 }
 
@@ -225,28 +248,32 @@
                     card.className = 'turma-card';
                     card.dataset.turmaId = docRef.id;
                     card.dataset.turmaName = turma.nome;
+                    card.dataset.turmaCode = turma.codigo;
 
                     const rodadaAtual = turma.rodadaAtual || 1;
                     const status = turma[`statusRodada${rodadaAtual}`] || 'nao_iniciada';
+                    
                     let roundHtml = '';
-
                     if (status === 'nao_iniciada') {
-                        roundHtml = `<div class="round-status status-not-started">Rodada ${rodadaAtual}: Não Iniciada</div><button class="btn btn-success start-round-btn" data-round="${rodadaAtual}">Iniciar Rodada ${rodadaAtual}</button>`;
+                        roundHtml = `<button class="btn btn-success start-round-btn" data-round="${rodadaAtual}">Iniciar Rodada ${rodadaAtual}</button>`;
                     } else if (status === 'iniciada') {
-                        roundHtml = `<div class="round-status status-in-progress">Rodada ${rodadaAtual}: Em Andamento</div><button class="btn btn-warning finalizar-round-btn" data-round="${rodadaAtual}">Finalizar Rodada ${rodadaAtual}</button>`;
+                        roundHtml = `<button class="btn btn-warning end-round-btn" data-round="${rodadaAtual}">Finalizar Rodada ${rodadaAtual}</button>`;
                     } else { // finalizada
-                        roundHtml = `<div class="round-status status-finished">Rodada ${rodadaAtual}: Finalizada</div><button class="btn btn-success start-round-btn" data-round="${rodadaAtual + 1}">Iniciar Rodada ${rodadaAtual + 1}</button>`;
+                        const proximaRodada = rodadaAtual + 1;
+                        roundHtml = `<button class="btn btn-success start-round-btn" data-round="${proximaRodada}">Iniciar Rodada ${proximaRodada}</button>`;
                     }
 
                     card.innerHTML = `
                         <div class="turma-card-header"><h3>${turma.nome}</h3></div>
                         <div class="turma-card-body">
                             <p>Alunos inscritos: ${turma.alunos ? turma.alunos.length : 0}</p>
-                            <div class="turma-code" style="margin-bottom: 20px;">${turma.codigo || 'N/D'}</div>
-                            ${roundHtml}
+                            <div class="turma-code" title="Clique para ver o QR Code">${turma.codigo || 'N/D'}</div>
+                            <p style="margin-top: 20px;"><strong>Status da Rodada ${rodadaAtual}:</strong></p>
+                            <div class="round-status status-${status}">${status.replace('_', ' ').toUpperCase()}</div>
                         </div>
                         <div class="turma-card-footer">
-                            <button class="btn btn-info btn-sm manage-students-btn">Gerenciar Alunos</button>
+                            ${roundHtml}
+                            <button class="btn btn-primary btn-sm manage-students-btn">Gerenciar Alunos</button>
                         </div>`;
                     turmasGrid.appendChild(card);
                 });
@@ -255,35 +282,71 @@
                 turmasGrid.innerHTML = `<p id="loading-message">Ocorreu um erro ao carregar as turmas.</p>`;
             }
         }
-
-        // --- LÓGICA DE GERENCIAMENTO DE ALUNOS ---
-
+        
+        // --- LÓGICA DE EVENTOS NOS CARDS (DELEGAÇÃO) ---
         turmasGrid.addEventListener('click', async (e) => {
             const card = e.target.closest('.turma-card');
             if (!card) return;
+
             const turmaId = card.dataset.turmaId;
             const turmaName = card.dataset.turmaName;
+            const turmaCode = card.dataset.turmaCode;
 
             if (e.target.classList.contains('manage-students-btn')) {
                 openManageStudentsModal(turmaId, turmaName);
+            } 
+            else if (e.target.classList.contains('turma-code')) {
+                openQrCodeModal(turmaCode, turmaName);
             }
-            // Adicionar lógica para os outros botões (iniciar/finalizar rodada) aqui
+            else if (e.target.classList.contains('start-round-btn')) {
+                const roundToStart = e.target.dataset.round;
+                if (confirm(`Tem certeza que deseja INICIAR a Rodada ${roundToStart} para a turma "${turmaName}"?`)) {
+                    await updateRoundStatus(turmaId, roundToStart, 'iniciada');
+                }
+            }
+            else if (e.target.classList.contains('end-round-btn')) {
+                const roundToEnd = e.target.dataset.round;
+                if (confirm(`Tem certeza que deseja FINALIZAR a Rodada ${roundToEnd} para a turma "${turmaName}"?`)) {
+                    await updateRoundStatus(turmaId, roundToEnd, 'finalizada');
+                }
+            }
         });
+
+        // --- FUNÇÕES DE MODAIS ESPECÍFICOS ---
+        function openQrCodeModal(turmaCode, turmaName) {
+            const qrcodeContainer = document.getElementById('qrcode-container');
+            qrcodeContainer.innerHTML = ''; // Limpa o QR Code anterior
+            new QRCode(qrcodeContainer, {
+                text: turmaCode,
+                width: 256,
+                height: 256,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+            const codeText = document.createElement('p');
+            codeText.textContent = turmaCode;
+            qrcodeContainer.appendChild(codeText);
+
+            document.getElementById('qrcode-title').textContent = `Código da Turma: ${turmaName}`;
+            qrcodeModal.style.display = 'flex';
+        }
 
         async function openManageStudentsModal(turmaId, turmaName) {
             document.getElementById('manage-students-title').textContent = `Alunos da Turma: ${turmaName}`;
             const studentList = document.getElementById('student-list');
             studentList.innerHTML = '<li>Carregando...</li>';
             
-            document.getElementById('add-student-form').dataset.turmaId = turmaId;
-            manageStudentsModal.style.display = 'block';
+            const form = document.getElementById('add-student-form');
+            form.dataset.turmaId = turmaId;
+            form.dataset.turmaName = turmaName; // Guardar o nome para reabrir o modal
+            manageStudentsModal.style.display = 'flex';
 
             const turmaRef = doc(db, "turmas", turmaId);
             const turmaSnap = await getDoc(turmaRef);
             if (!turmaSnap.exists()) return;
 
-            const turmaData = turmaSnap.data();
-            const studentIds = turmaData.alunos || [];
+            const studentIds = turmaSnap.data().alunos || [];
 
             if (studentIds.length === 0) {
                 studentList.innerHTML = '<li>Nenhum aluno adicionado ainda.</li>';
@@ -302,9 +365,11 @@
             }
         }
 
+        // --- LÓGICA DE MANIPULAÇÃO DE DADOS (ALUNOS E RODADAS) ---
         document.getElementById('add-student-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const turmaId = e.target.dataset.turmaId;
+            const turmaName = e.target.dataset.turmaName;
             const email = document.getElementById('student-email').value.trim();
             const addButton = e.target.querySelector('button');
 
@@ -317,37 +382,29 @@
                 const q = query(collection(db, "usuarios"), where("email", "==", email), where("perfil", "==", "aluno"));
                 const querySnapshot = await getDocs(q);
 
-                if (querySnapshot.empty) {
-                    throw new Error("Nenhum aluno encontrado com este e-mail.");
-                }
+                if (querySnapshot.empty) throw new Error("Nenhum aluno encontrado com este e-mail.");
 
                 const studentDoc = querySnapshot.docs[0];
                 const studentData = studentDoc.data();
+                if (studentData.turmaId) throw new Error(`Este aluno já pertence a outra turma.`);
+
                 const studentId = studentDoc.id;
-
-                if (studentData.turmaId) {
-                    throw new Error(`Este aluno já pertence a outra turma.`);
-                }
-
                 const turmaRef = doc(db, "turmas", turmaId);
                 const turmaSnap = await getDoc(turmaRef);
                 if (!turmaSnap.exists()) throw new Error("A turma não foi encontrada.");
+                
                 const turmaData = turmaSnap.data();
-
-                await updateDoc(doc(db, "usuarios", studentId), {
-                    turmaId: turmaId,
-                    rodadaAtual: turmaData.rodadaAtual
-                });
-
-                await updateDoc(turmaRef, {
-                    alunos: arrayUnion(studentId)
-                });
+                
+                // Atualiza ambos os documentos (aluno e turma)
+                await updateDoc(doc(db, "usuarios", studentId), { turmaId: turmaId, rodadaAtual: turmaData.rodadaAtual });
+                await updateDoc(turmaRef, { alunos: arrayUnion(studentId) });
 
                 alert(`Aluno "${studentData.nome}" adicionado com sucesso!`);
                 document.getElementById('student-email').value = '';
                 
-                openManageStudentsModal(turmaId, document.getElementById('manage-students-title').textContent.replace('Alunos da Turma: ', ''));
-                loadTurmas();
+                // Recarrega a lista de alunos no modal e a grade de turmas na página
+                openManageStudentsModal(turmaId, turmaName); 
+                loadTurmas(); 
 
             } catch (error) {
                 console.error("Erro ao adicionar aluno:", error);
@@ -358,6 +415,40 @@
             }
         });
 
+        async function updateRoundStatus(turmaId, round, newStatus) {
+            const turmaRef = doc(db, "turmas", turmaId);
+            const updates = {};
+            updates[`statusRodada${round}`] = newStatus;
+
+            try {
+                // Se estamos finalizando uma rodada, avançamos a rodada atual da turma
+                if (newStatus === 'finalizada') {
+                    updates.rodadaAtual = parseInt(round) + 1;
+                }
+                
+                await updateDoc(turmaRef, updates);
+
+                // Se iniciamos uma rodada, atualizamos a rodada de todos os alunos da turma
+                if (newStatus === 'iniciada') {
+                    const turmaSnap = await getDoc(turmaRef);
+                    const studentIds = turmaSnap.data().alunos || [];
+                    const batch = writeBatch(db);
+                    studentIds.forEach(studentId => {
+                        const studentRef = doc(db, "usuarios", studentId);
+                        batch.update(studentRef, { rodadaAtual: parseInt(round) });
+                    });
+                    await batch.commit();
+                    alert(`Rodada ${round} iniciada! Todos os alunos da turma foram atualizados.`);
+                } else {
+                     alert(`Rodada ${round} atualizada para ${newStatus}!`);
+                }
+
+                loadTurmas(); // Recarrega a grade para mostrar o novo status
+            } catch (error) {
+                console.error("Erro ao atualizar status da rodada:", error);
+                alert("Ocorreu um erro ao atualizar a rodada.");
+            }
+        }
     </script>
 </body>
 </html>
