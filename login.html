@@ -55,9 +55,8 @@
     </main>
 
     <script type="module">
-        // CORREÇÃO: Importa 'auth' e 'db' do arquivo centralizado.
-        // O caminho 'assets/js/...' funciona porque login.html está na raiz.
-        import { auth, db } from './assets/js/firebase-init.js';
+        // CORREÇÃO: Usando a URL completa para importar 'auth' e 'db'.
+        import { auth, db } from 'https://faguiar01.github.io/sitejoin/aluno/assets/js/firebase-init.js';
         
         // Importa as funções que esta página precisa
         import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
@@ -71,23 +70,27 @@
                 if (userDocSnap.exists()) {
                     const userData = userDocSnap.data();
                     const perfil = userData.perfil;
-                    
+                    const urlBase = "https://faguiar01.github.io/sitejoin";
+                    let destino = '';
+
                     if (perfil === 'professor') {
-                        window.location.href = './professor/professor.html';
+                        destino = `${urlBase}/professor/professor.html`;
                     } else if (perfil === 'aluno') {
-                        // Se o aluno não tem turma, vai para a sala de espera.
                         if (!userData.turmaId) {
-                            window.location.href = './aluno/xperience.html';
+                            destino = `${urlBase}/aluno/xperience.html`;
                         } else {
-                            // Se tem turma, vai para a rodada correta.
                             const rodada = userData.rodadaAtual || 1;
                             switch (rodada) {
-                                case 1: window.location.href = './aluno/rodada1-nivelamento.html'; break;
-                                case 2: window.location.href = './aluno/rodada2-fundacao.html'; break;
-                                case 3: window.location.href = './aluno/rodada3-operacoes.html'; break;
-                                default: window.location.href = './aluno/xperience.html';
+                                case 1: destino = `${urlBase}/aluno/rodada1-nivelamento.html`; break;
+                                case 2: destino = `${urlBase}/aluno/rodada2-fundacao.html`; break;
+                                case 3: destino = `${urlBase}/aluno/rodada3-operacoes.html`; break;
+                                default: destino = `${urlBase}/aluno/xperience.html`;
                             }
                         }
+                    }
+                    
+                    if (destino && window.location.href.indexOf(destino) === -1) {
+                         window.location.href = destino;
                     }
                 } else {
                     alert("Erro: Dados de perfil não encontrados. Contacte o suporte.");
@@ -99,15 +102,15 @@
             }
         }
 
-        // Verifica se o usuário JÁ ESTÁ LOGADO ao carregar a página
+        // Verifica o estado de autenticação
         const unsub = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Se já está logado, redireciona imediatamente
+                // Se já está logado, redireciona
                 redirecionarPorPerfil(user.uid);
             } else {
                 // Se não está logado, mostra a página de login
                 document.body.style.display = 'flex';
-                unsub(); // Para de ouvir para não redirecionar de novo
+                unsub(); // Para de ouvir para não causar loops
             }
         });
 
@@ -123,11 +126,9 @@
             loginButton.textContent = "Entrando...";
 
             try {
-                // Define a persistência para manter o usuário logado
                 await setPersistence(auth, browserLocalPersistence);
                 const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-                // A função onAuthStateChanged (que agora está sempre ativa) cuidará do redirecionamento.
-                // A linha abaixo é uma garantia caso o onAuthStateChanged demore.
+                // Após o login, a função onAuthStateChanged será acionada e fará o redirecionamento.
                 await redirecionarPorPerfil(userCredential.user.uid);
             } catch (error) {
                 alert("E-mail ou senha inválidos. Tente novamente.");
