@@ -1,141 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Join Xperience</title>
-    <style>
-        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: none; /* A página só aparece quando o script confirma que não há usuário logado */ flex-direction: column; min-height: 100vh; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav a { color: var(--cor-texto); text-decoration: none; font-weight: 500; }
-        .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 50px 20px; }
-        .form-card { background-color: var(--cor-branco); padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        .form-card h2 { text-align: center; font-size: 2em; margin-top: 0; margin-bottom: 25px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
-        .extra-links { text-align: center; margin-top: 20px; }
-        .extra-links a { color: var(--cor-primaria); text-decoration: none; display: block; margin-top: 10px; }
-        .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-    </style>
+    <meta name="description" content="Acesse sua conta no JOIN XPERIENCE">
+    <title>Login - JOIN XPERIENCE</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
     <header class="main-header">
-        <a href="index.html" class="logo-container">
-            <img src="JOIN.png" alt="Logo Join Xperience">
-            <span>Join Xperience</span>
+        <a href="index.html" class="logo">
+            <img src="assets/img/logo.png" alt="JOIN XPERIENCE">
         </a>
         <nav>
-            <a href="cadastro.html">Criar uma conta</a>
+            <a href="cadastro.html">Criar conta</a>
         </nav>
     </header>
-    <main class="main-container">
-        <div class="form-card">
-            <h2>Acesse sua Conta</h2>
-            <form id="login-form">
+
+    <main class="login-container">
+        <div class="login-card">
+            <h1>Acesse sua conta</h1>
+            <form id="loginForm">
                 <div class="form-group">
                     <label for="email">E-mail</label>
                     <input type="email" id="email" required>
+                    <div class="error-message" id="emailError"></div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="senha">Senha</label>
-                    <input type="password" id="senha" required>
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" required>
+                    <div class="error-message" id="passwordError"></div>
                 </div>
-                <button type="submit" class="btn btn-primary">Entrar</button>
-                <div class="extra-links">
-                    <a href="cadastro.html">Não tem uma conta? Cadastre-se</a>
+                
+                <button type="submit" id="loginBtn">Entrar</button>
+                
+                <div class="links">
+                    <a href="cadastro.html">Criar conta</a>
+                    <a href="recuperar-senha.html">Esqueci a senha</a>
                 </div>
             </form>
         </div>
     </main>
 
-    <script type="module">
-        // CORREÇÃO: Usando a URL completa para importar 'auth' e 'db'.
-        import { auth, db } from 'https://faguiar01.github.io/sitejoin/aluno/assets/js/firebase-init.js';
-        
-        // Importa as funções que esta página precisa
-        import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-
-        // Função para redirecionar o usuário após o login
-        async function redirecionarPorPerfil(uid) {
-            const userDocRef = doc(db, "usuarios", uid);
-            try {
-                const userDocSnap = await getDoc(userDocRef);
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    const perfil = userData.perfil;
-                    const urlBase = "https://faguiar01.github.io/sitejoin";
-                    let destino = '';
-
-                    if (perfil === 'professor') {
-                        destino = `${urlBase}/professor/professor.html`;
-                    } else if (perfil === 'aluno') {
-                        if (!userData.turmaId) {
-                            destino = `${urlBase}/aluno/xperience.html`;
-                        } else {
-                            const rodada = userData.rodadaAtual || 1;
-                            switch (rodada) {
-                                case 1: destino = `${urlBase}/aluno/rodada1-nivelamento.html`; break;
-                                case 2: destino = `${urlBase}/aluno/rodada2-fundacao.html`; break;
-                                case 3: destino = `${urlBase}/aluno/rodada3-operacoes.html`; break;
-                                default: destino = `${urlBase}/aluno/xperience.html`;
-                            }
-                        }
-                    }
-                    
-                    if (destino && window.location.href.indexOf(destino) === -1) {
-                         window.location.href = destino;
-                    }
-                } else {
-                    alert("Erro: Dados de perfil não encontrados. Contacte o suporte.");
-                    auth.signOut();
-                }
-            } catch (error) {
-                console.error("Erro ao buscar dados do usuário:", error);
-                alert("Ocorreu um erro ao carregar seus dados.");
-            }
-        }
-
-        // Verifica o estado de autenticação
-        const unsub = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Se já está logado, redireciona
-                redirecionarPorPerfil(user.uid);
-            } else {
-                // Se não está logado, mostra a página de login
-                document.body.style.display = 'flex';
-                unsub(); // Para de ouvir para não causar loops
-            }
-        });
-
-        // Adiciona o evento de submit ao formulário
-        const loginForm = document.getElementById('login-form');
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
-            const loginButton = e.target.querySelector('button[type="submit"]');
-            
-            loginButton.disabled = true;
-            loginButton.textContent = "Entrando...";
-
-            try {
-                await setPersistence(auth, browserLocalPersistence);
-                const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-                // Após o login, a função onAuthStateChanged será acionada e fará o redirecionamento.
-                await redirecionarPorPerfil(userCredential.user.uid);
-            } catch (error) {
-                alert("E-mail ou senha inválidos. Tente novamente.");
-                loginButton.disabled = false;
-                loginButton.textContent = "Entrar";
-            }
-        });
-    </script>
+    <script type="module" src="assets/js/auth.js"></script>
 </body>
 </html>
