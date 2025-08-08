@@ -1,22 +1,61 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Administrador - Join Xperience</title>
+    <title>Painel Admin - JoinXperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); }
-        .dashboard-header { text-align: center; padding: 40px 20px; background-color: var(--cor-branco); border-bottom: 1px solid #ddd; }
-        .dashboard-header h1 { margin: 0; font-size: 2.8em; color: var(--cor-texto); }
-        .dashboard-header p { font-size: 1.2em; color: #666; max-width: 600px; margin: 10px auto 0 auto; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 40px 0; }
-        .card { background-color: var(--cor-branco); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding: 25px; text-decoration: none; color: var(--cor-texto); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
-        .card .icon { font-size: 3em; margin-bottom: 15px; color: var(--cor-primaria); text-align: center; }
-        .card h3 { margin: 0 0 10px 0; font-size: 1.5em; text-align: center; }
-        .card p { flex-grow: 1; margin: 0 0 20px 0; color: #555; text-align: center; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .dashboard-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        p {
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -26,13 +65,71 @@
     </div>
     <div class="container">
         <div class="dashboard-grid">
-            <a href="gerenciar-catalogo.html" class="card"><div class="icon">📦</div><h3>Gerenciar Catálogo</h3><p>Cadastre máquinas, matérias-primas e moldes disponíveis para os alunos.</p></a>
-            <a href="gerenciar-rh.html" class="card"><div class="icon">👥</div><h3>Gerenciar RH</h3><p>Cadastre os cargos e salários de mercado disponíveis para contratação.</p></a>
-            <a href="gerenciar-produtos.html" class="card"><div class="icon">⚙️</div><h3>Gerenciar Produtos</h3><p>Defina a "receita" de cada produto final, combinando insumos e processos.</p></a>
-            <a href="gerenciar-cenarios.html" class="card"><div class="icon">🎲</div><h3>Gerenciar Cenários</h3><p>Crie e edite os cenários da roleta para customizar a experiência das turmas.</p></a>
-            <a href="gerenciar-biblioteca.html" class="card"><div class="icon">📚</div><h3>Gerenciar Biblioteca</h3><p>Adicione ou remova materiais de estudo como vídeos, manuais e podcasts.</p></a>
-            <a href="../professor/professor.html" class="card"><div class="icon">🎓</div><h3>Voltar ao Painel Professor</h3><p>Acesse a visão geral do professor para gerenciar turmas e relatórios.</p></a>
+            <a href="gerenciar-catalogo.html" class="card">
+                <div class="icon">📦</div>
+                <h3>Gerenciar Catálogo</h3>
+                <p>Cadastre máquinas, matérias-primas e moldes disponíveis para os alunos.</p>
+            </a>
+            <a href="gerenciar-rh.html" class="card">
+                <div class="icon">👥</div>
+                <h3>Gerenciar RH</h3>
+                <p>Cadastre os cargos e salários de mercado disponíveis para contratação.</p>
+            </a>
+            <a href="gerenciar-produtos.html" class="card">
+                <div class="icon">⚙️</div>
+                <h3>Gerenciar Produtos</h3>
+                <p>Defina a "receita" de cada produto final, combinando insumos e processos.</p>
+            </a>
+            <a href="gerenciar-cenarios.html" class="card">
+                <div class="icon">🎲</div>
+                <h3>Gerenciar Cenários</h3>
+                <p>Crie e edite os cenários da roleta para customizar a experiência das turmas.</p>
+            </a>
+            <a href="gerenciar-biblioteca.html" class="card">
+                <div class="icon">📚</div>
+                <h3>Gerenciar Biblioteca</h3>
+                <p>Adicione ou remova materiais de estudo como vídeos, manuais e podcasts.</p>
+            </a>
+            <a href="../professor/professor.html" class="card">
+                <div class="icon">🎓</div>
+                <h3>Voltar ao Painel Professor</h3>
+                <p>Acesse a visão geral do professor para gerenciar turmas e relatórios.</p>
+            </a>
         </div>
     </div>
+
+    <!-- Configuração Firebase (no final do body) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXtFYlng57P0C0p-b4TFuYucG1bn4NKAk",
+            authDomain: "joinxperience-site.firebaseapp.com",
+            projectId: "joinxperience-site",
+            storageBucket: "joinxperience-site.firebasestorage.app",
+            messagingSenderId: "140037739806",
+            appId: "1:140037739806:web:322493d72ca6149abce5bf",
+            measurementId: "G-V4SRK0FNBN"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Verificação de admin (adicione sua lógica personalizada)
+        onAuthStateChanged(auth, (user) => {
+            if (!user || !user.email.endsWith('@dominio-admin.com')) {
+                window.location.href = '/acesso-negado.html';
+            }
+        });
+
+        console.log("[Admin] Firebase inicializado");
+        window.auth = auth;
+        window.db = db;
+    </script>
 </body>
 </html>

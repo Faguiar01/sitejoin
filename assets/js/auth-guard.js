@@ -1,41 +1,51 @@
-// Importa as funções necessárias do Firebase
+// auth-guard.js - Versão Otimizada
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-// Importa a instância 'auth' do seu arquivo de inicialização.
-// O caminho './firebase-init.js' funciona porque ambos estão na mesma pasta (assets/js).
 import { auth } from './firebase-init.js';
 
-// --- LÓGICA DO GUARDA DE AUTENTICAÇÃO ---
+// --- CONSTANTES ---
+const LOGIN_PAGE = "/sitejoin/login.html";
+const PUBLIC_PAGES = [
+  "/sitejoin/login.html",
+  "/sitejoin/recover.html"
+];
 
-// MELHORIA: Definimos o caminho para a página de login a partir da raiz do seu site.
-// Isso é mais robusto do que usar a URL completa, pois funciona em qualquer servidor.
-const loginPagePath = "/sitejoin/login.html";
-const currentPath = window.location.pathname;
-
+// --- LÓGICA PRINCIPAL ---
 onAuthStateChanged(auth, (user) => {
-    // 1. Se NÃO há usuário logado...
-    if (!user) {
-        // ...e a página atual NÃO é a de login, então redirecionamos.
-        // Esta verificação evita um loop infinito de redirecionamentos.
-        if (!currentPath.endsWith(loginPagePath)) {
-            console.log("Auth Guard: Acesso negado. Redirecionando para login.");
-            
-            // Constrói a URL completa para o redirecionamento
-            window.location.href = window.location.origin + loginPagePath;
-        }
-        return; // Interrompe a execução se não houver usuário.
-    }
+  const currentPath = window.location.pathname;
 
-    // 2. Se HÁ um usuário logado, a página pode ser exibida.
-    console.log("Auth Guard: Acesso permitido.");
+  // 1. Páginas públicas: ignora verificação
+  if (PUBLIC_PAGES.some(page => currentPath.endsWith(page))) {
+    unlockPage();
+    return;
+  }
 
-    // O CSS de todas as páginas protegidas deve ter 'body { display: none; }'
-    // Aqui, nós tornamos o body visível.
+  // 2. Páginas privadas: exige autenticação
+  if (!user) {
+    console.warn("Auth Guard: Redirecionando para login...");
+    redirectToLogin();
+    return;
+  }
 
-    // Verifica se o body da página deve usar Flexbox
-    if (document.body.classList.contains('flex-body')) {
-        document.body.style.display = 'flex';
-    } else {
-        // Caso contrário, usa o 'block' como padrão
-        document.body.style.display = 'block';
-    }
+  // 3. Verificação adicional para alunos (opcional)
+  if (currentPath.includes('/aluno/') && !user.email.endsWith('@escola.com')) {
+    console.error("Auth Guard: Acesso restrito a alunos");
+    redirectToLogin();
+    return;
+  }
+
+  unlockPage();
 });
+
+// --- FUNÇÕES AUXILIARES ---
+function redirectToLogin() {
+  // Evita loops em páginas de erro
+  if (!window.location.href.includes(LOGIN_PAGE)) {
+    window.location.href = window.location.origin + LOGIN_PAGE;
+  }
+}
+
+function unlockPage() {
+  // Remove bloqueio de CSS de forma segura
+  document.body.style.display = 
+    document.body.classList.contains('flex-body') ? 'flex' : 'block';
+}

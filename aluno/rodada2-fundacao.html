@@ -3,29 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rodada 2: Fundação da Empresa - InovaPlas</title>
+    <title>Rodada 2: Fundação da Empresa - Join Xperience</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h1 { color: #003366; border-bottom: 2px solid #b3d1ff; padding-bottom: 10px; }
-        p { font-size: 1.1em; line-height: 1.6; }
-        fieldset { border: 1px solid #ccc; border-radius: 5px; padding: 20px; margin-bottom: 20px; }
-        legend { font-weight: bold; font-size: 1.2em; color: #0052cc; padding: 0 10px; }
-        label { display: block; margin-bottom: 10px; font-weight: 500; }
-        select { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 1em; }
-        .info-box { background-color: #eaf2ff; border: 1px solid #b3d1ff; padding: 15px; margin-top: 20px; border-radius: 5px; }
-        button { background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
-        button:hover { background-color: #218838; }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        :root {
+            --cor-primaria: #0052CC;
+            --cor-secundaria: #FF4400;
+            --cor-sucesso: #28a745;
+            --cor-erro: #dc3545;
+            --cor-texto: #333;
+            --cor-fundo: #f4f7f6;
+            --cor-branco: #fff;
+            --cor-borda: #ddd;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cor-fundo);
+            margin: 0;
+            padding: 20px;
+            display: none; /* Oculto até autenticação */
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: var(--cor-branco);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        
+        h1 {
+            color: var(--cor-primaria);
+            border-bottom: 2px solid rgba(0, 82, 204, 0.2);
+            padding-bottom: 15px;
+            margin-top: 0;
+        }
+        
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: var(--cor-texto);
+        }
+        
+        fieldset {
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        legend {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: var(--cor-primaria);
+            padding: 0 10px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--cor-borda);
+            font-size: 1em;
+            background-color: var(--cor-branco);
+            transition: border-color 0.3s;
+        }
+        
+        select:focus {
+            border-color: var(--cor-primaria);
+            outline: none;
+        }
+        
+        .info-box {
+            background-color: rgba(0, 82, 204, 0.05);
+            border: 1px solid rgba(0, 82, 204, 0.2);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        
+        .info-box p {
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        
+        .info-box .valor {
+            font-weight: bold;
+            color: var(--cor-primaria);
+        }
+        
+        .info-box .saldo-negativo {
+            color: var(--cor-erro);
+        }
+        
+        button {
+            background-color: var(--cor-sucesso);
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #loading-catalogo {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 82, 204, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--cor-primaria);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: var(--cor-erro);
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: rgba(220, 53, 69, 0.1);
+        }
     </style>
+    <script type="module" src="/assets/js/auth-guard.js"></script>
 </head>
 <body>
-
     <div class="container">
-        <h1>Rodada 2: A Fundação da InovaPlas</h1>
-        <p>Parabéns por concluir a primeira etapa! Agora é o momento de tomar a sua primeira grande decisão estratégica. Com o seu <strong>Capital Social de R$ 480.000,00</strong>, precisa de investir na sua primeira linha de produção.</p>
+        <h1>Rodada 2: Fundação da Empresa</h1>
+        <p>Parabéns por concluir a primeira etapa! Agora é o momento de tomar sua primeira grande decisão estratégica. Com seu <strong>Capital Social de R$ 480.000,00</strong>, você precisa investir em sua primeira linha de produção.</p>
 
-        <div id="loading-catalogo"><p>A carregar catálogos de equipamentos...</p></div>
+        <div id="loading-catalogo">
+            <div class="spinner"></div>
+            <p>Carregando catálogo de equipamentos...</p>
+        </div>
 
         <form id="form-rodada2" style="display: none;">
             <fieldset>
@@ -33,97 +183,103 @@
                 <div>
                     <label for="maquina-select">1. Selecione a Máquina Injetora:</label>
                     <select id="maquina-select" required>
-                        <option value="">A carregar...</option>
+                        <option value="">-- Carregando opções --</option>
                     </select>
                 </div>
-                <br>
+                
                 <div>
                     <label for="molde-select">2. Selecione o Molde (apenas compatíveis):</label>
                     <select id="molde-select" required disabled>
-                        <option value="">Escolha uma máquina primeiro</option>
+                        <option value="">Selecione uma máquina primeiro</option>
                     </select>
                 </div>
             </fieldset>
 
             <div id="combo-detalhes" class="info-box">
-                <p><strong>Custo Total do Investimento:</strong> R$ 0,00</p>
-                <p><strong>Capital Restante (Caixa):</strong> R$ 480.000,00</p>
+                <p><strong>Custo Total do Investimento:</strong> <span id="custo-total" class="valor">R$ 0,00</span></p>
+                <p><strong>Capital Restante:</strong> <span id="capital-restante" class="valor">R$ 480.000,00</span></p>
+                <p id="saldo-alerta" style="display: none; color: var(--cor-erro);">Seu investimento excede o capital disponível!</p>
             </div>
 
-            <button type="submit" id="submit-btn">Comprar Equipamentos e Fundar a Empresa</button>
+            <button type="submit" id="submit-btn">
+                <span id="submit-text">Comprar Equipamentos e Fundar a Empresa</span>
+                <span id="submit-loading" style="display: none;">Processando...</span>
+            </button>
         </form>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script type="module">
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs, 
+            doc, 
+            updateDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+        import { auth, db } from '/assets/js/firebase-init.js';
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
+        // Elementos DOM
         const loadingDiv = document.getElementById('loading-catalogo');
         const form = document.getElementById('form-rodada2');
         const maquinaSelect = document.getElementById('maquina-select');
         const moldeSelect = document.getElementById('molde-select');
-        const detalhesDiv = document.getElementById('combo-detalhes');
+        const custoTotalSpan = document.getElementById('custo-total');
+        const capitalRestanteSpan = document.getElementById('capital-restante');
+        const saldoAlerta = document.getElementById('saldo-alerta');
         const submitBtn = document.getElementById('submit-btn');
+        const submitText = document.getElementById('submit-text');
+        const submitLoading = document.getElementById('submit-loading');
 
+        // Dados e constantes
+        const CAPITAL_SOCIAL = 480000;
         let catalogoMaquinas = [];
         let catalogoMoldes = [];
-        const capitalSocial = 480000;
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                carregarCatalogos();
-            } else {
-                alert("Sessão expirada. A redirecionar para o login.");
-                window.top.location.href = '../login.html';
-            }
-        });
-
-        async function carregarCatalogos() {
+        // Carregar catálogos do Firestore
+        const carregarCatalogos = async () => {
             try {
                 const [maquinasSnapshot, moldesSnapshot] = await Promise.all([
-                    db.collection('catalogo_maquinas').get(),
-                    db.collection('catalogo_moldes').get()
+                    getDocs(collection(db, 'catalogo_maquinas')),
+                    getDocs(collection(db, 'catalogo_moldes'))
                 ]);
 
-                catalogoMaquinas = maquinasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                catalogoMoldes = moldesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                catalogoMaquinas = maquinasSnapshot.docs.map(doc => ({ 
+                    id: doc.id, 
+                    ...doc.data() 
+                }));
 
-                maquinaSelect.innerHTML = '<option value="">-- Escolha uma máquina --</option>';
-                catalogoMaquinas.forEach(maquina => {
-                    const option = document.createElement('option');
-                    option.value = maquina.id;
-                    option.textContent = `${maquina.nome} (Custo: R$ ${maquina.custo.toLocaleString('pt-BR')})`;
-                    maquinaSelect.appendChild(option);
-                });
+                catalogoMoldes = moldesSnapshot.docs.map(doc => ({ 
+                    id: doc.id, 
+                    ...doc.data() 
+                }));
 
+                popularSelectMaquinas();
                 loadingDiv.style.display = 'none';
                 form.style.display = 'block';
 
             } catch (error) {
                 console.error("Erro ao carregar catálogos:", error);
-                loadingDiv.innerHTML = "<p style='color: red;'>Ocorreu um erro ao carregar os equipamentos. Tente novamente mais tarde.</p>";
+                mostrarErro("Ocorreu um erro ao carregar os equipamentos. Tente recarregar a página.");
             }
-        }
+        };
 
+        // Popular select de máquinas
+        const popularSelectMaquinas = () => {
+            maquinaSelect.innerHTML = '<option value="">-- Selecione uma máquina --</option>';
+            
+            catalogoMaquinas.forEach(maquina => {
+                const option = document.createElement('option');
+                option.value = maquina.id;
+                option.textContent = `${maquina.nome} (R$ ${maquina.custo.toLocaleString('pt-BR')})`;
+                maquinaSelect.appendChild(option);
+            });
+        };
+
+        // Atualizar moldes compatíveis quando máquina é selecionada
         maquinaSelect.addEventListener('change', () => {
             const maquinaId = maquinaSelect.value;
-            moldeSelect.innerHTML = '<option value="">Escolha uma máquina primeiro</option>';
+            moldeSelect.innerHTML = '<option value="">-- Selecione um molde --</option>';
             moldeSelect.disabled = true;
 
             if (!maquinaId) {
@@ -132,76 +288,115 @@
             }
 
             const maquinaSelecionada = catalogoMaquinas.find(m => m.id === maquinaId);
-            const moldesCompativeis = catalogoMoldes.filter(molde => maquinaSelecionada.tonelagem >= molde.tonelagemMinima);
+            const moldesCompativeis = catalogoMoldes.filter(molde => 
+                maquinaSelecionada.tonelagem >= molde.tonelagemMinima
+            );
 
-            moldeSelect.innerHTML = '<option value="">-- Escolha um molde compatível --</option>';
-            moldesCompativeis.forEach(molde => {
-                const option = document.createElement('option');
-                option.value = molde.id;
-                option.textContent = `${molde.produtoFinal} (Custo: R$ ${molde.custo.toLocaleString('pt-BR')})`;
-                moldeSelect.appendChild(option);
-            });
+            if (moldesCompativeis.length > 0) {
+                moldesCompativeis.forEach(molde => {
+                    const option = document.createElement('option');
+                    option.value = molde.id;
+                    option.textContent = `${molde.produtoFinal} (R$ ${molde.custo.toLocaleString('pt-BR')})`;
+                    moldeSelect.appendChild(option);
+                });
+                moldeSelect.disabled = false;
+            } else {
+                moldeSelect.innerHTML = '<option value="">Nenhum molde compatível</option>';
+            }
 
-            moldeSelect.disabled = false;
             atualizarCustos();
         });
 
+        // Atualizar custos quando molde é selecionado
         moldeSelect.addEventListener('change', atualizarCustos);
 
-        function atualizarCustos() {
+        // Calcular e exibir custos totais
+        const atualizarCustos = () => {
             const maquinaId = maquinaSelect.value;
             const moldeId = moldeSelect.value;
-            const maquina = catalogoMaquinas.find(m => m.id === maquinaId);
-            const molde = catalogoMoldes.find(m => m.id === moldeId);
-
+            
+            const maquina = maquinaId ? catalogoMaquinas.find(m => m.id === maquinaId) : null;
+            const molde = moldeId ? catalogoMoldes.find(m => m.id === moldeId) : null;
+            
             const custoMaquina = maquina ? maquina.custo : 0;
             const custoMolde = molde ? molde.custo : 0;
-            const custoTotal = custoMaquina + custoMolde;
-            const capitalRestante = capitalSocial - custoTotal;
+            const total = custoMaquina + custoMolde;
+            const saldo = CAPITAL_SOCIAL - total;
 
-            detalhesDiv.innerHTML = `<p><strong>Custo Total do Investimento:</strong> R$ ${custoTotal.toLocaleString('pt-BR')}</p><p><strong>Capital Restante (Caixa):</strong> R$ ${capitalRestante.toLocaleString('pt-BR')}</p>`;
+            // Atualizar exibição
+            custoTotalSpan.textContent = `R$ ${total.toLocaleString('pt-BR')}`;
+            capitalRestanteSpan.textContent = `R$ ${saldo.toLocaleString('pt-BR')}`;
 
-            if (capitalRestante < 0) {
-                detalhesDiv.style.color = 'red';
+            // Verificar saldo negativo
+            if (saldo < 0) {
+                capitalRestanteSpan.classList.add('saldo-negativo');
+                saldoAlerta.style.display = 'block';
                 submitBtn.disabled = true;
             } else {
-                detalhesDiv.style.color = 'inherit';
+                capitalRestanteSpan.classList.remove('saldo-negativo');
+                saldoAlerta.style.display = 'none';
                 submitBtn.disabled = false;
             }
-        }
+        };
 
-        form.addEventListener('submit', async (e) => {
+        // Enviar decisão para o Firestore
+        const enviarDecisao = async (e) => {
             e.preventDefault();
-            const maquinaId = maquinaSelect.value;
-            const moldeId = moldeSelect.value;
-
-            if (!maquinaId || !moldeId) {
-                alert("Por favor, selecione uma máquina e um molde para continuar.");
+            
+            // Validar seleções
+            if (!maquinaSelect.value || !moldeSelect.value) {
+                alert("Por favor, selecione uma máquina e um molde compatível.");
                 return;
             }
 
+            // Mostrar estado de carregamento
+            submitText.style.display = 'none';
+            submitLoading.style.display = 'inline';
             submitBtn.disabled = true;
-            submitBtn.textContent = "A guardar decisão...";
 
             try {
                 const user = auth.currentUser;
-                if (user) {
-                    const userRef = db.collection('usuarios').doc(user.uid);
-                    await userRef.update({
-                        maquinaId: maquinaId,
-                        moldeId: moldeId,
-                        rodadaAtual: 3 // Avança o aluno para a Rodada 3
-                    });
+                if (!user) throw new Error("Usuário não autenticado.");
 
-                    alert("Investimento realizado e empresa fundada com sucesso! Será agora redirecionado para a próxima etapa.");
-                    window.top.location.href = 'rodada.html'; // Volta para o roteador
-                }
+                await updateDoc(doc(db, "usuarios", user.uid), {
+                    maquinaId: maquinaSelect.value,
+                    moldeId: moldeSelect.value,
+                    rodadaAtual: 3, // Avança para a próxima rodada
+                    ultimaAtualizacao: serverTimestamp()
+                });
+
+                // Redirecionar para a página de rodadas
+                window.location.href = '/aluno/rodada.html';
+
             } catch (error) {
-                 console.error("Erro ao finalizar a rodada 2:", error);
-                 alert("Ocorreu um erro ao guardar a sua decisão. Tente novamente.");
-                 submitBtn.disabled = false;
-                 submitBtn.textContent = "Comprar Equipamentos e Fundar a Empresa";
+                console.error("Erro ao salvar decisão:", error);
+                alert("Ocorreu um erro ao salvar sua decisão. Por favor, tente novamente.");
+                
+                // Restaurar botão
+                submitText.style.display = 'inline';
+                submitLoading.style.display = 'none';
+                submitBtn.disabled = false;
             }
+        };
+
+        // Mostrar mensagem de erro
+        const mostrarErro = (mensagem) => {
+            loadingDiv.innerHTML = `
+                <div class="error-message">
+                    ${mensagem}
+                    <button onclick="window.location.reload()" style="margin-top: 10px;">
+                        Recarregar Página
+                    </button>
+                </div>
+            `;
+        };
+
+        // Event Listeners
+        form.addEventListener('submit', enviarDecisao);
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarCatalogos();
         });
     </script>
 </body>

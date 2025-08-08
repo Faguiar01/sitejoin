@@ -3,24 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rodada 3 - Operações | Xperience InovaPlas</title>
+    <title>Rodada 3: Operações de Produção - Join Xperience</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f7f9; display: none; }
-        header, main > div { background-color: #fff; border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        h1, h2, h3, h4 { color: #333; }
-        label { display: block; margin-top: 15px; font-weight: bold; color: #555; }
-        select, button { width: 100%; padding: 12px; margin-top: 5px; font-size: 1em; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { cursor: pointer; background-color: #007bff; color: white; font-weight: bold; border: none; transition: background-color 0.2s; }
-        button:hover { background-color: #0056b3; }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
-        #painel-configuracao h3, #painel-configuracao h4 { margin-top: 30px; border-bottom: 2px solid #eee; padding-bottom: 5px;}
-        #alerta-recursos { color: #D8000C; background-color: #FFD2D2; padding: 10px; border-radius: 5px; margin-top: 10px; }
-        #financeiro-lucro { font-size: 1.3em; font-weight: bold; color: #28a745; }
-        #lucro-potencial-wrapper.negativo #financeiro-lucro { color: #dc3545; }
+        :root {
+            --cor-primaria: #0052CC;
+            --cor-secundaria: #FF4400;
+            --cor-sucesso: #28a745;
+            --cor-erro: #dc3545;
+            --cor-texto: #333;
+            --cor-fundo: #f4f7f6;
+            --cor-branco: #fff;
+            --cor-borda: #ddd;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background-color: var(--cor-fundo);
+            display: none; /* Oculto até autenticação */
+        }
+        
+        header, main > div {
+            background-color: var(--cor-branco);
+            border: 1px solid var(--cor-borda);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        header:hover, main > div:hover {
+            transform: translateY(-5px);
+        }
+        
+        h1, h2, h3, h4 {
+            color: var(--cor-texto);
+            margin-top: 0;
+        }
+        
+        h1 {
+            color: var(--cor-primaria);
+            border-bottom: 2px solid rgba(0, 82, 204, 0.2);
+            padding-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin: 20px 0 8px;
+            font-weight: 600;
+            color: var(--cor-texto);
+        }
+        
+        select, button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 5px;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 1px solid var(--cor-borda);
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        select:focus {
+            border-color: var(--cor-primaria);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2);
+        }
+        
+        button {
+            cursor: pointer;
+            background-color: var(--cor-primaria);
+            color: white;
+            font-weight: bold;
+            border: none;
+            margin-top: 20px;
+        }
+        
+        button:hover {
+            background-color: #003d99;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #painel-configuracao h3, #painel-configuracao h4 {
+            margin-top: 30px;
+            border-bottom: 2px solid var(--cor-borda);
+            padding-bottom: 10px;
+        }
+        
+        #alerta-recursos {
+            color: var(--cor-erro);
+            background-color: rgba(220, 53, 69, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid var(--cor-erro);
+        }
+        
+        #financeiro-lucro {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--cor-sucesso);
+        }
+        
+        #lucro-potencial-wrapper.negativo #financeiro-lucro {
+            color: var(--cor-erro);
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 82, 204, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--cor-primaria);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: var(--cor-erro);
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+        
+        .valor {
+            font-weight: bold;
+            color: var(--cor-primaria);
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
     </style>
+    <script type="module" src="/assets/js/auth-guard.js"></script>
 </head>
 <body>
-
     <header>
         <h1>Rodada 3: Operações de Produção</h1>
         <p>Uma nova oportunidade de negócio surgiu. Analise a proposta e configure sua produção.</p>
@@ -32,7 +172,7 @@
             <p>A empresa <strong id="ordem-cliente"></strong> encomendou <strong id="ordem-quantidade"></strong> unidades do produto <strong id="ordem-produto"></strong>.</p>
             <p>Preço de venda acordado: <strong id="ordem-preco-venda"></strong> por unidade.</p>
             <button id="btn-aceitar-ordem">Aceitar Contrato</button>
-            <button id="btn-rejeitar-ordem" style="background-color: #6c757d; margin-top: 10px;">Rejeitar Contrato</button>
+            <button id="btn-rejeitar-ordem" class="btn-secondary" style="margin-top: 10px;">Rejeitar Contrato</button>
         </div>
 
         <div id="painel-configuracao" style="display: none;">
@@ -48,25 +188,28 @@
             
             <h4>Pré-Produção: Verificação de Recursos</h4>
             <div id="resumo-recursos">
-                <p>Matéria-prima necessária: <strong id="recurso-necessario">--</strong> kg</p>
-                <p>Matéria-prima em stock: <strong id="recurso-disponivel">--</strong> kg</p>
+                <p>Matéria-prima necessária: <strong id="recurso-necessario" class="valor">--</strong> kg</p>
+                <p>Matéria-prima em estoque: <strong id="recurso-disponivel" class="valor">--</strong> kg</p>
                 <div id="alerta-recursos" style="display: none;">
                     <p>Atenção! Matéria-prima insuficiente.</p>
-                    <button id="btn-comprar-materia-prima">Ir para Compras</button>
+                    <button id="btn-comprar-materia-prima" class="btn-secondary">Ir para Compras</button>
                 </div>
             </div>
 
             <h4>Análise Financeira da Produção</h4>
             <div id="resumo-financeiro">
-                <p>Tempo de Produção Estimado: <strong id="financeiro-tempo">--</strong> horas</p>
-                <p>Custo Operacional (Energia + M.O.): <strong id="financeiro-custo-operacional">R$ --</strong></p>
-                <p>Custo da Matéria-Prima: <strong id="financeiro-custo-materia-prima">R$ --</strong></p>
-                <h3>Custo Total da Produção: <strong id="financeiro-custo-total">R$ --</strong></h3>
-                <p>Receita Bruta do Contrato: <strong id="financeiro-receita">R$ --</strong></p>
+                <p>Tempo de Produção Estimado: <strong id="financeiro-tempo" class="valor">--</strong> horas</p>
+                <p>Custo Operacional (Energia + M.O.): <strong id="financeiro-custo-operacional" class="valor">R$ --</strong></p>
+                <p>Custo da Matéria-Prima: <strong id="financeiro-custo-materia-prima" class="valor">R$ --</strong></p>
+                <h3>Custo Total da Produção: <strong id="financeiro-custo-total" class="valor">R$ --</strong></h3>
+                <p>Receita Bruta do Contrato: <strong id="financeiro-receita" class="valor">R$ --</strong></p>
                 <h2 id="lucro-potencial-wrapper">Lucro Potencial: <strong id="financeiro-lucro">R$ --</strong></h2>
             </div>
-            <hr style="margin-top: 30px;">
-            <button id="btn-confirmar-producao" disabled>Confirmar e Iniciar Produção</button>
+            
+            <button id="btn-confirmar-producao" disabled>
+                <span id="submit-text">Confirmar e Iniciar Produção</span>
+                <span id="submit-loading" style="display: none;">Processando...</span>
+            </button>
         </div>
 
         <div id="modal-resultado" style="display: none;">
@@ -77,26 +220,25 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { 
+            initializeApp 
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            browserSessionPersistence,
+            setPersistence
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            runTransaction,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+        import { auth, db } from '/assets/js/firebase-init.js';
 
-        // --- CONFIGURAÇÃO FIREBASE ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // --- ESTADO DA PÁGINA ---
+        // Configuração do estado da aplicação
         const estado = {
             usuario: null,
             dadosUsuario: {},
@@ -105,14 +247,27 @@
                 produtoNome: "Mini-Dinossauro de Plástico",
                 produtoId: "prod_dino_01",
                 quantidade: 10000,
-                precoVendaUnidade: 1.50
+                precoVendaUnidade: 1.50,
+                materiaPrimaPorUnidade: 0.05 // 50g por unidade
             },
-            selecao: { maquina: null, molde: null },
-            calculos: {}
+            selecao: { 
+                maquina: null, 
+                molde: null 
+            },
+            calculos: {
+                materiaPrimaNecessaria: 0,
+                tempoProducao: 0,
+                custoOperacional: 0,
+                custoMateriaPrima: 0,
+                custoTotal: 0,
+                receitaBruta: 0,
+                lucroPotencial: 0
+            }
         };
 
-        // --- ELEMENTOS DO DOM ---
+        // Elementos DOM
         const DOM = {
+            // Modal de Ordem
             modalOrdem: document.getElementById('modal-ordem-producao'),
             ordemCliente: document.getElementById('ordem-cliente'),
             ordemQuantidade: document.getElementById('ordem-quantidade'),
@@ -120,13 +275,20 @@
             ordemPrecoVenda: document.getElementById('ordem-preco-venda'),
             btnAceitarOrdem: document.getElementById('btn-aceitar-ordem'),
             btnRejeitarOrdem: document.getElementById('btn-rejeitar-ordem'),
+            
+            // Painel de Configuração
             painelConfiguracao: document.getElementById('painel-configuracao'),
             selectMaquina: document.getElementById('select-maquina'),
             selectMolde: document.getElementById('select-molde'),
+            
+            // Resumo de Recursos
             resumoRecursos: document.getElementById('resumo-recursos'),
             recursoNecessario: document.getElementById('recurso-necessario'),
             recursoDisponivel: document.getElementById('recurso-disponivel'),
             alertaRecursos: document.getElementById('alerta-recursos'),
+            btnComprarMateriaPrima: document.getElementById('btn-comprar-materia-prima'),
+            
+            // Resumo Financeiro
             resumoFinanceiro: document.getElementById('resumo-financeiro'),
             financeiroTempo: document.getElementById('financeiro-tempo'),
             financeiroCustoOperacional: document.getElementById('financeiro-custo-operacional'),
@@ -135,139 +297,271 @@
             financeiroReceita: document.getElementById('financeiro-receita'),
             financeiroLucro: document.getElementById('financeiro-lucro'),
             lucroPotencialWrapper: document.getElementById('lucro-potencial-wrapper'),
-            btnConfirmarProducao: document.getElementById('btn-confirmar-producao')
+            
+            // Botão de Confirmação
+            btnConfirmarProducao: document.getElementById('btn-confirmar-producao'),
+            submitText: document.getElementById('submit-text'),
+            submitLoading: document.getElementById('submit-loading'),
+            
+            // Modal de Resultado
+            modalResultado: document.getElementById('modal-resultado'),
+            resultadoTitulo: document.getElementById('resultado-titulo'),
+            resultadoDescricao: document.getElementById('resultado-descricao'),
+            btnFecharResultado: document.getElementById('btn-fechar-resultado')
         };
 
-        // --- FUNÇÕES DE RENDERIZAÇÃO (Atualizam a tela) ---
-
-        function renderizarModalProposta() {
-            DOM.ordemCliente.textContent = estado.cenario.cliente;
-            DOM.ordemQuantidade.textContent = estado.cenario.quantidade.toLocaleString('pt-BR');
-            DOM.ordemProduto.textContent = estado.cenario.produtoNome;
-            DOM.ordemPrecoVenda.textContent = estado.cenario.precoVendaUnidade.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            DOM.modalOrdem.style.display = 'block';
-        }
-
-        function popularSeletorMaquinas() {
-            // NOVO: Adicionado log para diagnóstico
-            console.log("Tentando popular seletor de máquinas. Dados do usuário:", estado.dadosUsuario);
+        // Funções de renderização
+        const renderizar = {
+            modalProposta: () => {
+                DOM.ordemCliente.textContent = estado.cenario.cliente;
+                DOM.ordemQuantidade.textContent = estado.cenario.quantidade.toLocaleString('pt-BR');
+                DOM.ordemProduto.textContent = estado.cenario.produtoNome;
+                DOM.ordemPrecoVenda.textContent = estado.cenario.precoVendaUnidade.toLocaleString('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                });
+                DOM.modalOrdem.style.display = 'block';
+            },
             
-            const maquinas = estado.dadosUsuario.maquinas;
-
-            if (!maquinas || !Array.isArray(maquinas) || maquinas.length === 0) {
-                console.warn("AVISO: O campo 'maquinas' não foi encontrado, não é um array ou está vazio nos dados do usuário.");
-                DOM.selectMaquina.innerHTML = '<option value="">Nenhuma máquina disponível</option>';
-                return;
-            }
+            seletorMaquinas: () => {
+                const maquinas = estado.dadosUsuario.maquinas || [];
+                DOM.selectMaquina.innerHTML = '<option value="">-- Selecione uma máquina --</option>';
+                
+                maquinas.forEach(maquina => {
+                    const option = document.createElement('option');
+                    option.value = maquina.id || maquina;
+                    option.textContent = maquina.nome || maquina;
+                    DOM.selectMaquina.appendChild(option);
+                });
+            },
             
-            DOM.selectMaquina.innerHTML = '<option value="">Selecione uma máquina...</option>';
-            maquinas.forEach(maquinaNome => {
-                const option = document.createElement('option');
-                option.value = maquinaNome;
-                option.textContent = maquinaNome;
-                DOM.selectMaquina.appendChild(option);
-            });
-        }
-
-        function popularSeletorMoldes() {
-             // NOVO: Adicionado log para diagnóstico
-            console.log("Tentando popular seletor de moldes. Dados do usuário:", estado.dadosUsuario);
-
-            const moldes = estado.dadosUsuario.moldes;
-
-            if (!moldes || !Array.isArray(moldes) || moldes.length === 0) {
-                console.warn("AVISO: O campo 'moldes' não foi encontrado, não é um array ou está vazio nos dados do usuário.");
-                DOM.selectMolde.innerHTML = '<option value="">Nenhum molde disponível</option>';
-                return;
-            }
-
-            DOM.selectMolde.innerHTML = '<option value="">Selecione um molde...</option>';
-            moldes.forEach(moldeNome => {
-                const option = document.createElement('option');
-                option.value = moldeNome;
-                option.textContent = moldeNome;
-                DOM.selectMolde.appendChild(option);
-            });
-        }
-
-        function atualizarPainelFinanceiro() {
-            // TODO: Implementar a lógica que pega os dados de estado.calculos
-        }
-
-        // --- FUNÇÕES DE LÓGICA (Calculam os dados) ---
-        
-        function calcularCustos() {
-            // TODO: Aqui entra a sua lógica de negócio.
-            console.log("Calculando custos para:", estado.selecao.maquina, "e", estado.selecao.molde);
-            
-            atualizarPainelFinanceiro();
-        }
-
-        // --- HANDLERS DE EVENTOS (Respondem às ações do usuário) ---
-
-        function handleAceitarOrdem() {
-            DOM.modalOrdem.style.display = 'none';
-            DOM.painelConfiguracao.style.display = 'block';
-            popularSeletorMaquinas();
-        }
-
-        function handleSelecaoMaquina(event) {
-            const maquinaId = event.target.value;
-            if (maquinaId) {
-                estado.selecao.maquina = maquinaId;
+            seletorMoldes: () => {
+                const moldes = estado.dadosUsuario.moldes || [];
+                DOM.selectMolde.innerHTML = '<option value="">-- Selecione um molde --</option>';
+                
+                moldes.forEach(molde => {
+                    const option = document.createElement('option');
+                    option.value = molde.id || molde;
+                    option.textContent = molde.produtoFinal || molde;
+                    DOM.selectMolde.appendChild(option);
+                });
+                
                 DOM.selectMolde.disabled = false;
-                popularSeletorMoldes();
-            } else {
-                estado.selecao.maquina = null;
+            },
+            
+            painelFinanceiro: () => {
+                const c = estado.calculos;
+                
+                // Atualizar recursos
+                DOM.recursoNecessario.textContent = c.materiaPrimaNecessaria.toLocaleString('pt-BR');
+                DOM.recursoDisponivel.textContent = (estado.dadosUsuario.materiaPrima || 0).toLocaleString('pt-BR');
+                
+                // Mostrar alerta se necessário
+                const materiaPrimaSuficiente = (estado.dadosUsuario.materiaPrima || 0) >= c.materiaPrimaNecessaria;
+                DOM.alertaRecursos.style.display = materiaPrimaSuficiente ? 'none' : 'block';
+                
+                // Atualizar valores financeiros
+                DOM.financeiroTempo.textContent = c.tempoProducao.toLocaleString('pt-BR');
+                DOM.financeiroCustoOperacional.textContent = c.custoOperacional.toLocaleString('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                });
+                DOM.financeiroCustoMateriaPrima.textContent = c.custoMateriaPrima.toLocaleString('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                });
+                DOM.financeiroCustoTotal.textContent = c.custoTotal.toLocaleString('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                });
+                DOM.financeiroReceita.textContent = c.receitaBruta.toLocaleString('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                });
+                DOM.financeiroLucro.textContent = c.lucroPotencial.toLocaleString('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                });
+                
+                // Destacar lucro ou prejuízo
+                DOM.lucroPotencialWrapper.classList.toggle('negativo', c.lucroPotencial < 0);
+                
+                // Habilitar/desabilitar botão de confirmação
+                DOM.btnConfirmarProducao.disabled = !materiaPrimaSuficiente;
+            }
+        };
+
+        // Funções de lógica de negócio
+        const logica = {
+            calcularCustos: () => {
+                const qtd = estado.cenario.quantidade;
+                const precoVenda = estado.cenario.precoVendaUnidade;
+                
+                // Cálculos básicos (valores fictícios - substituir por sua lógica real)
+                estado.calculos.materiaPrimaNecessaria = qtd * estado.cenario.materiaPrimaPorUnidade;
+                estado.calculos.tempoProducao = qtd / 500; // 500 unidades por hora
+                estado.calculos.custoOperacional = estado.calculos.tempoProducao * 120; // R$120/hora
+                estado.calculos.custoMateriaPrima = estado.calculos.materiaPrimaNecessaria * 8; // R$8/kg
+                estado.calculos.custoTotal = estado.calculos.custoOperacional + estado.calculos.custoMateriaPrima;
+                estado.calculos.receitaBruta = qtd * precoVenda;
+                estado.calculos.lucroPotencial = estado.calculos.receitaBruta - estado.calculos.custoTotal;
+                
+                renderizar.painelFinanceiro();
+            },
+            
+            confirmarProducao: async () => {
+                try {
+                    // Mostrar estado de carregamento
+                    DOM.submitText.style.display = 'none';
+                    DOM.submitLoading.style.display = 'inline';
+                    DOM.btnConfirmarProducao.disabled = true;
+                    
+                    const user = auth.currentUser;
+                    if (!user) throw new Error("Usuário não autenticado.");
+                    
+                    // Atualizar dados no Firestore
+                    await runTransaction(db, async (transaction) => {
+                        const userRef = doc(db, "usuarios", user.uid);
+                        const userDoc = await transaction.get(userRef);
+                        
+                        if (!userDoc.exists()) {
+                            throw new Error("Documento do usuário não encontrado.");
+                        }
+                        
+                        // Atualizar estoque e registrar produção
+                        const novaMateriaPrima = (userDoc.data().materiaPrima || 0) - estado.calculos.materiaPrimaNecessaria;
+                        
+                        transaction.update(userRef, {
+                            materiaPrima: novaMateriaPrima,
+                            producoes: [...(userDoc.data().producoes || []), {
+                                data: serverTimestamp(),
+                                produto: estado.cenario.produtoId,
+                                quantidade: estado.cenario.quantidade,
+                                custoTotal: estado.calculos.custoTotal,
+                                receita: estado.calculos.receitaBruta
+                            }],
+                            rodadaAtual: 4, // Avança para a próxima rodada
+                            ultimaAtualizacao: serverTimestamp()
+                        });
+                    });
+                    
+                    // Mostrar mensagem de sucesso
+                    DOM.resultadoTitulo.textContent = "Produção Iniciada com Sucesso!";
+                    DOM.resultadoDescricao.textContent = `Sua equipe começou a produzir ${estado.cenario.quantidade.toLocaleString('pt-BR')} unidades do ${estado.cenario.produtoNome}.`;
+                    DOM.modalResultado.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error("Erro ao confirmar produção:", error);
+                    
+                    // Mostrar mensagem de erro
+                    DOM.resultadoTitulo.textContent = "Erro na Produção";
+                    DOM.resultadoDescricao.textContent = "Ocorreu um erro ao iniciar a produção. Por favor, tente novamente.";
+                    DOM.modalResultado.style.display = 'block';
+                    
+                    // Restaurar botão
+                    DOM.submitText.style.display = 'inline';
+                    DOM.submitLoading.style.display = 'none';
+                    DOM.btnConfirmarProducao.disabled = false;
+                }
+            }
+        };
+
+        // Handlers de eventos
+        const handlers = {
+            aceitarOrdem: () => {
+                DOM.modalOrdem.style.display = 'none';
+                DOM.painelConfiguracao.style.display = 'block';
+                renderizar.seletorMaquinas();
+            },
+            
+            rejeitarOrdem: () => {
+                if (confirm("Tem certeza que deseja rejeitar esta ordem de produção?")) {
+                    window.location.href = "/aluno/rodada.html";
+                }
+            },
+            
+            selecaoMaquina: (event) => {
+                estado.selecao.maquina = event.target.value;
+                if (estado.selecao.maquina) {
+                    renderizar.seletorMoldes();
+                } else {
+                    DOM.selectMolde.innerHTML = '<option value="">-- Selecione uma máquina primeiro --</option>';
+                    DOM.selectMolde.disabled = true;
+                }
                 estado.selecao.molde = null;
-                DOM.selectMolde.disabled = true;
-                DOM.selectMolde.innerHTML = '<option>Aguardando máquina...</option>';
+                logica.calcularCustos();
+            },
+            
+            selecaoMolde: (event) => {
+                estado.selecao.molde = event.target.value;
+                if (estado.selecao.molde) {
+                    logica.calcularCustos();
+                }
+            },
+            
+            fecharResultado: () => {
+                window.location.href = "/aluno/rodada.html";
+            },
+            
+            comprarMateriaPrima: () => {
+                alert("Redirecionando para a página de compras...");
+                // Implemente o redirecionamento real conforme sua aplicação
             }
-            estado.calculos = {};
-            atualizarPainelFinanceiro();
-        }
-        
-        function handleSelecaoMolde(event) {
-            const moldeId = event.target.value;
-            if (moldeId) {
-                estado.selecao.molde = moldeId;
-                calcularCustos();
-            }
-        }
-        
-        async function init() {
-            const userDocRef = doc(db, "usuarios", estado.usuario.uid);
-            const userDocSnap = await getDoc(userDocRef);
+        };
 
-            if (userDocSnap.exists()) {
-                estado.dadosUsuario = userDocSnap.data();
-                // NOVO: Log mais importante para diagnóstico.
-                console.log("DADOS COMPLETOS RECEBIDOS DO FIRESTORE:", estado.dadosUsuario);
-                renderizarModalProposta();
-            } else {
-                console.error("ERRO: Documento do usuário não encontrado no Firestore para o UID:", estado.usuario.uid);
-                alert("Erro crítico: Não foi possível carregar os dados do seu usuário.");
-                window.location.href = "https://faguiar01.github.io/sitejoin/login.html";
+        // Inicialização da aplicação
+        const init = async () => {
+            try {
+                const userDocRef = doc(db, "usuarios", estado.usuario.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                
+                if (userDocSnap.exists()) {
+                    estado.dadosUsuario = userDocSnap.data();
+                    renderizar.modalProposta();
+                } else {
+                    throw new Error("Documento do usuário não encontrado.");
+                }
+            } catch (error) {
+                console.error("Erro ao inicializar:", error);
+                alert("Erro ao carregar os dados. Por favor, recarregue a página.");
             }
-        }
+        };
 
-        // --- GUARDA DE ROTA E PONTO DE ENTRADA ---
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.body.style.display = 'block';
-                estado.usuario = user;
-                init();
-            } else {
-                window.location.href = 'https://faguiar01.github.io/sitejoin/login.html';
+        // Configuração de autenticação
+        const configurarAuth = async () => {
+            try {
+                await setPersistence(auth, browserSessionPersistence);
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        document.body.style.display = 'block';
+                        estado.usuario = user;
+                        init();
+                    } else {
+                        window.location.href = '/login.html';
+                    }
+                });
+            } catch (error) {
+                console.error("Erro na autenticação:", error);
             }
+        };
+
+        // Registrar event listeners
+        const registrarEventListeners = () => {
+            DOM.btnAceitarOrdem.addEventListener('click', handlers.aceitarOrdem);
+            DOM.btnRejeitarOrdem.addEventListener('click', handlers.rejeitarOrdem);
+            DOM.selectMaquina.addEventListener('change', handlers.selecaoMaquina);
+            DOM.selectMolde.addEventListener('change', handlers.selecaoMolde);
+            DOM.btnConfirmarProducao.addEventListener('click', logica.confirmarProducao);
+            DOM.btnFecharResultado.addEventListener('click', handlers.fecharResultado);
+            DOM.btnComprarMateriaPrima.addEventListener('click', handlers.comprarMateriaPrima);
+        };
+
+        // Inicializar aplicação
+        document.addEventListener('DOMContentLoaded', () => {
+            configurarAuth();
+            registrarEventListeners();
         });
-
-        // --- REGISTRO DOS EVENTOS ---
-        DOM.btnAceitarOrdem.addEventListener('click', handleAceitarOrdem);
-        DOM.selectMaquina.addEventListener('change', handleSelecaoMaquina);
-        DOM.selectMolde.addEventListener('change', handleSelecaoMolde);
-        // DOM.btnConfirmarProducao.addEventListener('click', handleConfirmarProducao);
-
     </script>
 </body>
 </html>

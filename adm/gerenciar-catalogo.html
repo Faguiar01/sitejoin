@@ -5,30 +5,171 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Catálogo - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-sucesso: #28a745; --cor-perigo: #dc3545; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 20px auto; padding: 20px; background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1, h2 { color: var(--cor-texto); border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; }
-        h2 { font-size: 1.5em; margin-top: 30px; }
-        .form-container { margin-bottom: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
-        .form-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); align-items: end; }
-        .form-group { display: flex; flex-direction: column; }
-        label { font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
-        input, textarea, button { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
-        button { background-color: var(--cor-sucesso); color: var(--cor-branco); border: none; cursor: pointer; font-weight: bold; }
-        button:hover { opacity: 0.9; }
-        #maquinas-list, #materias-primas-list { margin-top: 20px; }
-        .item-header { display: grid; font-weight: bold; padding: 10px; background-color: #e9ecef; border-bottom: 2px solid #ddd; margin-bottom: 5px; }
-        .item-row { display: grid; gap: 10px; padding: 10px; border-bottom: 1px solid #eee; align-items: center;}
-        .maquina-row { grid-template-columns: 2fr 1fr 1fr 1fr 100px; }
-        .mp-row { grid-template-columns: 1fr 2fr 1fr 1fr 1fr; }
-        .item-row:nth-child(even) { background-color: #f9f9f9; }
-        .item-row span { word-wrap: break-word; font-size: 0.9em; }
-        .delete-btn { background-color: var(--cor-perigo); color: var(--cor-branco); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.9em; }
-        nav { background-color: var(--cor-branco); padding: 1rem 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-        nav .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        nav .logo-container img { height: 50px; margin-right: 15px; }
-        .btn-nav { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        :root { 
+            --cor-primaria: #0052CC; 
+            --cor-texto: #333; 
+            --cor-fundo: #f4f7f6; 
+            --cor-branco: #fff; 
+            --cor-sucesso: #28a745; 
+            --cor-perigo: #dc3545;
+            --cor-cinza-escuro: #6c757d;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--cor-fundo); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 20px auto; 
+            padding: 20px; 
+            background-color: var(--cor-branco); 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        h1, h2 { 
+            color: var(--cor-texto); 
+            border-bottom: 2px solid var(--cor-primaria); 
+            padding-bottom: 10px; 
+        }
+        h2 { 
+            font-size: 1.5em; 
+            margin-top: 30px; 
+        }
+        .form-container { 
+            margin-bottom: 20px; 
+            padding: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            background-color: #f9f9f9; 
+        }
+        .form-grid { 
+            display: grid; 
+            gap: 15px; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            align-items: end; 
+        }
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+        }
+        label { 
+            font-weight: bold; 
+            margin-bottom: 5px; 
+            font-size: 0.9em; 
+        }
+        input, textarea, button { 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 1em; 
+        }
+        button { 
+            background-color: var(--cor-primaria); 
+            color: var(--cor-branco); 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: opacity 0.3s;
+        }
+        button:hover { 
+            opacity: 0.9; 
+        }
+        #maquinas-list, #materias-primas-list { 
+            margin-top: 20px; 
+        }
+        .item-header { 
+            display: grid; 
+            font-weight: bold; 
+            padding: 10px; 
+            background-color: #e9ecef; 
+            border-bottom: 2px solid #ddd; 
+            margin-bottom: 5px; 
+        }
+        .item-row { 
+            display: grid; 
+            gap: 10px; 
+            padding: 10px; 
+            border-bottom: 1px solid #eee; 
+            align-items: center;
+        }
+        .maquina-row { 
+            grid-template-columns: 2fr 1fr 1fr 1fr 100px; 
+        }
+        .mp-row { 
+            grid-template-columns: 1fr 2fr 1fr 1fr 1fr; 
+        }
+        .item-row:nth-child(even) { 
+            background-color: #f9f9f9; 
+        }
+        .item-row span { 
+            word-wrap: break-word; 
+            font-size: 0.9em; 
+        }
+        .delete-btn { 
+            background-color: var(--cor-perigo); 
+            color: var(--cor-branco); 
+            border: none; 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 0.9em; 
+        }
+        nav { 
+            background-color: var(--cor-branco); 
+            padding: 1rem 2rem; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        nav .logo-container { 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+            color: var(--cor-texto); 
+            font-weight: 600; 
+        }
+        nav .logo-container img { 
+            height: 50px; 
+            margin-right: 15px; 
+        }
+        .btn-nav { 
+            color: var(--cor-primaria); 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 8px 16px; 
+            border: 1px solid var(--cor-primaria); 
+            border-radius: 8px; 
+            margin-left: 10px;
+        }
+        .loading { 
+            display: inline-block; 
+            width: 20px; 
+            height: 20px; 
+            border: 3px solid rgba(0,0,0,.3); 
+            border-radius: 50%; 
+            border-top-color: var(--cor-primaria); 
+            animation: spin 1s ease-in-out infinite; 
+        }
+        @keyframes spin { 
+            to { transform: rotate(360deg); } 
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: var(--cor-sucesso);
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +183,7 @@
             <button id="logout-button" class="btn-nav" style="background:var(--cor-cinza-escuro); color:white; border-color:var(--cor-cinza-escuro);">Sair</button>
         </div>
     </nav>
+
     <div class="container">
         <h1>Gerenciar Catálogo do Jogo</h1>
 
@@ -49,77 +191,199 @@
             <h2>Cadastrar Nova Máquina</h2>
             <form id="add-maquina-form">
                 <div class="form-grid">
-                    <div class="form-group"><label for="maquina-nome">Nome da Máquina:</label><input type="text" id="maquina-nome" required></div>
-                    <div class="form-group"><label for="maquina-custo">Custo (R$):</label><input type="number" id="maquina-custo" min="0" step="0.01" required></div>
-                    <div class="form-group"><label for="maquina-capacidade">Capacidade (unid/mês):</label><input type="number" id="maquina-capacidade" min="0" required></div>
-                    <div class="form-group"><label for="maquina-operacional">Custo/Hora (R$):</label><input type="number" id="maquina-operacional" min="0" value="0" step="0.01" required></div>
-                    <div class="form-group"><button type="submit">Adicionar Máquina</button></div>
+                    <div class="form-group">
+                        <label for="maquina-nome">Nome da Máquina:</label>
+                        <input type="text" id="maquina-nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="maquina-custo">Custo (R$):</label>
+                        <input type="number" id="maquina-custo" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="maquina-capacidade">Capacidade (unid/mês):</label>
+                        <input type="number" id="maquina-capacidade" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="maquina-operacional">Custo/Hora (R$):</label>
+                        <input type="number" id="maquina-operacional" min="0" value="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" id="submit-maquina">
+                            <span id="maquina-btn-text">Adicionar Máquina</span>
+                            <span id="maquina-loading" class="loading" style="display:none;"></span>
+                        </button>
+                    </div>
                 </div>
             </form>
-            <div id="maquinas-list"><h3>Máquinas Cadastradas</h3></div>
+            <div id="maquinas-list">
+                <h3>Máquinas Cadastradas</h3>
+                <div class="item-header maquina-row">
+                    <span>Nome</span>
+                    <span>Custo</span>
+                    <span>Capacidade</span>
+                    <span>Custo/Hora</span>
+                    <span>Ações</span>
+                </div>
+            </div>
         </div>
 
         <div class="form-container">
             <h2>Cadastrar Nova Matéria-Prima</h2>
             <form id="add-materia-prima-form">
                  <div class="form-grid">
-                    <div class="form-group"><label for="mp-codigo">Código:</label><input type="text" id="mp-codigo" required></div>
-                    <div class="form-group"><label for="mp-nome">Nomeclatura:</label><input type="text" id="mp-nome" required></div>
-                    <div class="form-group"><label for="mp-tipo">Tipo:</label><input type="text" id="mp-tipo" required></div>
-                    <div class="form-group"><label for="mp-descricao">Descrição:</label><input type="text" id="mp-descricao"></div>
-                    <div class="form-group"><label for="mp-preco">Preço (R$):</label><input type="number" id="mp-preco" min="0" step="0.01" required></div>
-                    <div class="form-group"><label for="mp-obs">Observações:</label><input type="text" id="mp-obs"></div>
-                    <div class="form-group"><button type="submit">Adicionar Matéria-Prima</button></div>
+                    <div class="form-group">
+                        <label for="mp-codigo">Código:</label>
+                        <input type="text" id="mp-codigo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mp-nome">Nomeclatura:</label>
+                        <input type="text" id="mp-nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mp-tipo">Tipo:</label>
+                        <input type="text" id="mp-tipo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mp-descricao">Descrição:</label>
+                        <input type="text" id="mp-descricao">
+                    </div>
+                    <div class="form-group">
+                        <label for="mp-preco">Preço (R$):</label>
+                        <input type="number" id="mp-preco" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mp-obs">Observações:</label>
+                        <input type="text" id="mp-obs">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" id="submit-materia-prima">
+                            <span id="mp-btn-text">Adicionar Matéria-Prima</span>
+                            <span id="mp-loading" class="loading" style="display:none;"></span>
+                        </button>
+                    </div>
                 </div>
             </form>
-            <div id="materias-primas-list"><h3>Matérias-Primas Cadastradas</h3></div>
+            <div id="materias-primas-list">
+                <h3>Matérias-Primas Cadastradas</h3>
+                <div class="item-header mp-row">
+                    <span>Código</span>
+                    <span>Nome</span>
+                    <span>Tipo</span>
+                    <span>Preço</span>
+                    <span>Ações</span>
+                </div>
+            </div>
         </div>
     </div>
 
+    <div class="toast" id="toast"></div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            onSnapshot, 
+            deleteDoc, 
+            doc, 
+            getDoc,
+            query,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
+        // Configuração do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            apiKey: "AIzaSyAXtFYlng57P0C0p-b4TFuYucG1bn4NKAk",
             authDomain: "joinxperience-site.firebaseapp.com",
             projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
+            storageBucket: "joinxperience-site.firebasestorage.app",
             messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            appId: "1:140037739806:web:322493d72ca6149abce5bf",
             measurementId: "G-V4SRK0FNBN"
         };
+
+        // Inicialização do Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        
+        // Referências às coleções
         const maquinasCollection = collection(db, 'catalogo_maquinas');
         const materiasPrimasCollection = collection(db, 'catalogo_materias_primas');
+        
+        // Consultas ordenadas
+        const maquinasQuery = query(maquinasCollection, orderBy('nome'));
+        const materiasPrimasQuery = query(materiasPrimasCollection, orderBy('nome'));
 
+        // Verificação de autenticação e permissões
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const userDoc = await getDoc(doc(db, "usuarios", user.uid));
-                if (!userDoc.exists() || !userDoc.data().isAdmin) {
-                    alert("Acesso negado.");
-                    window.location.href = '../index.html';
+                try {
+                    const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+                    if (!userDoc.exists() || !userDoc.data().isAdmin) {
+                        showToast('Acesso negado: apenas administradores podem acessar esta página', 'error');
+                        setTimeout(() => window.location.href = '../index.html', 2000);
+                    }
+                } catch (error) {
+                    console.error("Erro ao verificar permissões:", error);
+                    showToast('Erro ao verificar permissões', 'error');
+                    setTimeout(() => window.location.href = '../index.html', 2000);
                 }
             } else {
                 window.location.href = '../login.html';
             }
         });
 
-        document.getElementById('logout-button').addEventListener('click', () => signOut(auth));
+        // Logout
+        document.getElementById('logout-button').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = '../index.html';
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+                showToast('Erro ao fazer logout', 'error');
+            });
+        });
 
-        const createListRenderer = (elementId, headerHtml, rowRenderer) => (data) => {
+        // Função para mostrar notificações
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.backgroundColor = type === 'error' ? 'var(--cor-perigo)' : 'var(--cor-sucesso)';
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Renderização das listas
+        const renderList = (elementId, rowRenderer) => (data) => {
             const listDiv = document.getElementById(elementId);
-            listDiv.innerHTML = headerHtml;
-            if (data.length === 0) { listDiv.innerHTML += '<p>Nenhum item cadastrado ainda.</p>'; return; }
-            data.forEach(item => listDiv.appendChild(rowRenderer(item)));
+            const itemsContainer = listDiv.querySelector('.items-container') || document.createElement('div');
+            itemsContainer.className = 'items-container';
+            
+            if (data.length === 0) {
+                itemsContainer.innerHTML = '<p class="no-items">Nenhum item cadastrado ainda.</p>';
+            } else {
+                itemsContainer.innerHTML = '';
+                data.forEach(item => itemsContainer.appendChild(rowRenderer(item)));
+            }
+            
+            // Garante que o container de itens exista
+            if (!listDiv.querySelector('.items-container')) {
+                listDiv.appendChild(itemsContainer);
+            }
         };
 
-        const renderMaquinas = createListRenderer(
+        // Renderizadores específicos
+        const renderMaquinas = renderList(
             'maquinas-list',
-            '<h3>Máquinas Cadastradas</h3>',
             item => {
                 const row = document.createElement('div');
                 row.className = 'item-row maquina-row';
@@ -133,9 +397,8 @@
             }
         );
 
-        const renderMateriasPrimas = createListRenderer(
+        const renderMateriasPrimas = renderList(
             'materias-primas-list',
-            '<h3>Matérias-Primas Cadastradas</h3>',
             item => {
                 const row = document.createElement('div');
                 row.className = 'item-row mp-row';
@@ -149,41 +412,98 @@
             }
         );
 
-        onSnapshot(maquinasCollection, snapshot => renderMaquinas(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
-        onSnapshot(materiasPrimasCollection, snapshot => renderMateriasPrimas(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
+        // Listeners para atualizações em tempo real
+        onSnapshot(maquinasQuery, 
+            snapshot => renderMaquinas(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))),
+            error => console.error("Erro ao carregar máquinas:", error)
+        );
 
+        onSnapshot(materiasPrimasQuery, 
+            snapshot => renderMateriasPrimas(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))),
+            error => console.error("Erro ao carregar matérias-primas:", error)
+        );
+
+        // Formulário de máquinas
         document.getElementById('add-maquina-form').addEventListener('submit', async e => {
             e.preventDefault();
             const form = e.target;
-            await addDoc(maquinasCollection, {
-                nome: form['maquina-nome'].value,
-                custo: parseFloat(form['maquina-custo'].value),
-                capacidade: parseInt(form['maquina-capacidade'].value),
-                operacional: parseFloat(form['maquina-operacional'].value)
-            });
-            form.reset();
+            const button = document.getElementById('submit-maquina');
+            const buttonText = document.getElementById('maquina-btn-text');
+            const loading = document.getElementById('maquina-loading');
+            
+            button.disabled = true;
+            buttonText.style.display = 'none';
+            loading.style.display = 'inline-block';
+            
+            try {
+                await addDoc(maquinasCollection, {
+                    nome: form['maquina-nome'].value.trim(),
+                    custo: parseFloat(form['maquina-custo'].value),
+                    capacidade: parseInt(form['maquina-capacidade'].value),
+                    operacional: parseFloat(form['maquina-operacional'].value),
+                    createdAt: new Date()
+                });
+                form.reset();
+                showToast('Máquina cadastrada com sucesso!');
+            } catch (error) {
+                console.error("Erro ao cadastrar máquina:", error);
+                showToast('Erro ao cadastrar máquina', 'error');
+            } finally {
+                button.disabled = false;
+                buttonText.style.display = 'inline-block';
+                loading.style.display = 'none';
+            }
         });
 
+        // Formulário de matérias-primas
         document.getElementById('add-materia-prima-form').addEventListener('submit', async e => {
             e.preventDefault();
             const form = e.target;
-            await addDoc(materiasPrimasCollection, {
-                codigo: form['mp-codigo'].value,
-                nome: form['mp-nome'].value,
-                tipo: form['mp-tipo'].value,
-                descricao: form['mp-descricao'].value,
-                preco: parseFloat(form['mp-preco'].value),
-                obs: form['mp-obs'].value
-            });
-            form.reset();
+            const button = document.getElementById('submit-materia-prima');
+            const buttonText = document.getElementById('mp-btn-text');
+            const loading = document.getElementById('mp-loading');
+            
+            button.disabled = true;
+            buttonText.style.display = 'none';
+            loading.style.display = 'inline-block';
+            
+            try {
+                await addDoc(materiasPrimasCollection, {
+                    codigo: form['mp-codigo'].value.trim(),
+                    nome: form['mp-nome'].value.trim(),
+                    tipo: form['mp-tipo'].value.trim(),
+                    descricao: form['mp-descricao'].value.trim(),
+                    preco: parseFloat(form['mp-preco'].value),
+                    obs: form['mp-obs'].value.trim(),
+                    createdAt: new Date()
+                });
+                form.reset();
+                showToast('Matéria-prima cadastrada com sucesso!');
+            } catch (error) {
+                console.error("Erro ao cadastrar matéria-prima:", error);
+                showToast('Erro ao cadastrar matéria-prima', 'error');
+            } finally {
+                button.disabled = false;
+                buttonText.style.display = 'inline-block';
+                loading.style.display = 'none';
+            }
         });
 
+        // Deleção de itens
         document.addEventListener('click', async e => {
             if (e.target.classList.contains('delete-btn')) {
-                const id = e.target.dataset.id, type = e.target.dataset.tipo;
-                if (confirm(`Tem certeza que deseja excluir este item?`)) {
-                    const collectionName = type === 'maquina' ? 'catalogo_maquinas' : 'catalogo_materias_primas';
-                    await deleteDoc(doc(db, collectionName, id));
+                const id = e.target.dataset.id;
+                const type = e.target.dataset.tipo;
+                
+                if (confirm(`Tem certeza que deseja excluir este ${type === 'maquina' ? 'máquina' : 'matéria-prima'}?`)) {
+                    try {
+                        const collectionName = type === 'maquina' ? 'catalogo_maquinas' : 'catalogo_materias_primas';
+                        await deleteDoc(doc(db, collectionName, id));
+                        showToast(`${type === 'maquina' ? 'Máquina' : 'Matéria-prima'} excluída com sucesso!`);
+                    } catch (error) {
+                        console.error(`Erro ao excluir ${type}:`, error);
+                        showToast(`Erro ao excluir ${type === 'maquina' ? 'máquina' : 'matéria-prima'}`, 'error');
+                    }
                 }
             }
         });

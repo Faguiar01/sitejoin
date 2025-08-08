@@ -5,60 +5,308 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mural do Explorador - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        main { flex: 1; }
-        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
-        .page-header h1 { margin: 0; font-size: 2.2em; }
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: opacity 0.3s ease; }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn:hover { opacity: 0.85; }
-        .mural-grid { display: flex; flex-direction: column; gap: 25px; margin-top: 30px; }
-        .mural-card { background-color: var(--cor-branco); border-left: 5px solid; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; align-items: flex-start; padding: 20px; gap: 20px;}
-        .mural-card .icon { font-size: 2.5em; }
+        :root { 
+            --cor-primaria: #0052CC; 
+            --cor-secundaria: #FF4400;
+            --cor-texto: #333; 
+            --cor-fundo: #f4f7f6; 
+            --cor-branco: #fff; 
+            --cor-cinza-escuro: #343a40;
+            --cor-noticia: #17a2b8;
+            --cor-conquista: #ffc107;
+            --cor-dica: #28a745;
+            --cor-alerta: #dc3545;
+        }
+        
+        body { 
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--cor-fundo); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        
+        header.main-header { 
+            background-color: var(--cor-branco); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        header.main-header .logo-container { 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+            color: var(--cor-texto); 
+            font-weight: 600; 
+        }
+        
+        header.main-header .logo-container img { 
+            height: 50px; 
+            margin-right: 15px; 
+        }
+        
+        header.main-header nav a { 
+            color: var(--cor-primaria); 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 8px 16px; 
+            border: 1px solid var(--cor-primaria); 
+            border-radius: 8px; 
+            transition: all 0.3s ease;
+        }
+        
+        header.main-header nav a:hover {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+        }
+        
+        main { 
+            flex: 1; 
+            padding-bottom: 40px;
+        }
+        
+        .page-header { 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #ddd; 
+            background-color: #e9ecef; 
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .page-header h1 { 
+            margin: 0; 
+            font-size: 2.2em; 
+            color: var(--cor-primaria);
+        }
+        
+        .btn { 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            border: none; 
+            text-decoration: none; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+        }
+        
+        .btn-primary { 
+            background-color: var(--cor-primaria); 
+            color: var(--cor-branco); 
+        }
+        
+        .btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .mural-grid { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 25px; 
+        }
+        
+        .mural-card { 
+            background-color: var(--cor-branco); 
+            border-left: 5px solid; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+            display: flex; 
+            align-items: flex-start; 
+            padding: 20px; 
+            gap: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .mural-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .mural-card .icon { 
+            font-size: 2.5em; 
+            flex-shrink: 0;
+        }
+        
         /* Cores dinâmicas baseadas no tipo de post */
-        .mural-card.news { border-left-color: #17a2b8; }
-        .mural-card.achievement { border-left-color: #ffc107; }
-        .mural-card.tip { border-left-color: #28a745; }
-        .mural-card-content h3 { margin-top: 0; margin-bottom: 5px; font-size: 1.4em; }
-        .mural-card-content p { color: #555; line-height: 1.6; margin: 0; white-space: pre-wrap; /* Para manter quebras de linha do textarea */ }
-        .mural-card-content .date { font-size: 0.9em; color: #888; margin-top: 10px; }
-        #loading-message { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+        .mural-card.news { border-left-color: var(--cor-noticia); }
+        .mural-card.achievement { border-left-color: var(--cor-conquista); }
+        .mural-card.tip { border-left-color: var(--cor-dica); }
+        .mural-card.alert { border-left-color: var(--cor-alerta); }
+        
+        .mural-card-content { flex-grow: 1; }
+        .mural-card-content h3 { 
+            margin-top: 0; 
+            margin-bottom: 10px; 
+            font-size: 1.4em; 
+            color: var(--cor-texto);
+        }
+        
+        .mural-card-content p { 
+            color: #555; 
+            line-height: 1.6; 
+            margin: 0 0 15px 0; 
+            white-space: pre-wrap;
+        }
+        
+        .mural-card-content .date { 
+            font-size: 0.9em; 
+            color: #888; 
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .mural-card-content .date::before {
+            content: "📅";
+        }
+        
+        .mural-card-content .author {
+            font-size: 0.9em;
+            color: var(--cor-primaria);
+            font-weight: 500;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .mural-card-content .author::before {
+            content: "👤";
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-right: 8px;
+            background-color: #e9ecef;
+            color: var(--cor-texto);
+        }
+        
+        .tag.news { background-color: color-mix(in srgb, var(--cor-noticia) 15%, white); }
+        .tag.achievement { background-color: color-mix(in srgb, var(--cor-conquista) 15%, white); }
+        .tag.tip { background-color: color-mix(in srgb, var(--cor-dica) 15%, white); }
+        .tag.alert { background-color: color-mix(in srgb, var(--cor-alerta) 15%, white); }
+        
+        #loading-message { 
+            text-align: center; 
+            padding: 40px; 
+            font-size: 1.2em; 
+            color: #666; 
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background-color: var(--cor-branco);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        footer.main-footer { 
+            background-color: var(--cor-cinza-escuro); 
+            color: var(--cor-branco); 
+            padding: 20px; 
+            text-align: center; 
+            margin-top: auto; 
+        }
+        
+        /* Animação de skeleton loading */
+        @keyframes shimmer {
+            0% { background-position: -468px 0 }
+            100% { background-position: 468px 0 }
+        }
+        
+        .skeleton {
+            animation: shimmer 1.5s infinite linear;
+            background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-size: 800px 104px;
+        }
+        
+        .skeleton-card {
+            height: 150px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <header class="main-header">
-        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
-        <nav><a href="#" id="logout-button">Sair</a></nav>
+        <a href="../index.html" class="logo-container">
+            <img src="../JOIN.png" alt="Logo Join Xperience">
+            <span>Join Xperience</span>
+        </a>
+        <nav>
+            <a href="#" id="logout-button">Sair</a>
+            <a href="xperience.html" class="btn btn-primary" style="margin-left: 10px;">Voltar ao Painel</a>
+        </nav>
     </header>
 
     <main class="container">
         <div class="page-header">
             <h1>Mural do Explorador</h1>
-            <div>
-                <a href="xperience.html" class="btn btn-primary">Voltar ao Painel</a>
+            <div id="filter-container" style="display: none;">
+                <select id="post-filter" class="btn">
+                    <option value="all">Todos os posts</option>
+                    <option value="news">Notícias</option>
+                    <option value="achievement">Conquistas</option>
+                    <option value="tip">Dicas</option>
+                    <option value="alert">Alertas</option>
+                </select>
             </div>
         </div>
 
         <div id="mural-container" class="mural-grid">
-            <p id="loading-message">Carregando novidades...</p>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
         </div>
     </main>
 
-    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+    <footer class="main-footer">
+        <p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p>
+    </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        // NOVO: Importando funções para LER dados do Firestore
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { 
+            getAuth, 
+            signOut, 
+            onAuthStateChanged,
+            browserSessionPersistence,
+            setPersistence
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            where,
+            getDocs, 
+            orderBy,
+            Timestamp
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
+        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -68,66 +316,192 @@
             appId: "1:140037739806:web:322493d72ca6149abce50f",
             measurementId: "G-V4SRK0FNBN"
         };
+
+        // Inicialização
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- LÓGICA DE LOGIN E LOGOUT ---
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Se o usuário está logado, carrega os posts do mural
-                loadMuralPosts();
-            } else {
-                window.location.href = '../login.html';
-            }
-        });
-        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+        // Elementos DOM
+        const muralContainer = document.getElementById('mural-container');
+        const logoutButton = document.getElementById('logout-button');
+        const postFilter = document.getElementById('post-filter');
+        const filterContainer = document.getElementById('filter-container');
 
-        // --- NOVA LÓGICA PARA CARREGAR E EXIBIR OS POSTS ---
-        async function loadMuralPosts() {
-            const muralContainer = document.getElementById('mural-container');
-            const loadingMessage = document.getElementById('loading-message');
+        // Formatar data
+        const formatDate = (timestamp) => {
+            if (!timestamp || !(timestamp instanceof Timestamp)) return 'Data desconhecida';
+            
+            const date = timestamp.toDate();
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        };
 
-            // Cria uma consulta para buscar os posts, ordenados pelo mais novo primeiro
-            const q = query(collection(db, "mural_posts"), orderBy("criadoEm", "desc"));
-
+        // Gerenciamento de autenticação
+        const initAuth = async () => {
             try {
+                await setPersistence(auth, browserSessionPersistence);
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        loadMuralPosts();
+                    } else {
+                        window.location.href = '../login.html';
+                    }
+                });
+            } catch (error) {
+                console.error("Erro na autenticação: ", error);
+                showError("Erro ao verificar autenticação. Tente recarregar a página.");
+            }
+        };
+
+        // Logout seguro
+        const setupLogout = () => {
+            logoutButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                    window.location.href = '../index.html';
+                } catch (error) {
+                    console.error("Erro ao fazer logout: ", error);
+                    showError("Erro ao sair. Tente novamente.");
+                }
+            });
+        };
+
+        // Mostrar mensagem de erro
+        const showError = (message) => {
+            muralContainer.innerHTML = `
+                <div class="empty-state">
+                    <p>${message}</p>
+                    <button onclick="location.reload()" class="btn btn-primary">Recarregar</button>
+                </div>
+            `;
+        };
+
+        // Carregar posts do mural
+        const loadMuralPosts = async (filter = 'all') => {
+            try {
+                // Mostrar skeleton loading
+                muralContainer.innerHTML = `
+                    <div class="skeleton skeleton-card"></div>
+                    <div class="skeleton skeleton-card"></div>
+                    <div class="skeleton skeleton-card"></div>
+                `;
+                
+                let q;
+                if (filter === 'all') {
+                    q = query(
+                        collection(db, "mural_posts"),
+                        where("status", "==", "ativo"),
+                        orderBy("criadoEm", "desc")
+                    );
+                } else {
+                    q = query(
+                        collection(db, "mural_posts"),
+                        where("status", "==", "ativo"),
+                        where("tipo", "==", filter),
+                        orderBy("criadoEm", "desc")
+                    );
+                }
+
                 const querySnapshot = await getDocs(q);
-
-                // Limpa a mensagem de "carregando"
-                muralContainer.innerHTML = ''; 
-
+                
                 if (querySnapshot.empty) {
-                    muralContainer.innerHTML = '<p id="loading-message">Nenhuma novidade no mural por enquanto.</p>';
+                    muralContainer.innerHTML = `
+                        <div class="empty-state">
+                            <p>Nenhuma postagem no mural no momento.</p>
+                            <p>Volte mais tarde para conferir as novidades!</p>
+                        </div>
+                    `;
+                    filterContainer.style.display = 'none';
                     return;
                 }
 
+                // Mostrar filtro se houver posts
+                filterContainer.style.display = 'block';
+                
+                muralContainer.innerHTML = '';
+                
                 querySnapshot.forEach((doc) => {
                     const post = doc.data();
-                    const postDate = post.criadoEm ? post.criadoEm.toDate().toLocaleDateString('pt-BR') : 'Data indisponível';
-
-                    let icon = '📰'; // Padrão
-                    if (post.tipo === 'achievement') icon = '🏆';
-                    if (post.tipo === 'tip') icon = '💡';
-
-                    const postElement = document.createElement('div');
-                    postElement.classList.add('mural-card', post.tipo); // Adiciona a classe do tipo para a cor da borda
-                    postElement.innerHTML = `
-                        <div class="icon">${icon}</div>
-                        <div class="mural-card-content">
-                            <h3>${post.titulo}</h3>
-                            <p>${post.conteudo}</p>
-                            <div class="date">Postado em ${postDate}</div>
-                        </div>
-                    `;
+                    const postElement = createPostElement(post);
                     muralContainer.appendChild(postElement);
                 });
 
+                // Configurar filtro
+                setupFilter();
+
             } catch (error) {
                 console.error("Erro ao buscar posts: ", error);
-                loadingMessage.textContent = 'Erro ao carregar as novidades. Tente recarregar a página.';
+                showError("Erro ao carregar o mural. Tente novamente mais tarde.");
             }
-        }
+        };
+
+        // Criar elemento de post
+        const createPostElement = (post) => {
+            const postElement = document.createElement('div');
+            postElement.classList.add('mural-card', post.tipo);
+            
+            const { icon, tagText } = getPostMeta(post.tipo);
+            const formattedDate = formatDate(post.criadoEm);
+            
+            postElement.innerHTML = `
+                <div class="icon">${icon}</div>
+                <div class="mural-card-content">
+                    <div>
+                        <span class="tag ${post.tipo}">${tagText}</span>
+                        <h3>${escapeHtml(post.titulo)}</h3>
+                    </div>
+                    <p>${escapeHtml(post.conteudo)}</p>
+                    <div class="date">${formattedDate}</div>
+                    ${post.autor ? `<div class="author">${escapeHtml(post.autor)}</div>` : ''}
+                </div>
+            `;
+            
+            return postElement;
+        };
+
+        // Obter metadados do tipo de post
+        const getPostMeta = (type) => {
+            const meta = {
+                news: { icon: '📰', tagText: 'Notícia' },
+                achievement: { icon: '🏆', tagText: 'Conquista' },
+                tip: { icon: '💡', tagText: 'Dica' },
+                alert: { icon: '⚠️', tagText: 'Alerta' },
+                default: { icon: '📌', tagText: 'Post' }
+            };
+            return meta[type] || meta.default;
+        };
+
+        // Configurar filtro
+        const setupFilter = () => {
+            postFilter.addEventListener('change', () => {
+                loadMuralPosts(postFilter.value);
+            });
+        };
+
+        // Sanitizar HTML
+        const escapeHtml = (unsafe) => {
+            return unsafe?.replace(/[&<"'>]/g, (match) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[match])) || '';
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+            setupLogout();
+        });
     </script>
 </body>
 </html>

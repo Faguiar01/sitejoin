@@ -3,35 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A iniciar Rodada...</title>
+    <title>Preparando Rodada - Join Xperience</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f7f6; text-align: center; }
-        .loading-container { color: #333; }
-        h1 { color: #0056b3; }
-
-        /* Estilos para a página de espera */
-        .wait-container { max-width: 800px; margin: auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .wait-container h1 { color: #28a745; border-bottom: 2px solid #a7d7b2; padding-bottom: 10px; }
-        .wait-container p { font-size: 1.2em; color: #333; line-height: 1.6; }
-        .wait-container .btn { display: inline-block; background-color: #007bff; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: background-color 0.3s; }
-        .wait-container .btn:hover { background-color: #0056b3; }
+        :root {
+            --cor-primaria: #0052CC;
+            --cor-sucesso: #28a745;
+            --cor-texto: #333;
+            --cor-fundo: #f4f7f6;
+            --cor-branco: #fff;
+            --cor-cinza-escuro: #343a40;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--cor-fundo);
+            text-align: center;
+        }
+        
+        .loading-container {
+            max-width: 800px;
+            margin: 2rem;
+            background: var(--cor-branco);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .loading-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+        }
+        
+        h1 {
+            color: var(--cor-primaria);
+            margin-top: 0;
+            font-size: 2.2rem;
+            border-bottom: 2px solid rgba(0, 82, 204, 0.1);
+            padding-bottom: 1rem;
+        }
+        
+        p {
+            font-size: 1.1rem;
+            color: var(--cor-texto);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .loading-spinner {
+            border: 5px solid rgba(0, 82, 204, 0.1);
+            border-radius: 50%;
+            border-top: 5px solid var(--cor-primaria);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--cor-primaria);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: #003d99;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-success {
+            background-color: var(--cor-sucesso);
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
-
     <div class="loading-container">
-        <h1>InovaPlas</h1>
-        <p>Aguarde, estamos a preparar a sua próxima rodada...</p>
-        <p><em>Será redirecionado em breve.</em></p>
+        <div class="loading-spinner"></div>
+        <h1>Preparando sua Rodada</h1>
+        <p id="status-message">Carregando seus dados, por favor aguarde...</p>
+        <p id="additional-info"></p>
+        <div id="error-container" class="error-message" style="display: none;"></div>
+        <a href="xperience.html" id="action-button" class="btn" style="display: none;">Voltar ao Painel</a>
     </div>
 
-    <!-- Firebase SDKs (versão compatível) -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            browserSessionPersistence,
+            setPersistence
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-    <script>
-        // Suas credenciais do Firebase
+        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -42,96 +141,179 @@
             measurementId: "G-V4SRK0FNBN"
         };
 
-        // Inicializa o Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        // Inicialização
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Mapeamento de rodadas para as páginas de atividade corretas.
-        const rodadaPaginas = {
+        // Elementos DOM
+        const statusMessage = document.getElementById('status-message');
+        const additionalInfo = document.getElementById('additional-info');
+        const errorContainer = document.getElementById('error-container');
+        const actionButton = document.getElementById('action-button');
+
+        // Mapeamento de rodadas para páginas
+        const rodadaPages = {
             1: 'rodada1-nivelamento.html',
             2: 'rodada2-fundacao.html',
             3: 'rodada3-operacoes.html',
-            4: 'simulador-producao.html',  
+            4: 'simulador-producao.html',
             5: 'rodada5.html'
         };
 
-        const maxRodadas = 5;
+        const MAX_RODADAS = 5;
 
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                try {
-                    const userDoc = await db.collection('usuarios').doc(user.uid).get();
-                    if (!userDoc.exists) {
-                        throw new Error("Utilizador não encontrado no Firestore.");
-                    }
-
-                    const userData = userDoc.data();
-                    const alunoRodada = userData.rodadaAtual || 1;
-
-                    if (alunoRodada > maxRodadas) {
-                         document.body.innerHTML = `
-                            <div class="wait-container">
-                                <h1>Parabéns!</h1>
-                                <p>Você concluiu com sucesso todas as rodadas da simulação InovaPlas.</p>
-                                <a href="xperience.html" class="btn">Voltar ao Painel</a>
-                            </div>`;
-                         return;
-                    }
-
-                    const turmaId = userData.turmaId;
-                    if (!turmaId) {
-                        alert("Você ainda não está numa turma. Insira o código para começar.");
-                        window.top.location.href = 'xperience.html';
-                        return;
-                    }
-
-                    const turmaDoc = await db.collection('turmas').doc(turmaId).get();
-                    if (!turmaDoc.exists) {
-                        throw new Error("Turma não encontrada. Contacte o seu professor.");
-                    }
-
-                    const turmaData = turmaDoc.data();
-                    const turmaRodadaTeto = turmaData.rodadaAtual || 1; 
-
-                    const rodadaParaAcessar = Math.min(alunoRodada, turmaRodadaTeto);
-
-                    if (alunoRodada > turmaRodadaTeto) {
-                        document.body.innerHTML = `
-                            <div class="wait-container">
-                                <h1>Bom trabalho!</h1>
-                                <p>Você está em dia com a sua turma. Aguarde o seu professor liberar a próxima rodada para continuar a sua jornada.</p>
-                                <a href="xperience.html" class="btn">Voltar ao Painel</a>
-                            </div>`;
-                        return;
-                    }
-
-                    const paginaDestino = rodadaPaginas[rodadaParaAcessar];
-
-                    if (paginaDestino) {
-                        window.top.location.href = paginaDestino;
-                    } else {
-                        document.body.innerHTML = `
-                            <div class="wait-container">
-                                <h1>Rodada ${rodadaParaAcessar} em Breve!</h1>
-                                <p>O conteúdo para esta rodada ainda não está disponível no sistema.</p>
-                                <a href="xperience.html" class="btn">Voltar ao Painel</a>
-                            </div>`;
-                    }
-
-                } catch (error) {
-                    alert("Ocorreu um erro ao carregar a sua rodada: " + error.message);
-                    window.top.location.href = 'xperience.html';
-                }
+        // Atualizar mensagens de status
+        const updateStatus = (message, additional = '', isError = false) => {
+            statusMessage.textContent = message;
+            additionalInfo.textContent = additional;
+            
+            if (isError) {
+                errorContainer.textContent = message;
+                errorContainer.style.display = 'block';
+                statusMessage.style.display = 'none';
             } else {
-                setTimeout(() => {
-                    if (!auth.currentUser) {
-                         window.top.location.href = '../login.html';
-                    }
-                }, 500);
+                errorContainer.style.display = 'none';
+                statusMessage.style.display = 'block';
             }
+        };
+
+        // Mostrar botão de ação
+        const showActionButton = (text, href) => {
+            actionButton.textContent = text;
+            actionButton.href = href;
+            actionButton.style.display = 'inline-block';
+        };
+
+        // Gerenciamento de autenticação
+        const initAuth = async () => {
+            try {
+                await setPersistence(auth, browserSessionPersistence);
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        await loadUserData(user);
+                    } else {
+                        setTimeout(() => {
+                            if (!auth.currentUser) {
+                                window.location.href = '../login.html';
+                            }
+                        }, 1000);
+                    }
+                });
+            } catch (error) {
+                handleError("Erro na autenticação", error);
+            }
+        };
+
+        // Carregar dados do usuário
+        const loadUserData = async (user) => {
+            try {
+                updateStatus("Verificando seus dados...");
+                
+                const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+                if (!userDoc.exists()) {
+                    throw new Error("Usuário não encontrado no sistema.");
+                }
+
+                const userData = userDoc.data();
+                const alunoRodada = userData.rodadaAtual || 1;
+                const turmaId = userData.turmaId;
+
+                if (!turmaId) {
+                    updateStatus("Você ainda não está em uma turma.", "Por favor, insira o código da turma para continuar.");
+                    showActionButton("Voltar ao Painel", "xperience.html");
+                    return;
+                }
+
+                await verifyTurmaStatus(turmaId, alunoRodada);
+            } catch (error) {
+                handleError("Erro ao carregar seus dados", error);
+            }
+        };
+
+        // Verificar status da turma
+        const verifyTurmaStatus = async (turmaId, alunoRodada) => {
+            try {
+                updateStatus("Verificando progresso da turma...");
+                
+                const turmaDoc = await getDoc(doc(db, "turmas", turmaId));
+                if (!turmaDoc.exists()) {
+                    throw new Error("Turma não encontrada. Contate seu professor.");
+                }
+
+                const turmaData = turmaDoc.data();
+                const turmaRodada = turmaData.rodadaAtual || 1;
+                const rodadaParaAcessar = Math.min(alunoRodada, turmaRodada);
+
+                if (alunoRodada > MAX_RODADAS) {
+                    showCompletionMessage();
+                    return;
+                }
+
+                if (alunoRodada > turmaRodada) {
+                    showWaitingMessage(turmaRodada);
+                    return;
+                }
+
+                redirectToRodada(rodadaParaAcessar);
+            } catch (error) {
+                handleError("Erro ao verificar turma", error);
+            }
+        };
+
+        // Mostrar mensagem de conclusão
+        const showCompletionMessage = () => {
+            updateStatus(
+                "Parabéns! 🎉", 
+                "Você concluiu com sucesso todas as rodadas da simulação InovaPlas."
+            );
+            showActionButton("Voltar ao Painel", "xperience.html");
+        };
+
+        // Mostrar mensagem de espera
+        const showWaitingMessage = (turmaRodada) => {
+            updateStatus(
+                "Você está adiantado!",
+                `Sua turma está atualmente na rodada ${turmaRodada}. Aguarde seu professor liberar a próxima rodada.`
+            );
+            showActionButton("Voltar ao Painel", "xperience.html");
+        };
+
+        // Redirecionar para a rodada apropriada
+        const redirectToRodada = (rodada) => {
+            const targetPage = rodadaPages[rodada];
+            
+            if (targetPage) {
+                updateStatus(`Redirecionando para Rodada ${rodada}...`);
+                setTimeout(() => {
+                    window.location.href = targetPage;
+                }, 1500);
+            } else {
+                updateStatus(
+                    `Rodada ${rodada} em breve!`,
+                    "O conteúdo para esta rodada ainda não está disponível no sistema.",
+                    true
+                );
+                showActionButton("Voltar ao Painel", "xperience.html");
+            }
+        };
+
+        // Tratamento de erros
+        const handleError = (message, error) => {
+            console.error(`${message}:`, error);
+            updateStatus(
+                "Ocorreu um erro",
+                "Não foi possível carregar sua rodada no momento.",
+                true
+            );
+            showActionButton("Voltar ao Painel", "xperience.html");
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
         });
     </script>
-
 </body>
 </html>

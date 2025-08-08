@@ -4,33 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatórios - Join Xperience</title>
-    <style>
-        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        main { flex: 1; }
-        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
-        .page-header h1 { margin: 0; font-size: 2.2em; }
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: opacity 0.3s ease; }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn:hover { opacity: 0.85; }
-        .reports-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-top: 30px; }
-        .report-card { background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .report-card-header { padding: 20px; border-bottom: 1px solid #eee; }
-        .report-card-header h3 { margin: 0; }
-        .report-card-body { padding: 25px; color: #666; font-style: italic; text-align: center; }
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
-    </style>
+    
+    <!-- CSS otimizado -->
+    <link rel="stylesheet" href="../assets/css/professor-styles.css">
+    <link rel="stylesheet" href="../assets/css/reports.css">
+    
+    <!-- Pré-conexões para melhor performance -->
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Biblioteca Chart.js para gráficos futuros -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
 </head>
-<body>
+<body class="flex-body">
     <header class="main-header">
-        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
-        <nav><a href="#" id="logout-button">Sair</a></nav>
+        <a href="../index.html" class="logo-container">
+            <img src="../assets/images/JOIN.png" alt="Logo Join Xperience" loading="lazy">
+            <span>Join Xperience</span>
+        </a>
+        <nav>
+            <button id="logout-button" class="btn-logout">Sair</button>
+        </nav>
     </header>
+
     <main class="container">
         <div class="page-header">
             <h1>Relatórios de Desempenho</h1>
@@ -39,43 +34,127 @@
             </div>
         </div>
 
-        <div class="reports-grid">
-            <div class="report-card">
-                <div class="report-card-header"><h3>Resultados da Rodada Atual</h3></div>
-                <div class="report-card-body"><p>Os dados desta seção estarão disponíveis após o fechamento da rodada atual.</p></div>
-            </div>
-            <div class="report-card">
-                <div class="report-card-header"><h3>Ranking Geral de Equipes</h3></div>
-                <div class="report-card-body"><p>Um ranking de rentabilidade e valor de mercado será exibido aqui.</p></div>
-            </div>
-            <div class="report-card">
-                <div class="report-card-header"><h3>Histórico de Desempenho</h3></div>
-                <div class="report-card-body"><p>Gráficos mostrando a evolução das equipes ao longo das rodadas aparecerão nesta área.</p></div>
-            </div>
-             <div class="report-card">
-                <div class="report-card-header"><h3>Análise Individual por Aluno</h3></div>
-                <div class="report-card-body"><p>Uma visão detalhada das decisões e resultados de cada aluno será implementada futuramente.</p></div>
+        <div class="reports-grid" id="reports-container">
+            <!-- Os cards serão gerados dinamicamente via JavaScript -->
+            <div class="loading-message">
+                <p>Carregando relatórios...</p>
             </div>
         </div>
     </main>
-    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
 
+    <footer class="main-footer">
+        <p>© <span id="current-year">2025</span> JOIN XPERIENCE - Todos os direitos reservados</p>
+    </footer>
+
+    <!-- Scripts otimizados -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = '../login.html'; } });
-        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+        // Importações otimizadas
+        import { auth, db } from '../assets/js/firebase-init.js';
+        import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { showAlert } from '../assets/js/form-utils.js';
+
+        // Dados dos relatórios
+        const REPORTS_DATA = [
+            {
+                id: 'current-round',
+                title: 'Resultados da Rodada Atual',
+                description: 'Os dados desta seção estarão disponíveis após o fechamento da rodada atual.',
+                icon: '📊',
+                available: false
+            },
+            {
+                id: 'ranking',
+                title: 'Ranking Geral de Equipes',
+                description: 'Um ranking de rentabilidade e valor de mercado será exibido aqui.',
+                icon: '🏆',
+                available: false
+            },
+            {
+                id: 'history',
+                title: 'Histórico de Desempenho',
+                description: 'Gráficos mostrando a evolução das equipes ao longo das rodadas aparecerão nesta área.',
+                icon: '📈',
+                available: false
+            },
+            {
+                id: 'student-analysis',
+                title: 'Análise Individual por Aluno',
+                description: 'Uma visão detalhada das decisões e resultados de cada aluno será implementada futuramente.',
+                icon: '👤',
+                available: false
+            }
+        ];
+
+        // Inicialização quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        });
+
+        // Controle de autenticação
+        function initAuth() {
+            onAuthStateChanged(auth, (user) => {
+                if (user && user.email.endsWith('@escola.com')) {
+                    document.body.style.display = 'flex';
+                    loadReports();
+                } else {
+                    window.location.href = '../login.html';
+                }
+            });
+
+            // Configuração do logout
+            document.getElementById('logout-button').addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                    window.location.href = '../index.html';
+                } catch (error) {
+                    console.error('Erro ao fazer logout:', error);
+                    showAlert('Ocorreu um erro ao tentar sair.', 'error');
+                }
+            });
+        }
+
+        // Carrega os relatórios
+        function loadReports() {
+            const container = document.getElementById('reports-container');
+            container.innerHTML = '';
+            
+            REPORTS_DATA.forEach(report => {
+                const card = document.createElement('div');
+                card.className = `report-card ${report.available ? '' : 'disabled'}`;
+                card.id = `report-${report.id}`;
+                
+                card.innerHTML = `
+                    <div class="report-card-header">
+                        <div class="report-icon">${report.icon}</div>
+                        <h3>${report.title}</h3>
+                    </div>
+                    <div class="report-card-body">
+                        <p>${report.description}</p>
+                        ${report.available ? 
+                            '<button class="btn btn-primary view-report-btn">Ver Relatório</button>' : 
+                            '<div class="coming-soon">Em breve</div>'}
+                    </div>`;
+                
+                container.appendChild(card);
+            });
+
+            // Adiciona evento de clique para relatórios disponíveis
+            document.querySelectorAll('.view-report-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const reportId = this.closest('.report-card').id.replace('report-', '');
+                    viewReport(reportId);
+                });
+            });
+        }
+
+        // Visualizar relatório (implementação futura)
+        function viewReport(reportId) {
+            console.log(`Visualizando relatório: ${reportId}`);
+            // Implementação futura para carregar dados específicos do relatório
+        }
     </script>
 </body>
 </html>

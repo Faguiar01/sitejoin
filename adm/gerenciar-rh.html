@@ -5,27 +5,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar RH - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-sucesso: #28a745; --cor-perigo: #dc3545; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 20px auto; padding: 20px; background-color: var(--cor-branco); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1, h2 { color: var(--cor-texto); border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; }
-        h2 { font-size: 1.5em; margin-top: 30px; }
-        .form-container { margin-bottom: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
-        .form-grid { display: grid; gap: 15px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); align-items: end; }
-        .form-group { display: flex; flex-direction: column; }
-        label { font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
-        input, button { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
-        button { background-color: var(--cor-sucesso); color: var(--cor-branco); border: none; cursor: pointer; font-weight: bold; }
-        button:hover { opacity: 0.9; }
-        #rh-list { margin-top: 20px; }
-        .item-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; padding: 10px; border-bottom: 1px solid #eee; align-items: center;}
-        .item-row:nth-child(even) { background-color: #f9f9f9; }
-        .item-row span { word-wrap: break-word; }
-        .delete-btn { background-color: var(--cor-perigo); color: var(--cor-branco); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.9em; justify-self: end; }
-        nav { background-color: var(--cor-branco); padding: 1rem 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-        nav .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        nav .logo-container img { height: 50px; margin-right: 15px; }
-        .btn-nav { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
+        :root { 
+            --cor-primaria: #0052CC; 
+            --cor-texto: #333; 
+            --cor-fundo: #f4f7f6; 
+            --cor-branco: #fff; 
+            --cor-sucesso: #28a745; 
+            --cor-perigo: #dc3545;
+            --cor-cinza-escuro: #6c757d;
+            --cor-aviso: #ffc107;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--cor-fundo); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 20px auto; 
+            padding: 20px; 
+            background-color: var(--cor-branco); 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        h1, h2 { 
+            color: var(--cor-texto); 
+            border-bottom: 2px solid var(--cor-primaria); 
+            padding-bottom: 10px; 
+        }
+        h2 { 
+            font-size: 1.5em; 
+            margin-top: 30px; 
+        }
+        .form-container { 
+            margin-bottom: 20px; 
+            padding: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            background-color: #f9f9f9; 
+        }
+        .form-grid { 
+            display: grid; 
+            gap: 15px; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            align-items: end; 
+        }
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+        }
+        label { 
+            font-weight: bold; 
+            margin-bottom: 5px; 
+            font-size: 0.9em; 
+        }
+        input, button { 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 1em; 
+        }
+        button { 
+            background-color: var(--cor-primaria); 
+            color: var(--cor-branco); 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: opacity 0.3s;
+        }
+        button:hover { 
+            opacity: 0.9; 
+        }
+        #rh-list { 
+            margin-top: 20px; 
+        }
+        .item-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 100px;
+            gap: 10px;
+            padding: 10px;
+            font-weight: bold;
+            background-color: #e9ecef;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 5px;
+        }
+        .item-row { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr 1fr 100px; 
+            gap: 10px; 
+            padding: 10px; 
+            border-bottom: 1px solid #eee; 
+            align-items: center;
+        }
+        .item-row:nth-child(even) { 
+            background-color: #f9f9f9; 
+        }
+        .item-row span { 
+            word-wrap: break-word; 
+        }
+        .delete-btn { 
+            background-color: var(--cor-perigo); 
+            color: var(--cor-branco); 
+            border: none; 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 0.9em; 
+            justify-self: end; 
+        }
+        nav { 
+            background-color: var(--cor-branco); 
+            padding: 1rem 2rem; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        nav .logo-container { 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+            color: var(--cor-texto); 
+            font-weight: 600; 
+        }
+        nav .logo-container img { 
+            height: 50px; 
+            margin-right: 15px; 
+        }
+        .btn-nav { 
+            color: var(--cor-primaria); 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 8px 16px; 
+            border: 1px solid var(--cor-primaria); 
+            border-radius: 8px; 
+            margin-left: 10px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,.3);
+            border-radius: 50%;
+            border-top-color: var(--cor-primaria);
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: var(--cor-sucesso);
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+        .custo-total {
+            background-color: var(--cor-primaria);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #btn-exportar {
+            background-color: var(--cor-aviso);
+            color: var(--cor-texto);
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -39,6 +196,7 @@
             <button id="logout-button" class="btn-nav" style="background:var(--cor-cinza-escuro); color:white; border-color:var(--cor-cinza-escuro);">Sair</button>
         </div>
     </nav>
+
     <div class="container" id="page-content" style="display: none;">
         <h1>Gerenciar Recursos Humanos (RH)</h1>
 
@@ -46,100 +204,264 @@
             <h2>Cadastrar Novo Cargo</h2>
             <form id="add-rh-form">
                 <div class="form-grid">
-                    <div class="form-group"><label for="rh-funcao">Função / Cargo:</label><input type="text" id="rh-funcao" required></div>
-                    <div class="form-group"><label for="rh-salario">Salário Base (R$):</label><input type="number" id="rh-salario" min="0" step="0.01" required></div>
-                    <div class="form-group"><label for="rh-encargos">Encargos (%):</label><input type="number" id="rh-encargos" min="0" step="1" value="70" required></div>
-                    <div class="form-group"><button type="submit">Adicionar Cargo</button></div>
+                    <div class="form-group">
+                        <label for="rh-funcao">Função / Cargo:</label>
+                        <input type="text" id="rh-funcao" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rh-salario">Salário Base (R$):</label>
+                        <input type="number" id="rh-salario" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rh-encargos">Encargos (%):</label>
+                        <input type="number" id="rh-encargos" min="0" max="100" step="1" value="70" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" id="submit-rh">
+                            <span id="rh-btn-text">Adicionar Cargo</span>
+                            <span id="rh-loading" class="loading" style="display:none;"></span>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
 
         <div id="rh-list">
             <h2>Cargos Cadastrados</h2>
+            <div class="item-header">
+                <span>Função</span>
+                <span>Salário Base</span>
+                <span>Encargos</span>
+                <span>Ações</span>
+            </div>
+            <div id="rh-items-container"></div>
+            <div id="rh-total-container" class="custo-total" style="display:none;">
+                Custo Total com Encargos: <span id="rh-total"></span>
+            </div>
+            <button id="btn-exportar" class="btn-nav">Exportar para CSV</button>
         </div>
     </div>
 
+    <div class="toast" id="toast"></div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            onSnapshot, 
+            deleteDoc, 
+            doc, 
+            getDoc,
+            query,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
+        // Configuração do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            apiKey: "AIzaSyAXtFYlng57P0C0p-b4TFuYucG1bn4NKAk",
             authDomain: "joinxperience-site.firebaseapp.com",
             projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
+            storageBucket: "joinxperience-site.firebasestorage.app",
             messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            appId: "1:140037739806:web:322493d72ca6149abce5bf",
             measurementId: "G-V4SRK0FNBN"
         };
 
+        // Inicialização do Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        
+        // Referência à coleção de RH
         const rhCollection = collection(db, 'catalogo_rh');
+        const rhQuery = query(rhCollection, orderBy('funcao'));
 
+        // Verificação de autenticação e permissões
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const userDoc = await getDoc(doc(db, "usuarios", user.uid));
-                if (userDoc.exists() && userDoc.data().isAdmin) {
-                    document.getElementById('page-content').style.display = 'block';
-                } else {
-                    alert("Acesso negado.");
-                    window.location.href = '../index.html';
+                try {
+                    const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+                    if (userDoc.exists() && userDoc.data().isAdmin) {
+                        document.getElementById('page-content').style.display = 'block';
+                    } else {
+                        showToast('Acesso negado: apenas administradores podem acessar esta página', 'error');
+                        setTimeout(() => window.location.href = '../index.html', 2000);
+                    }
+                } catch (error) {
+                    console.error("Erro ao verificar permissões:", error);
+                    showToast('Erro ao verificar permissões', 'error');
+                    setTimeout(() => window.location.href = '../index.html', 2000);
                 }
             } else {
                 window.location.href = '../login.html';
             }
         });
 
+        // Logout
         document.getElementById('logout-button').addEventListener('click', () => {
-            signOut(auth).catch(error => console.error("Erro ao sair:", error));
+            signOut(auth).then(() => {
+                window.location.href = '../index.html';
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+                showToast('Erro ao fazer logout', 'error');
+            });
         });
 
+        // Função para mostrar notificações
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.backgroundColor = type === 'error' ? 'var(--cor-perigo)' : 
+                                         type === 'warning' ? 'var(--cor-aviso)' : 'var(--cor-sucesso)';
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Função para calcular custo total
+        function calcularCustoTotal(cargos) {
+            return cargos.reduce((total, cargo) => {
+                return total + (cargo.salarioBase * (1 + (cargo.encargos / 100)));
+            }, 0);
+        }
+
+        // Renderizar lista de cargos
         const renderRhList = (cargos) => {
-            const rhListDiv = document.getElementById('rh-list');
-            rhListDiv.innerHTML = '<h2>Cargos Cadastrados</h2>';
+            const container = document.getElementById('rh-items-container');
+            container.innerHTML = '';
+            
             if (cargos.length === 0) {
-                rhListDiv.innerHTML += '<p>Nenhum cargo cadastrado ainda.</p>';
+                container.innerHTML = '<p>Nenhum cargo cadastrado ainda.</p>';
+                document.getElementById('rh-total-container').style.display = 'none';
                 return;
             }
+
             cargos.forEach(cargo => {
                 const itemRow = document.createElement('div');
                 itemRow.className = 'item-row';
                 itemRow.innerHTML = `
-                    <span><strong>Função:</strong> ${cargo.funcao}</span>
-                    <span><strong>Salário Base:</strong> ${cargo.salarioBase.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                    <span><strong>Encargos:</strong> ${cargo.encargos}%</span>
+                    <span>${cargo.funcao}</span>
+                    <span>${cargo.salarioBase.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    <span>${cargo.encargos}%</span>
                     <button class="delete-btn" data-id="${cargo.id}">Excluir</button>
                 `;
-                rhListDiv.appendChild(itemRow);
+                container.appendChild(itemRow);
             });
+
+            // Atualizar custo total
+            const total = calcularCustoTotal(cargos);
+            document.getElementById('rh-total').textContent = total.toLocaleString('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL' 
+            });
+            document.getElementById('rh-total-container').style.display = 'block';
         };
 
-        onSnapshot(rhCollection, snapshot => {
-            const cargos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderRhList(cargos);
-        });
+        // Listener para atualizações em tempo real
+        onSnapshot(rhQuery, 
+            snapshot => {
+                const cargos = snapshot.docs.map(doc => ({ 
+                    id: doc.id, 
+                    ...doc.data() 
+                }));
+                renderRhList(cargos);
+            },
+            error => {
+                console.error("Erro ao carregar cargos:", error);
+                showToast('Erro ao carregar lista de cargos', 'error');
+            }
+        );
 
+        // Formulário de cadastro
         document.getElementById('add-rh-form').addEventListener('submit', async e => {
             e.preventDefault();
             const form = e.target;
-            await addDoc(rhCollection, {
-                funcao: form['rh-funcao'].value,
-                salarioBase: parseFloat(form['rh-salario'].value),
-                encargos: parseFloat(form['rh-encargos'].value)
-            });
-            form.reset();
+            const button = document.getElementById('submit-rh');
+            const buttonText = document.getElementById('rh-btn-text');
+            const loading = document.getElementById('rh-loading');
+            
+            button.disabled = true;
+            buttonText.style.display = 'none';
+            loading.style.display = 'inline-block';
+            
+            try {
+                await addDoc(rhCollection, {
+                    funcao: form['rh-funcao'].value.trim(),
+                    salarioBase: parseFloat(form['rh-salario'].value),
+                    encargos: parseFloat(form['rh-encargos'].value),
+                    createdAt: new Date()
+                });
+                form.reset();
+                showToast('Cargo cadastrado com sucesso!');
+            } catch (error) {
+                console.error("Erro ao cadastrar cargo:", error);
+                showToast('Erro ao cadastrar cargo', 'error');
+            } finally {
+                button.disabled = false;
+                buttonText.style.display = 'inline-block';
+                loading.style.display = 'none';
+            }
         });
 
-        document.getElementById('rh-list').addEventListener('click', async e => {
+        // Deleção de cargos
+        document.getElementById('rh-items-container').addEventListener('click', async e => {
             if (e.target.classList.contains('delete-btn')) {
                 const id = e.target.dataset.id;
+                
                 if (confirm('Tem certeza que deseja excluir este cargo?')) {
-                    await deleteDoc(doc(db, 'catalogo_rh', id));
+                    try {
+                        await deleteDoc(doc(db, 'catalogo_rh', id));
+                        showToast('Cargo excluído com sucesso!');
+                    } catch (error) {
+                        console.error("Erro ao excluir cargo:", error);
+                        showToast('Erro ao excluir cargo', 'error');
+                    }
                 }
             }
+        });
+
+        // Exportar para CSV
+        document.getElementById('btn-exportar').addEventListener('click', () => {
+            onSnapshot(rhQuery, snapshot => {
+                const cargos = snapshot.docs.map(doc => doc.data());
+                
+                if (cargos.length === 0) {
+                    showToast('Nenhum cargo para exportar', 'warning');
+                    return;
+                }
+
+                let csv = 'Cargo,Salário Base,Encargos%,Custo Total\n';
+                
+                cargos.forEach(cargo => {
+                    const custoTotal = cargo.salarioBase * (1 + (cargo.encargos / 100));
+                    csv += `"${cargo.funcao}",${cargo.salarioBase},${cargo.encargos},${custoTotal.toFixed(2)}\n`;
+                });
+
+                // Adicionar total geral
+                const totalGeral = calcularCustoTotal(cargos);
+                csv += `\nTOTAL GERAL,,,${totalGeral.toFixed(2)}`;
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `cargos_rh_${new Date().toISOString().slice(0,10)}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showToast('Dados exportados com sucesso!');
+            });
         });
     </script>
 </body>

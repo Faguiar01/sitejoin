@@ -60,16 +60,31 @@
 
         <div class="resource-grid" id="resource-grid-container">
             <p id="loading-message">Carregando recursos...</p>
-            </div>
+        </div>
     </main>
 
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        // Importações otimizadas
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { 
+            getAuth, 
+            signOut, 
+            onAuthStateChanged,
+            browserSessionPersistence,
+            setPersistence
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            orderBy, 
+            getDocs,
+            where
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
+        // Configuração centralizada
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -79,90 +94,175 @@
             appId: "1:140037739806:web:322493d72ca6149abce50f",
             measurementId: "G-V4SRK0FNBN"
         };
+
+        // Inicialização do Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loadResources();
-            } else {
+        // Elementos DOM
+        const gridContainer = document.getElementById('resource-grid-container');
+        const logoutButton = document.getElementById('logout-button');
+        const categoryFilter = document.getElementById('category-filter');
+
+        // Verificação de autenticação com persistência de sessão
+        const initAuth = async () => {
+            try {
+                await setPersistence(auth, browserSessionPersistence);
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        loadResources();
+                    } else {
+                        window.location.href = '../login.html';
+                    }
+                });
+            } catch (error) {
+                console.error("Erro na autenticação: ", error);
                 window.location.href = '../login.html';
             }
-        });
-        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+        };
 
-        const gridContainer = document.getElementById('resource-grid-container');
+        // Logout seguro
+        const setupLogout = () => {
+            logoutButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                    window.location.href = '../index.html';
+                } catch (error) {
+                    console.error("Erro ao fazer logout: ", error);
+                }
+            });
+        };
 
-        async function loadResources() {
-            gridContainer.innerHTML = '<p id="loading-message">Carregando recursos...</p>';
-            const q = query(collection(db, "biblioteca_recursos"), orderBy("criadoEm", "desc"));
-
+        // Carregar recursos com tratamento de erros
+        const loadResources = async () => {
             try {
-                const querySnapshot = await getDocs(q);
-                gridContainer.innerHTML = ''; // Limpa a mensagem de "carregando"
+                gridContainer.innerHTML = '<p id="loading-message">Carregando recursos...</p>';
+                
+                // Consulta segura com filtro para recursos ativos
+                const q = query(
+                    collection(db, "biblioteca_recursos"),
+                    where("status", "==", "ativo"),
+                    orderBy("criadoEm", "desc")
+                );
 
+                const querySnapshot = await getDocs(q);
+                
                 if (querySnapshot.empty) {
                     gridContainer.innerHTML = '<p id="loading-message">Nenhum recurso disponível no momento.</p>';
                     return;
                 }
 
+                gridContainer.innerHTML = '';
+                
+                // Processamento dos documentos
                 querySnapshot.forEach((doc) => {
                     const resource = doc.data();
-                    const card = document.createElement('div');
-                    card.className = 'resource-card';
-                    card.dataset.category = resource.categoria;
-
-                    if (resource.categoria === 'video') {
-                        card.innerHTML = `
-                            <div class="video-wrapper">
-                                ${resource.link} </div>
-                            <div class="resource-card-content">
-                                <h3>${resource.titulo}</h3>
-                                <p>${resource.descricao}</p>
-                            </div>
-                        `;
-                    } else {
-                        const icon = resource.categoria === 'manual' ? '📄' : '🎙️';
-                        const linkText = resource.categoria === 'manual' ? 'Acessar Material' : 'Ouvir Podcast';
-                        card.innerHTML = `
-                            <div class="resource-card-content">
-                                <div class="icon">${icon}</div>
-                                <h3>${resource.titulo}</h3>
-                                <p>${resource.descricao}</p>
-                            </div>
-                            <div class="resource-card-footer">
-                                <a href="${resource.link}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">${linkText}</a>
-                            </div>
-                        `;
-                    }
+                    if (!resource.titulo || !resource.categoria) return; // Validação básica
+                    
+                    const card = createResourceCard(resource);
                     gridContainer.appendChild(card);
                 });
 
-                // Re-aplica o listener do filtro após carregar os cards
                 setupFilter();
 
             } catch (error) {
                 console.error("Erro ao carregar recursos: ", error);
-                gridContainer.innerHTML = '<p id="loading-message">Ocorreu um erro ao carregar os recursos. Tente novamente mais tarde.</p>';
+                gridContainer.innerHTML = `
+                    <p id="loading-message">
+                        Ocorreu um erro ao carregar os recursos. 
+                        <button onclick="location.reload()" class="btn btn-primary">Tentar novamente</button>
+                    </p>
+                `;
             }
-        }
+        };
 
-        function setupFilter() {
-            const categoryFilter = document.getElementById('category-filter');
-            categoryFilter.addEventListener('change', (event) => {
-                const selectedCategory = event.target.value;
-                const resourceCards = document.querySelectorAll('.resource-card');
+        // Factory para criar cards de recursos
+        const createResourceCard = (resource) => {
+            const card = document.createElement('div');
+            card.className = 'resource-card';
+            card.dataset.category = resource.categoria;
 
-                resourceCards.forEach(card => {
-                    if (selectedCategory === 'todos' || card.dataset.category === selectedCategory) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
+            // Template para vídeos
+            if (resource.categoria === 'video') {
+                const videoEmbed = resource.link.includes('iframe') ? 
+                    resource.link : 
+                    `<iframe src="https://www.youtube.com/embed/${extractYoutubeId(resource.link)}" frameborder="0" allowfullscreen></iframe>`;
+                
+                card.innerHTML = `
+                    <div class="video-wrapper">${videoEmbed}</div>
+                    <div class="resource-card-content">
+                        <h3>${escapeHtml(resource.titulo)}</h3>
+                        <p>${escapeHtml(resource.descricao || '')}</p>
+                    </div>
+                `;
+            } 
+            // Template para outros recursos
+            else {
+                const { icon, linkText } = getResourceMeta(resource.categoria);
+                
+                card.innerHTML = `
+                    <div class="resource-card-content">
+                        <div class="icon">${icon}</div>
+                        <h3>${escapeHtml(resource.titulo)}</h3>
+                        <p>${escapeHtml(resource.descricao || '')}</p>
+                    </div>
+                    <div class="resource-card-footer">
+                        <a href="${escapeHtml(resource.link)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                            ${linkText}
+                        </a>
+                    </div>
+                `;
+            }
+            
+            return card;
+        };
+
+        // Helper functions
+        const getResourceMeta = (category) => {
+            const meta = {
+                manual: { icon: '📄', linkText: 'Acessar Material' },
+                podcast: { icon: '🎙️', linkText: 'Ouvir Podcast' },
+                default: { icon: '📂', linkText: 'Acessar Recurso' }
+            };
+            return meta[category] || meta.default;
+        };
+
+        const extractYoutubeId = (url) => {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        };
+
+        const escapeHtml = (unsafe) => {
+            return unsafe?.replace(/[&<"'>]/g, (match) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[match])) || '';
+        };
+
+        // Filtro de categoria
+        const setupFilter = () => {
+            categoryFilter.addEventListener('change', () => {
+                const selectedCategory = categoryFilter.value;
+                document.querySelectorAll('.resource-card').forEach(card => {
+                    card.style.display = (selectedCategory === 'todos' || card.dataset.category === selectedCategory) 
+                        ? 'flex' 
+                        : 'none';
                 });
             });
-        }
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+            setupLogout();
+        });
     </script>
 </body>
 </html>

@@ -5,47 +5,258 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil de Gestor - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        main { flex: 1; }
-        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
-        .page-header h1 { margin: 0; font-size: 2.2em; }
-        .btn { padding: 12px 25px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; font-size: 1.1em; cursor: pointer; transition: opacity 0.3s ease; }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn-success { background-color: #28a745; color: var(--cor-branco); }
-        .btn:hover { opacity: 0.85; }
-        .quiz-container { background-color: var(--cor-branco); margin-top: 30px; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .quiz-container > p { font-size: 1.1em; line-height: 1.6; }
-        .question-block { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 25px; }
-        .question-block p { font-size: 1.2em; font-weight: 600; margin-bottom: 15px; }
-        .question-block label { display: block; background-color: #f8f9fa; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; transition: all 0.2s ease; }
-        .question-block label:hover { border-color: var(--cor-primaria); background-color: #e9f2ff; }
-        .question-block input[type="radio"] { margin-right: 10px; }
-        .result-container { margin-top: 30px; padding: 30px; border-radius: 8px; text-align: center; display: none; /* Começa escondido */ animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
-        .result-container h2 { margin-top: 0; font-size: 1.8em; }
-        .result-container p { font-size: 1.1em; line-height: 1.6; }
-        .result-cautious { background-color: #e0f0ff; border: 2px solid #99caff; }
-        .result-analytical { background-color: #e8f5e9; border: 2px solid #a5d6a7; }
-        .result-bold { background-color: #fff3e0; border: 2px solid #ffcc80; }
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+        :root { 
+            --cor-primaria: #0052CC; 
+            --cor-secundaria: #FF4400;
+            --cor-texto: #333; 
+            --cor-fundo: #f4f7f6; 
+            --cor-branco: #fff; 
+            --cor-cinza-escuro: #343a40;
+            --cor-cauteloso: #1e88e5;
+            --cor-analitico: #43a047;
+            --cor-ousado: #fb8c00;
+        }
+        
+        body { 
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--cor-fundo); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        
+        header.main-header { 
+            background-color: var(--cor-branco); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        header.main-header .logo-container { 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+            color: var(--cor-texto); 
+            font-weight: 600; 
+        }
+        
+        header.main-header .logo-container img { 
+            height: 50px; 
+            margin-right: 15px; 
+        }
+        
+        header.main-header nav a { 
+            color: var(--cor-primaria); 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 8px 16px; 
+            border: 1px solid var(--cor-primaria); 
+            border-radius: 8px; 
+            transition: all 0.3s ease;
+        }
+        
+        header.main-header nav a:hover {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+        }
+        
+        main { 
+            flex: 1; 
+            padding-bottom: 40px;
+        }
+        
+        .page-header { 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #ddd; 
+            background-color: #e9ecef; 
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .page-header h1 { 
+            margin: 0; 
+            font-size: 2.2em; 
+            color: var(--cor-primaria);
+        }
+        
+        .btn { 
+            padding: 12px 25px; 
+            border-radius: 8px; 
+            border: none; 
+            text-decoration: none; 
+            font-weight: 700; 
+            font-size: 1.1em; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+        }
+        
+        .btn-primary { 
+            background-color: var(--cor-primaria); 
+            color: var(--cor-branco); 
+        }
+        
+        .btn-success { 
+            background-color: var(--cor-analitico); 
+            color: var(--cor-branco); 
+        }
+        
+        .btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .quiz-container { 
+            background-color: var(--cor-branco); 
+            margin-top: 30px; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+        }
+        
+        .quiz-container > p { 
+            font-size: 1.1em; 
+            line-height: 1.6; 
+            margin-bottom: 20px;
+        }
+        
+        .question-block { 
+            margin-bottom: 25px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 25px; 
+        }
+        
+        .question-block p { 
+            font-size: 1.2em; 
+            font-weight: 600; 
+            margin-bottom: 15px; 
+        }
+        
+        .question-block label { 
+            display: block; 
+            background-color: #f8f9fa; 
+            padding: 15px; 
+            margin-bottom: 10px; 
+            border-radius: 8px; 
+            border: 1px solid #ddd; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        
+        .question-block label:hover { 
+            border-color: var(--cor-primaria); 
+            background-color: #e9f2ff; 
+        }
+        
+        .question-block input[type="radio"] { 
+            margin-right: 10px; 
+        }
+        
+        .result-container { 
+            margin-top: 30px; 
+            padding: 30px; 
+            border-radius: 8px; 
+            text-align: center; 
+            display: none;
+            animation: fadeIn 0.5s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        @keyframes fadeIn { 
+            from {opacity: 0; transform: translateY(10px);} 
+            to {opacity: 1; transform: translateY(0);} 
+        }
+        
+        .result-container h2 { 
+            margin-top: 0; 
+            font-size: 1.8em; 
+        }
+        
+        .result-container p { 
+            font-size: 1.1em; 
+            line-height: 1.6; 
+        }
+        
+        .result-cautious { 
+            background-color: color-mix(in srgb, var(--cor-cauteloso) 15%, white);
+            border-left: 5px solid var(--cor-cauteloso);
+        }
+        
+        .result-analytical { 
+            background-color: color-mix(in srgb, var(--cor-analitico) 15%, white);
+            border-left: 5px solid var(--cor-analitico);
+        }
+        
+        .result-bold { 
+            background-color: color-mix(in srgb, var(--cor-ousado) 15%, white);
+            border-left: 5px solid var(--cor-ousado);
+        }
+        
+        .result-image {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+        
+        footer.main-footer { 
+            background-color: var(--cor-cinza-escuro); 
+            color: var(--cor-branco); 
+            padding: 20px; 
+            text-align: center; 
+            margin-top: auto; 
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: var(--cor-primaria);
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
     </style>
 </head>
 <body>
     <header class="main-header">
-        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
-        <nav><a href="#" id="logout-button">Sair</a></nav>
+        <a href="../index.html" class="logo-container">
+            <img src="../JOIN.png" alt="Logo Join Xperience">
+            <span>Join Xperience</span>
+        </a>
+        <nav>
+            <a href="#" id="logout-button">Sair</a>
+            <a href="xperience.html" class="btn btn-primary" style="margin-left: 10px;">Voltar ao Painel</a>
+        </nav>
     </header>
 
     <main class="container">
         <div class="page-header">
             <h1>Descubra Seu Perfil de Gestor</h1>
-            <div><a href="xperience.html" class="btn btn-primary">Voltar ao Painel</a></div>
+            <div class="progress-container">
+                <div id="quiz-progress" class="progress-bar" style="width: 0%"></div>
+            </div>
         </div>
 
         <div class="quiz-container">
@@ -91,15 +302,31 @@
         </div>
 
         <div id="result-container">
+            <img id="result-image" class="result-image" src="" alt="">
             <h2 id="result-title"></h2>
             <p id="result-description"></p>
+            <button id="save-profile-btn" class="btn btn-primary" style="margin-top: 20px;">Salvar Meu Perfil</button>
         </div>
     </main>
     <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { 
+            getAuth, 
+            signOut, 
+            onAuthStateChanged,
+            browserSessionPersistence,
+            setPersistence
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc,
+            collection
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -109,52 +336,156 @@
             appId: "1:140037739806:web:322493d72ca6149abce50f",
             measurementId: "G-V4SRK0FNBN"
         };
+
+        // Inicialização
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = '../login.html'; } });
-        document.getElementById('logout-button').addEventListener('click', (e) => { e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; }); });
+        const db = getFirestore(app);
 
-        // --- LÓGICA DO QUIZ ---
+        // Elementos DOM
         const quizForm = document.getElementById('quiz-form');
         const resultContainer = document.getElementById('result-container');
         const resultTitle = document.getElementById('result-title');
         const resultDescription = document.getElementById('result-description');
+        const resultImage = document.getElementById('result-image');
+        const saveProfileBtn = document.getElementById('save-profile-btn');
+        const progressBar = document.getElementById('quiz-progress');
+        const logoutButton = document.getElementById('logout-button');
 
+        // Gerenciamento de autenticação
+        const initAuth = async () => {
+            try {
+                await setPersistence(auth, browserSessionPersistence);
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (!user) {
+                        window.location.href = '../login.html';
+                    }
+                });
+            } catch (error) {
+                console.error("Erro na autenticação: ", error);
+                alert("Erro ao verificar autenticação. Tente recarregar a página.");
+            }
+        };
+
+        // Logout seguro
+        const setupLogout = () => {
+            logoutButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                    window.location.href = '../index.html';
+                } catch (error) {
+                    console.error("Erro ao fazer logout: ", error);
+                    alert("Erro ao sair. Tente novamente.");
+                }
+            });
+        };
+
+        // Atualizar barra de progresso
+        const updateProgress = () => {
+            const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+            const total = document.querySelectorAll('input[type="radio"]').length / 3;
+            const progress = (answered / total) * 100;
+            progressBar.style.width = `${progress}%`;
+        };
+
+        // Configurar listeners para as perguntas
+        const setupQuizListeners = () => {
+            const radioButtons = document.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', updateProgress);
+            });
+        };
+
+        // Salvar perfil no Firestore
+        const saveProfile = async (profileType) => {
+            try {
+                const user = auth.currentUser;
+                if (!user) return;
+                
+                await setDoc(doc(db, "perfis_gestao", user.uid), {
+                    tipo: profileType,
+                    dataAtualizacao: new Date(),
+                    usuarioId: user.uid
+                });
+                
+                alert("Perfil salvo com sucesso!");
+                saveProfileBtn.disabled = true;
+                saveProfileBtn.textContent = "Perfil Salvo!";
+            } catch (error) {
+                console.error("Erro ao salvar perfil: ", error);
+                alert("Erro ao salvar perfil. Tente novamente.");
+            }
+        };
+
+        // Processar resultado do quiz
         quizForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            const totalQuestions = 5;
+            
             const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
-            if (answeredQuestions < totalQuestions) {
+            if (answeredQuestions < 5) {
                 alert('Por favor, responda a todas as perguntas para ver seu perfil.');
                 return;
             }
+            
             let score = 0;
             const formData = new FormData(quizForm);
             for (const value of formData.values()) {
                 score += parseInt(value);
             }
-            let profileTitle = '';
-            let profileDescription = '';
-            let profileClass = '';
+            
+            let profileType = '';
+            let profileData = {};
+            
             if (score <= 11) {
-                profileTitle = "Perfil: Gestor Cauteloso 🛡️";
-                profileDescription = "Você prioriza a segurança e a estabilidade da empresa. Suas decisões visam preservar o capital e garantir a liquidez, evitando riscos desnecessários. Seu lema é 'passos lentos, mas sempre seguros'.";
-                profileClass = 'result-cautious';
+                profileType = 'cauteloso';
+                profileData = {
+                    title: "Perfil: Gestor Cauteloso 🛡️",
+                    description: "Você prioriza a segurança e a estabilidade da empresa. Suas decisões visam preservar o capital e garantir a liquidez, evitando riscos desnecessários. Seu lema é 'passos lentos, mas sempre seguros'.",
+                    image: "https://cdn-icons-png.flaticon.com/512/2454/2454273.png",
+                    class: 'result-cautious'
+                };
             } else if (score <= 18) {
-                profileTitle = "Perfil: Gestor Analítico ⚖️";
-                profileDescription = "Você busca o crescimento sustentável através da análise. Suas decisões são um equilíbrio entre risco e retorno, sempre baseadas em dados e projeções para otimizar os resultados da empresa sem expô-la a perigos excessivos.";
-                profileClass = 'result-analytical';
+                profileType = 'analitico';
+                profileData = {
+                    title: "Perfil: Gestor Analítico ⚖️",
+                    description: "Você busca o crescimento sustentável através da análise. Suas decisões são um equilíbrio entre risco e retorno, sempre baseadas em dados e projeções para otimizar os resultados da empresa sem expô-la a perigos excessivos.",
+                    image: "https://cdn-icons-png.flaticon.com/512/3281/3281289.png",
+                    class: 'result-analytical'
+                };
             } else {
-                profileTitle = "Perfil: Gestor Ousado 🚀";
-                profileDescription = "Você foca na expansão e no domínio do mercado. Não tem medo de tomar decisões de alto risco se o potencial de retorno for grande. Para você, o crescimento acelerado justifica investimentos e estratégias agressivas.";
-                profileClass = 'result-bold';
+                profileType = 'ousado';
+                profileData = {
+                    title: "Perfil: Gestor Ousado 🚀",
+                    description: "Você foca na expansão e no domínio do mercado. Não tem medo de tomar decisões de alto risco se o potencial de retorno for grande. Para você, o crescimento acelerado justifica investimentos e estratégias agressivas.",
+                    image: "https://cdn-icons-png.flaticon.com/512/3281/3281306.png",
+                    class: 'result-bold'
+                };
             }
-            resultTitle.textContent = profileTitle;
-            resultDescription.textContent = profileDescription;
-            resultContainer.className = 'result-container'; // Limpa classes antigas
-            resultContainer.classList.add(profileClass);
+            
+            // Exibir resultado
+            resultTitle.textContent = profileData.title;
+            resultDescription.textContent = profileData.description;
+            resultImage.src = profileData.image;
+            resultContainer.className = 'result-container';
+            resultContainer.classList.add(profileData.class);
             resultContainer.style.display = 'block';
+            
+            // Configurar botão de salvar
+            saveProfileBtn.disabled = false;
+            saveProfileBtn.textContent = "Salvar Meu Perfil";
+            saveProfileBtn.onclick = () => saveProfile(profileType);
+            
+            // Rolagem suave para o resultado
             resultContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+            setupLogout();
+            setupQuizListeners();
         });
     </script>
 </body>

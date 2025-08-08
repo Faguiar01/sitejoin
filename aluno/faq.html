@@ -2,12 +2,208 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Join Xperience - Aluno</title>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Join Xperience</title>
+    <style>
+        :root {
+            --cor-primaria: #0052CC;
+            --cor-secundaria: #FF4400;
+            --cor-texto: #333;
+            --cor-fundo: #f4f7f6;
+            --cor-branco: #fff;
+            --cor-cinza-claro: #e9ecef;
+            --cor-cinza-escuro: #343a40;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--cor-texto);
+            background-color: var(--cor-fundo);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--cor-branco);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--cor-texto);
+            font-weight: 600;
+        }
+        
+        .logo-container img {
+            height: 50px;
+            margin-right: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            text-decoration: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: var(--cor-primaria);
+            color: var(--cor-branco);
+        }
+        
+        .btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+        
+        .page-header {
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .page-header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            color: var(--cor-primaria);
+        }
+        
+        .faq-container {
+            background-color: var(--cor-branco);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid var(--cor-cinza-claro);
+        }
+        
+        .faq-question {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background-color: var(--cor-branco);
+            transition: background-color 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background-color: var(--cor-cinza-claro);
+        }
+        
+        .faq-question h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background-color: var(--cor-cinza-claro);
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 20px;
+            max-height: 500px;
+        }
+        
+        .search-container {
+            margin-bottom: 30px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        footer {
+            background-color: var(--cor-cinza-escuro);
+            color: var(--cor-branco);
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        #loading-message {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="xperience.html" class="logo-container">
+            <img src="../JOIN.png" alt="Logo Join Xperience">
+            <span>Join Xperience</span>
+        </a>
+        <nav>
+            <a href="#" id="logout-button" class="btn btn-primary">Sair</a>
+        </nav>
+    </header>
 
+    <main class="container">
+        <div class="page-header">
+            <h1>Perguntas Frequentes</h1>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="search-faq" class="search-input" placeholder="Buscar perguntas...">
+        </div>
+
+        <div class="faq-container" id="faq-container">
+            <p id="loading-message">Carregando perguntas...</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { 
+            getAuth, 
+            signOut, 
+            onAuthStateChanged,
+            browserSessionPersistence,
+            setPersistence
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            where, 
+            getDocs,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
             authDomain: "joinxperience-site.firebaseapp.com",
@@ -18,70 +214,161 @@
             measurementId: "G-V4SRK0FNBN"
         };
 
+        // Inicialização
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let currentUserUid = null;
+        // Elementos DOM
+        const faqContainer = document.getElementById('faq-container');
+        const logoutButton = document.getElementById('logout-button');
+        const searchInput = document.getElementById('search-faq');
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUserUid = user.uid;
-
-                const userDocRef = doc(db, "usuarios", user.uid);
-                const userDocSnap = await getDoc(userDocRef);
-
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    document.getElementById('welcome-msg').textContent = `Bem-vindo, ${userData.nome}!`;
-
-                    if (userData.turmaId) {
-                        window.location.href = "rodada.html";
+        // Gerenciamento de autenticação
+        const initAuth = async () => {
+            try {
+                await setPersistence(auth, browserSessionPersistence);
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        loadFAQs();
+                    } else {
+                        window.location.href = '../login.html';
                     }
+                });
+            } catch (error) {
+                console.error("Erro na autenticação: ", error);
+                window.location.href = '../login.html';
+            }
+        };
 
-                } else {
-                    alert("Dados do usuário não encontrados.");
+        // Logout seguro
+        const setupLogout = () => {
+            logoutButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                    window.location.href = '../index.html';
+                } catch (error) {
+                    console.error("Erro ao fazer logout: ", error);
+                    alert("Erro ao sair. Tente novamente.");
                 }
-            } else {
-                window.location.href = "../login.html";
-            }
-        });
+            });
+        };
 
-        async function entrarNaTurma() {
-            const codigoTurma = document.getElementById('codigoTurma').value.trim().toUpperCase();
+        // Carregar FAQs
+        const loadFAQs = async (searchTerm = '') => {
+            try {
+                faqContainer.innerHTML = '<p id="loading-message">Carregando perguntas...</p>';
+                
+                let q;
+                if (searchTerm) {
+                    q = query(
+                        collection(db, "faq"),
+                        where("keywords", "array-contains", searchTerm.toLowerCase()),
+                        orderBy("categoria"),
+                        orderBy("ordem")
+                    );
+                } else {
+                    q = query(
+                        collection(db, "faq"),
+                        orderBy("categoria"),
+                        orderBy("ordem")
+                    );
+                }
 
-            if (!codigoTurma) {
-                alert("Digite o código da turma.");
-                return;
-            }
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    faqContainer.innerHTML = '<p id="loading-message">Nenhuma pergunta encontrada.</p>';
+                    return;
+                }
 
-            const turmasRef = collection(db, "turmas");
-            const q = query(turmasRef, where("codigo", "==", codigoTurma));
-            const querySnapshot = await getDocs(q);
-
-            if (!querySnapshot.empty) {
-                const turmaDoc = querySnapshot.docs[0];
-                const turmaId = turmaDoc.id;
-
-                // Atualizar aluno com o ID da turma
-                await updateDoc(doc(db, "usuarios", currentUserUid), {
-                    turmaId: turmaId
+                // Agrupar por categoria
+                const faqsByCategory = {};
+                querySnapshot.forEach((doc) => {
+                    const faq = doc.data();
+                    if (!faqsByCategory[faq.categoria]) {
+                        faqsByCategory[faq.categoria] = [];
+                    }
+                    faqsByCategory[faq.categoria].push(faq);
                 });
 
-                alert("Você entrou na turma com sucesso!");
-                window.location.href = "rodada.html";
-            } else {
-                alert("Código de turma inválido.");
-            }
-        }
+                // Renderizar FAQs
+                faqContainer.innerHTML = '';
+                for (const [category, faqs] of Object.entries(faqsByCategory)) {
+                    const categoryHeader = document.createElement('h2');
+                    categoryHeader.textContent = category;
+                    categoryHeader.style.padding = '20px 20px 10px';
+                    categoryHeader.style.margin = '0';
+                    categoryHeader.style.background = 'var(--cor-primaria)';
+                    categoryHeader.style.color = 'var(--cor-branco)';
+                    faqContainer.appendChild(categoryHeader);
+                    
+                    faqs.forEach((faq, index) => {
+                        const faqItem = document.createElement('div');
+                        faqItem.className = 'faq-item';
+                        faqItem.innerHTML = `
+                            <div class="faq-question">
+                                <h3>${escapeHtml(faq.pergunta)}</h3>
+                                <span>+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>${escapeHtml(faq.resposta)}</p>
+                            </div>
+                        `;
+                        
+                        faqItem.querySelector('.faq-question').addEventListener('click', () => {
+                            faqItem.classList.toggle('active');
+                            const icon = faqItem.querySelector('.faq-question span');
+                            icon.textContent = faqItem.classList.contains('active') ? '−' : '+';
+                        });
+                        
+                        faqContainer.appendChild(faqItem);
+                    });
+                }
 
-        window.entrarNaTurma = entrarNaTurma;
+                // Configurar busca
+                setupSearch();
+
+            } catch (error) {
+                console.error("Erro ao carregar FAQs: ", error);
+                faqContainer.innerHTML = `
+                    <p id="loading-message">
+                        Ocorreu um erro ao carregar as perguntas. 
+                        <button onclick="location.reload()" class="btn btn-primary">Tentar novamente</button>
+                    </p>
+                `;
+            }
+        };
+
+        // Configurar busca
+        const setupSearch = () => {
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    loadFAQs(searchInput.value.trim());
+                }, 500);
+            });
+        };
+
+        // Helper functions
+        const escapeHtml = (unsafe) => {
+            return unsafe?.replace(/[&<"'>]/g, (match) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[match])) || '';
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+            setupLogout();
+        });
     </script>
-</head>
-<body>
-    <h1 id="welcome-msg">Bem-vindo!</h1>
-    <p>Digite o código da sua turma:</p>
-    <input type="text" id="codigoTurma" placeholder="Ex: ABCDEF">
-    <button onclick="entrarNaTurma()">Entrar na Turma</button>
 </body>
 </html>

@@ -3,129 +3,523 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Join Xperience</title>
+    <title>Roleta de Eventos - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: none; /* A página só aparece quando o script confirma que não há utilizador autenticado */ flex-direction: column; min-height: 100vh; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav a { color: var(--cor-texto); text-decoration: none; font-weight: 500; }
-        .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 50px 20px; }
-        .form-card { background-color: var(--cor-branco); padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        .form-card h2 { text-align: center; font-size: 2em; margin-top: 0; margin-bottom: 25px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
-        .extra-links { text-align: center; margin-top: 20px; }
-        .extra-links a { color: var(--cor-primaria); text-decoration: none; display: block; margin-top: 10px; }
-        .btn { display: inline-block; padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; text-align: center; cursor: pointer; width: 100%; font-size: 1.1em; }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        :root {
+            --cor-primaria: #0052CC;
+            --cor-secundaria: #FF4400;
+            --cor-sucesso: #28a745;
+            --cor-erro: #dc3545;
+            --cor-texto: #333;
+            --cor-fundo: #f4f7f6;
+            --cor-branco: #fff;
+            --cor-cinza-escuro: #343a40;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cor-fundo);
+            margin: 0;
+            padding: 20px;
+            color: var(--cor-texto);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--cor-branco);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        
+        header h1 {
+            text-align: center;
+            color: var(--cor-primaria);
+            margin-top: 0;
+            border-bottom: 2px solid rgba(0, 82, 204, 0.2);
+            padding-bottom: 15px;
+        }
+        
+        .roleta-container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .progresso-container {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.2em;
+        }
+        
+        #wheel-wrapper {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            margin: 30px auto;
+        }
+        
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid var(--cor-cinza-escuro);
+            overflow: hidden;
+            transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            background-color: #eee;
+        }
+        
+        .segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+            left: 25%;
+            width: 50%;
+            height: 50%;
+        }
+        
+        #arrow {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid var(--cor-secundaria);
+            position: absolute;
+            left: 50%;
+            top: -30px;
+            transform: translateX(-50%);
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        #spin-btn {
+            background-color: var(--cor-primaria);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        #spin-btn:hover {
+            background-color: #003d99;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        #spin-btn:disabled {
+            cursor: not-allowed;
+            background-color: #ccc;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .resultado-modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: var(--cor-branco);
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border: 2px solid var(--cor-primaria);
+        }
+        
+        .modal-content h2 {
+            color: var(--cor-primaria);
+            margin-top: 0;
+        }
+        
+        .modal-buttons {
+            margin-top: 25px;
+        }
+        
+        .modal-buttons button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #modal-action-btn {
+            background-color: var(--cor-primaria);
+            color: white;
+        }
+        
+        #modal-action-btn:hover {
+            background-color: #003d99;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 82, 204, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--cor-primaria);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: var(--cor-erro);
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: rgba(220, 53, 69, 0.1);
+        }
     </style>
+    <script type="module" src="/assets/js/auth-guard.js"></script>
 </head>
 <body>
-    <header class="main-header">
-        <a href="/sitejoin/index.html" class="logo-container">
-            <img src="/sitejoin/JOIN.png" alt="Logo Join Xperience">
-            <span>Join Xperience</span>
-        </a>
-        <nav>
-            <a href="/sitejoin/cadastro.html">Criar uma conta</a>
-        </nav>
-    </header>
-    <main class="main-container">
-        <div class="form-card">
-            <h2>Aceda à sua Conta</h2>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" required>
+    <div class="container">
+        <header>
+            <h1>Rodada 3: Roleta de Eventos</h1>
+        </header>
+
+        <main>
+            <div id="loading" class="progresso-container">
+                <div class="loading-spinner"></div>
+                <p>Carregando dados da rodada...</p>
+            </div>
+
+            <div id="game-content" class="hidden">
+                <div class="progresso-container">
+                    <p>Gire a roleta para simular eventos do dia a dia da empresa.</p>
+                    <p id="progresso-texto"><strong>Giros Realizados: <span id="giros-atual">0</span> de <span id="giros-total">0</span></strong></p>
                 </div>
-                <div class="form-group">
-                    <label for="senha">Senha</label>
-                    <input type="password" id="senha" required>
+                <div class="roleta-container">
+                    <div id="wheel-wrapper">
+                        <div id="arrow"></div>
+                        <div id="wheel"></div>
+                    </div>
+                    <button id="spin-btn" disabled>Carregando Cenários...</button>
                 </div>
-                <button type="submit" class="btn btn-primary">Entrar</button>
-                <div class="extra-links">
-                    <a href="/sitejoin/cadastro.html">Não tem uma conta? Registe-se</a>
+            </div>
+        </main>
+
+        <div id="resultado-modal" class="resultado-modal">
+            <div class="modal-content">
+                <h2 id="resultado-titulo"></h2>
+                <p id="resultado-descricao"></p>
+                <p id="resultado-impacto" class="valor"></p>
+                <div class="modal-buttons">
+                    <button id="modal-action-btn"></button>
                 </div>
-            </form>
+            </div>
         </div>
-    </main>
+    </div>
 
     <script type="module">
-        // Importa os serviços do Firebase de forma segura
-        import { auth, db } from '/sitejoin/assets/js/firebase-init.js';
-        
-        // Importa as funções que esta página precisa
-        import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            browserSessionPersistence,
+            setPersistence
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            updateDoc,
+            increment,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+        import { auth, db } from '/assets/js/firebase-init.js';
 
-        // Função para redirecionar o utilizador após o login
-        async function redirecionarPorPerfil(uid) {
-            const userDocRef = doc(db, "usuarios", uid);
+        // Elementos DOM
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spin-btn');
+        const modal = document.getElementById('resultado-modal');
+        const modalActionBtn = document.getElementById('modal-action-btn');
+        const progressoTexto = document.getElementById('progresso-texto');
+        const girosAtualSpan = document.getElementById('giros-atual');
+        const girosTotalSpan = document.getElementById('giros-total');
+        const loadingDiv = document.getElementById('loading');
+        const gameContentDiv = document.getElementById('game-content');
+        const resultadoTitulo = document.getElementById('resultado-titulo');
+        const resultadoDescricao = document.getElementById('resultado-descricao');
+        const resultadoImpacto = document.getElementById('resultado-impacto');
+
+        // Estado da aplicação
+        const estado = {
+            cenarios: [],
+            turmaId: null,
+            girosNecessarios: 0,
+            girosAtuais: 0,
+            rotation: 0,
+            colors: [
+                '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', 
+                '#009688', '#4caf50', '#8bc34a', '#cddc39', 
+                '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'
+            ]
+        };
+
+        // Inicialização do jogo
+        const initGame = async () => {
             try {
-                const userDocSnap = await getDoc(userDocRef);
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    const perfil = userData.perfil;
-                    
-                    if (perfil === 'professor') {
-                        window.location.href = '/sitejoin/professor/professor.html';
-                    } else if (perfil === 'aluno') {
-                        if (!userData.turmaId) {
-                            window.location.href = '/sitejoin/aluno/xperience.html';
-                        } else {
-                            const rodada = userData.rodadaAtual || 1;
-                            window.location.href = `/sitejoin/aluno/rodada${rodada}-nivelamento.html`; // Simplificado
-                        }
+                // Configurar persistência de autenticação
+                await setPersistence(auth, browserSessionPersistence);
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        await setupGame(user);
+                    } else {
+                        window.location.href = '/login.html';
                     }
-                } else {
-                    alert("Erro: Dados de perfil não encontrados. Contacte o suporte.");
-                    auth.signOut();
-                }
+                });
             } catch (error) {
-                console.error("Erro ao procurar dados do utilizador:", error);
-                alert("Ocorreu um erro ao carregar os seus dados.");
+                console.error("Erro na inicialização:", error);
+                showError("Erro ao carregar o jogo. Tente recarregar a página.");
             }
-        }
+        };
 
-        // Verifica se o utilizador JÁ ESTÁ AUTENTICADO ao carregar a página
-        const unsub = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Se já está autenticado, redireciona imediatamente
-                redirecionarPorPerfil(user.uid);
-            } else {
-                // Se não está autenticado, mostra a página de login
-                document.body.style.display = 'flex';
-                unsub(); // Para de ouvir para não redirecionar de novo
-            }
-        });
-
-        // Adiciona o evento de submit ao formulário
-        const loginForm = document.getElementById('login-form');
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
-            const loginButton = e.target.querySelector('button[type="submit"]');
-            
-            loginButton.disabled = true;
-            loginButton.textContent = "A entrar...";
-
+        // Configurar o jogo
+        const setupGame = async (user) => {
             try {
-                // FIX: Garante que a sessão é guardada no navegador
-                await setPersistence(auth, browserLocalPersistence);
-                const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-                // A função onAuthStateChanged (que agora está sempre ativa) cuidará do redirecionamento.
-                // A linha abaixo é uma garantia caso o onAuthStateChanged demore.
-                await redirecionarPorPerfil(userCredential.user.uid);
+                // Obter dados do usuário
+                const userRef = doc(db, "usuarios", user.uid);
+                const userDoc = await getDoc(userRef);
+                
+                if (!userDoc.exists()) {
+                    throw new Error("Usuário não encontrado.");
+                }
+
+                const userData = userDoc.data();
+                estado.turmaId = userData.turmaId;
+                
+                if (!estado.turmaId) {
+                    throw new Error("Você não está em uma turma.");
+                }
+
+                // Obter dados da turma
+                const turmaRef = doc(db, "turmas", estado.turmaId);
+                const turmaDoc = await getDoc(turmaRef);
+                
+                if (!turmaDoc.exists()) {
+                    throw new Error("Dados da turma não encontrados.");
+                }
+
+                estado.girosNecessarios = turmaDoc.data().girosNecessarios_r3 || 5;
+                estado.girosAtuais = (userData.girosRoleta && userData.girosRoleta[estado.turmaId]) || 0;
+
+                updateProgressoUI();
+
+                // Carregar cenários
+                await loadCenarios();
+                setupWheel();
+
+                loadingDiv.classList.add('hidden');
+                gameContentDiv.classList.remove('hidden');
+
             } catch (error) {
-                alert("E-mail ou senha inválidos. Tente novamente.");
-                loginButton.disabled = false;
-                loginButton.textContent = "Entrar";
+                console.error("Erro ao configurar o jogo:", error);
+                showError(error.message);
             }
+        };
+
+        // Atualizar interface de progresso
+        const updateProgressoUI = () => {
+            girosAtualSpan.textContent = estado.girosAtuais;
+            girosTotalSpan.textContent = estado.girosNecessarios;
+            
+            if (estado.girosAtuais >= estado.girosNecessarios) {
+                spinBtn.textContent = "Rodada Concluída";
+                spinBtn.disabled = true;
+                setTimeout(() => {
+                    avancarRodada();
+                }, 2000);
+            }
+        };
+
+        // Carregar cenários da roleta
+        const loadCenarios = async () => {
+            try {
+                const snapshot = await getDocs(collection(db, 'roleta_cenarios'));
+                
+                if (snapshot.empty) {
+                    throw new Error("Nenhum cenário encontrado para a roleta.");
+                }
+
+                estado.cenarios = snapshot.docs.map(doc => ({ 
+                    id: doc.id, 
+                    ...doc.data() 
+                }));
+
+                spinBtn.textContent = "Girar a Roleta";
+                spinBtn.disabled = false;
+
+            } catch (error) {
+                console.error("Erro ao carregar cenários:", error);
+                showError("Erro ao carregar os cenários. Tente novamente.");
+                spinBtn.textContent = "Erro ao Carregar";
+                spinBtn.disabled = true;
+            }
+        };
+
+        // Configurar a roleta visualmente
+        const setupWheel = () => {
+            const numSegments = estado.cenarios.length;
+            if (numSegments === 0) return;
+            
+            const deg = 360 / numSegments;
+            wheel.innerHTML = '';
+            
+            for (let i = 0; i < numSegments; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'segment';
+                segment.style.transform = `rotate(${deg * i}deg)`;
+                segment.style.backgroundColor = estado.colors[i % estado.colors.length];
+                wheel.appendChild(segment);
+            }
+        };
+
+        // Girar a roleta
+        const spinWheel = async () => {
+            if (spinBtn.disabled) return;
+            
+            spinBtn.disabled = true;
+            const numSegments = estado.cenarios.length;
+            const degPerSegment = 360 / numSegments;
+            
+            // Animação
+            estado.rotation += (5 * 360) + Math.floor(Math.random() * 360);
+            wheel.style.transform = `rotate(${estado.rotation}deg)`;
+            
+            // Calcular resultado
+            const finalEffectiveRotation = estado.rotation % 360;
+            const winningSegmentIndex = Math.floor((360 - finalEffectiveRotation + degPerSegment/2) % 360 / degPerSegment);
+            const cenarioVencedor = estado.cenarios[winningSegmentIndex] || { 
+                titulo: "Erro", 
+                descricao: "Não foi possível carregar o cenário.", 
+                impacto: "Nenhum" 
+            };
+
+            // Atualizar contador no Firestore
+            try {
+                const userRef = doc(db, "usuarios", auth.currentUser.uid);
+                await updateDoc(userRef, {
+                    [`girosRoleta.${estado.turmaId}`]: increment(1),
+                    ultimaAtualizacao: serverTimestamp()
+                });
+
+                estado.girosAtuais++;
+                updateProgressoUI();
+
+            } catch (error) {
+                console.error("Erro ao salvar giro:", error);
+                showError("Ocorreu um erro ao salvar seu progresso. Seu giro não foi contado.");
+                spinBtn.disabled = false;
+                return;
+            }
+
+            // Mostrar resultado após animação
+            setTimeout(() => {
+                showResult(cenarioVencedor);
+            }, 5100);
+        };
+
+        // Mostrar resultado do giro
+        const showResult = (cenario) => {
+            resultadoTitulo.textContent = cenario.titulo;
+            resultadoDescricao.textContent = cenario.descricao;
+            resultadoImpacto.textContent = `Impacto: ${cenario.impacto}`;
+
+            if (estado.girosAtuais >= estado.girosNecessarios) {
+                modalActionBtn.textContent = "Finalizar Rodada";
+                modalActionBtn.onclick = avancarRodada;
+            } else {
+                modalActionBtn.textContent = "Girar Novamente";
+                modalActionBtn.onclick = closeModal;
+            }
+
+            modal.style.display = 'flex';
+        };
+
+        // Fechar modal
+        const closeModal = () => {
+            modal.style.display = 'none';
+            if (estado.girosAtuais < estado.girosNecessarios) {
+                spinBtn.disabled = false;
+            }
+        };
+
+        // Avançar para próxima rodada
+        const avancarRodada = async () => {
+            modalActionBtn.disabled = true;
+            modalActionBtn.textContent = "Avançando...";
+            
+            try {
+                const userRef = doc(db, "usuarios", auth.currentUser.uid);
+                await updateDoc(userRef, {
+                    rodadaAtual: 4,
+                    ultimaAtualizacao: serverTimestamp()
+                });
+
+                window.location.href = '/aluno/rodada.html';
+
+            } catch (error) {
+                console.error("Erro ao avançar de rodada:", error);
+                showError("Não foi possível salvar seu avanço. Tente novamente.");
+                modalActionBtn.disabled = false;
+                modalActionBtn.textContent = estado.girosAtuais >= estado.girosNecessarios 
+                    ? "Finalizar Rodada" 
+                    : "Girar Novamente";
+            }
+        };
+
+        // Mostrar mensagem de erro
+        const showError = (message) => {
+            loadingDiv.innerHTML = `
+                <div class="error-message">
+                    ${message}
+                    <button onclick="window.location.reload()" style="margin-top: 10px;">
+                        Recarregar Página
+                    </button>
+                </div>
+            `;
+        };
+
+        // Event Listeners
+        spinBtn.addEventListener('click', spinWheel);
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
         });
     </script>
 </body>

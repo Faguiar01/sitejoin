@@ -3,76 +3,330 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Cenários da Roleta - Join Xperience</title>
+    <title>Gerenciar Cenários - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-perigo: #dc3545; --cor-info: #17a2b8; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        main { flex: 1; }
-        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
-        .page-header h1 { margin: 0; font-size: 2.2em; }
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
-        .btn-danger { background-color: var(--cor-perigo); color: var(--cor-branco); }
-        .btn:hover:not(:disabled) { opacity: 0.85; }
-        .content-box { background-color: var(--cor-branco); padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 30px; }
+        :root { 
+            --cor-primaria: #0052CC; 
+            --cor-sucesso: #28a745; 
+            --cor-perigo: #dc3545; 
+            --cor-info: #17a2b8; 
+            --cor-texto: #333; 
+            --cor-fundo: #f4f7f6; 
+            --cor-branco: #fff; 
+            --cor-cinza-escuro: #343a40;
+            --cor-aviso: #ffc107;
+        }
+        body { 
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--cor-fundo); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        header.main-header { 
+            background-color: var(--cor-branco); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        }
+        header.main-header .logo-container { 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+            color: var(--cor-texto); 
+            font-weight: 600; 
+        }
+        header.main-header .logo-container img { 
+            height: 50px; 
+            margin-right: 15px; 
+        }
+        header.main-header nav a { 
+            color: var(--cor-primaria); 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 8px 16px; 
+            border: 1px solid var(--cor-primaria); 
+            border-radius: 8px; 
+            margin-left: 10px;
+        }
+        main { 
+            flex: 1; 
+        }
+        .page-header { 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #ddd; 
+            background-color: #e9ecef; 
+        }
+        .page-header h1 { 
+            margin: 0; 
+            font-size: 2.2em; 
+        }
+        .btn { 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            border: none; 
+            text-decoration: none; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+        }
+        .btn-primary { 
+            background-color: var(--cor-primaria); 
+            color: var(--cor-branco); 
+        }
+        .btn-success { 
+            background-color: var(--cor-sucesso); 
+            color: var(--cor-branco); 
+        }
+        .btn-danger { 
+            background-color: var(--cor-perigo); 
+            color: var(--cor-branco); 
+        }
+        .btn-warning {
+            background-color: var(--cor-aviso);
+            color: var(--cor-texto);
+        }
+        .btn:hover:not(:disabled) { 
+            opacity: 0.85; 
+        }
+        .content-box { 
+            background-color: var(--cor-branco); 
+            padding: 25px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+            margin-top: 30px; 
+        }
 
-        .section-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; }
-        .section-header h2 { margin: 0; border: none; padding: 0; font-size: 1.5em; }
-        .section-header .section-toggle-icon { font-size: 1.5em; font-weight: bold; transition: transform 0.3s ease; }
-        .section-header .section-toggle-icon.rotate { transform: rotate(180deg); }
-        .section-content { max-height: 2000px; /* Altura grande para permitir conteúdo */ overflow: hidden; transition: max-height 0.5s ease-in-out; }
-        .section-content.collapsed { max-height: 0; padding-top: 0; }
+        .section-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            cursor: pointer; 
+            border-bottom: 2px solid var(--cor-primaria); 
+            padding-bottom: 10px; 
+            margin-bottom: 20px;
+        }
+        .section-header h2 { 
+            margin: 0; 
+            border: none; 
+            padding: 0; 
+            font-size: 1.5em; 
+        }
+        .section-header .section-toggle-icon { 
+            font-size: 1.5em; 
+            font-weight: bold; 
+            transition: transform 0.3s ease; 
+        }
+        .section-header .section-toggle-icon.rotate { 
+            transform: rotate(180deg); 
+        }
+        .section-content { 
+            max-height: 2000px;
+            overflow: hidden; 
+            transition: max-height 0.5s ease-in-out; 
+        }
+        .section-content.collapsed { 
+            max-height: 0; 
+            padding-top: 0; 
+        }
 
-        .form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
-        @media (min-width: 768px) { .form-grid { grid-template-columns: 1fr 1fr; } }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; box-sizing: border-box; font-family: inherit; }
-        .form-group textarea { resize: vertical; min-height: 100px; }
-        .form-group small { color: #6c757d; }
-        #loading-message, #access-denied { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 20px; 
+            margin-top: 20px; 
+        }
+        @media (min-width: 768px) { 
+            .form-grid { 
+                grid-template-columns: 1fr 1fr; 
+            } 
+        }
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+        }
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            font-size: 1em; 
+            box-sizing: border-box; 
+            font-family: inherit; 
+        }
+        .form-group textarea { 
+            resize: vertical; 
+            min-height: 100px; 
+        }
+        .form-group small { 
+            color: #6c757d; 
+            font-size: 0.85em;
+            display: block;
+            margin-top: 5px;
+        }
+        #loading-message, 
+        #access-denied { 
+            text-align: center; 
+            padding: 40px; 
+            font-size: 1.2em; 
+            color: #666; 
+        }
 
-        .accordion-container { text-align: left; margin-top: 20px; }
-        .accordion-item { margin-bottom: 1rem; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; font-size: 1.1rem; font-weight: 600; cursor: pointer; background-color: #e9ecef; color: var(--cor-texto); transition: background-color 0.3s ease; }
-        .accordion-header .actions { display: flex; gap: 10px; }
-        .accordion-header .actions button { font-size: 0.9em; padding: 5px 10px; }
-        .accordion-header:hover { background-color: #dde2e6; }
-        .accordion-content { background-color: #f9fafb; max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease-out; padding: 0 1.5rem; }
-        .accordion-content.active { max-height: 500px; padding: 1.5rem; border: 1px solid #ddd; border-top: none; border-radius: 0 0 0.75rem 0.75rem; }
-        .accordion-content p { margin: 0; color: #333; line-height: 1.6; }
-        .accordion-icon { transition: transform 0.3s ease; margin-left: auto; padding-left: 20px; }
-        .accordion-icon.rotate { transform: rotate(180deg); }
+        .accordion-container { 
+            text-align: left; 
+            margin-top: 20px; 
+        }
+        .accordion-item { 
+            margin-bottom: 1rem; 
+            border-radius: 0.75rem; 
+            overflow: hidden; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            border: 1px solid #e9ecef;
+        }
+        .accordion-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 1rem 1.5rem; 
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            background-color: #f8f9fa; 
+            color: var(--cor-texto); 
+            transition: background-color 0.3s ease; 
+        }
+        .accordion-header .actions { 
+            display: flex; 
+            gap: 10px; 
+        }
+        .accordion-header .actions button { 
+            font-size: 0.9em; 
+            padding: 5px 10px; 
+        }
+        .accordion-header:hover { 
+            background-color: #e9ecef; 
+        }
+        .accordion-content { 
+            background-color: #f9fafb; 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out; 
+            padding: 0 1.5rem; 
+        }
+        .accordion-content.active { 
+            max-height: 500px; 
+            padding: 1.5rem; 
+            border-top: 1px solid #e9ecef;
+        }
+        .accordion-content p { 
+            margin: 0; 
+            color: #333; 
+            line-height: 1.6; 
+        }
+        .accordion-icon { 
+            transition: transform 0.3s ease; 
+            margin-left: auto; 
+            padding-left: 20px; 
+        }
+        .accordion-icon.rotate { 
+            transform: rotate(180deg); 
+        }
+        .scenario-values {
+            margin-top: 10px;
+            font-weight: bold;
+            color: var(--cor-primaria);
+        }
 
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+        footer.main-footer { 
+            background-color: var(--cor-cinza-escuro); 
+            color: var(--cor-branco); 
+            padding: 20px; 
+            text-align: center; 
+            margin-top: auto; 
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: var(--cor-sucesso);
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,.3);
+            border-radius: 50%;
+            border-top-color: var(--cor-primaria);
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <header class="main-header">
-        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
-        <nav><a href="#" id="logout-button">Sair</a></nav>
+        <a href="../index.html" class="logo-container">
+            <img src="../JOIN.png" alt="Logo Join Xperience">
+            <span>Join Xperience (Admin)</span>
+        </a>
+        <nav>
+            <a href="index.html" class="btn btn-primary">Voltar ao Painel</a>
+            <a href="#" id="logout-button" class="btn btn-danger">Sair</a>
+        </nav>
     </header>
 
     <main class="container">
         <div id="page-content" style="display: none;">
             <div class="page-header">
-                <h1>Gerenciar Cenários</h1>
-                <div><a href="professor.html" class="btn btn-primary">Voltar ao Painel</a></div>
+                <h1>Gerenciar Cenários da Roleta</h1>
+                <div>
+                    <button id="btn-export" class="btn btn-warning">Exportar Cenários</button>
+                </div>
             </div>
 
             <div class="content-box">
                 <div class="section-header" data-target="default-section">
                     <h2>Cenários Padrão (Não editáveis)</h2>
-                    <span class="section-toggle-icon">▼</span>
+                    <span class="section-toggle-icon rotate">▼</span>
                 </div>
                 <div class="section-content" id="default-section">
-                    <div class="accordion-container" id="default-scenarios-accordion"></div>
+                    <div class="accordion-container" id="default-scenarios-accordion">
+                        <div id="loading-default">Carregando cenários padrão...</div>
+                    </div>
                 </div>
             </div>
 
@@ -81,32 +335,40 @@
                     <h2>Meus Cenários Customizados</h2>
                     <span class="section-toggle-icon">▼</span>
                 </div>
-                <div class="section-content" id="custom-section">
+                <div class="section-content collapsed" id="custom-section">
                     <form id="add-scenario-form">
                         <div class="form-group">
-                            <label for="sc-title">Título do Cenário</label>
-                            <input type="text" id="sc-title" required>
+                            <label for="sc-title">Título do Cenário*</label>
+                            <input type="text" id="sc-title" required maxlength="100">
                         </div>
                         <div class="form-group">
-                            <label for="sc-desc">Descrição</label>
-                            <textarea id="sc-desc" rows="4" required></textarea>
+                            <label for="sc-desc">Descrição*</label>
+                            <textarea id="sc-desc" rows="4" required maxlength="500"></textarea>
                             <small>Use a tag [VALOR] onde o valor aleatório deve aparecer. Ex: "Você recebeu um bônus de R$ [VALOR]".</small>
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="sc-min">Valor Mínimo (R$)</label>
-                                <input type="number" id="sc-min" required>
+                                <label for="sc-min">Valor Mínimo (R$)*</label>
+                                <input type="number" id="sc-min" required min="0" step="0.01">
                             </div>
                             <div class="form-group">
-                                <label for="sc-max">Valor Máximo (R$)</label>
-                                <input type="number" id="sc-max" required>
+                                <label for="sc-max">Valor Máximo (R$)*</label>
+                                <input type="number" id="sc-max" required min="0" step="0.01">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success">Adicionar Cenário Customizado</button>
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-danger">Limpar</button>
+                            <button type="submit" class="btn btn-success">
+                                <span id="btn-text">Salvar Cenário</span>
+                                <span id="btn-loading" class="loading" style="display:none;"></span>
+                            </button>
+                        </div>
                     </form>
                     <hr style="margin: 30px 0;">
-                    <h3>Cenários Criados por Você</h3>
-                    <div class="accordion-container" id="custom-scenarios-accordion"></div>
+                    <h3>Meus Cenários Criados</h3>
+                    <div class="accordion-container" id="custom-scenarios-accordion">
+                        <div id="loading-custom">Carregando seus cenários...</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -117,40 +379,71 @@
         </div>
     </main>
 
-    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+    <div class="toast" id="toast"></div>
+
+    <footer class="main-footer">
+        <p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp, query, where, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            collection, 
+            addDoc, 
+            serverTimestamp, 
+            query, 
+            where, 
+            orderBy, 
+            getDocs, 
+            deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
+        // Configuração do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            apiKey: "AIzaSyAXtFYlng57P0C0p-b4TFuYucG1bn4NKAk",
             authDomain: "joinxperience-site.firebaseapp.com",
             projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
+            storageBucket: "joinxperience-site.firebasestorage.app",
             messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            appId: "1:140037739806:web:322493d72ca6149abce5bf",
             measurementId: "G-V4SRK0FNBN"
         };
+
+        // Inicialização do Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Elementos da página
         const pageContent = document.getElementById('page-content');
         const accessDenied = document.getElementById('access-denied');
+        const toast = document.getElementById('toast');
         let currentUser;
 
+        // Verificação de autenticação e permissões
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                const userDocRef = doc(db, "usuarios", user.uid);
-                const userDoc = await getDoc(userDocRef);
-
-                if (userDoc.exists() && userDoc.data().isAdmin === true) {
-                    pageContent.style.display = 'block';
-                    initializeAdminPage();
-                } else {
+                try {
+                    const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+                    if (userDoc.exists() && userDoc.data().isAdmin) {
+                        pageContent.style.display = 'block';
+                        initializeAdminPage();
+                    } else {
+                        accessDenied.style.display = 'block';
+                        showToast('Acesso negado: apenas administradores podem acessar esta página', 'error');
+                    }
+                } catch (error) {
+                    console.error("Erro ao verificar permissões:", error);
+                    showToast('Erro ao verificar permissões', 'error');
                     accessDenied.style.display = 'block';
                 }
             } else {
@@ -158,21 +451,48 @@
             }
         });
 
+        // Logout
         document.getElementById('logout-button').addEventListener('click', (e) => {
-            e.preventDefault(); signOut(auth).then(() => { window.location.href = '../index.html'; });
+            e.preventDefault();
+            signOut(auth).then(() => {
+                window.location.href = '../index.html';
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+                showToast('Erro ao fazer logout', 'error');
+            });
         });
 
+        // Função para mostrar notificações
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.style.backgroundColor = type === 'error' ? 'var(--cor-perigo)' : 
+                                         type === 'warning' ? 'var(--cor-aviso)' : 'var(--cor-sucesso)';
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Inicializar a página de administração
         function initializeAdminPage() {
+            // Elementos do formulário
+            const addForm = document.getElementById('add-scenario-form');
             const defaultAccordion = document.getElementById('default-scenarios-accordion');
             const customAccordion = document.getElementById('custom-scenarios-accordion');
-            const addForm = document.getElementById('add-scenario-form');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+            const submitBtn = addForm.querySelector('button[type="submit"]');
 
+            // Função para renderizar os cenários em acordeão
             const renderAccordion = (containerEl, scenarios, isCustom) => {
                 containerEl.innerHTML = '';
+                
                 if (scenarios.length === 0) {
-                    containerEl.innerHTML = `<p style="padding: 15px 0;">Nenhum cenário encontrado.</p>`;
+                    containerEl.innerHTML = `<p style="padding: 15px 0;">${isCustom ? 'Você ainda não criou nenhum cenário.' : 'Nenhum cenário padrão encontrado.'}</p>`;
                     return;
                 }
+                
                 scenarios.forEach((sc, index) => {
                     const item = document.createElement('div');
                     item.className = 'accordion-item';
@@ -193,17 +513,22 @@
                     if (isCustom) {
                         const actionsDiv = document.createElement('div');
                         actionsDiv.className = 'actions';
+                        
                         const deleteBtn = document.createElement('button');
                         deleteBtn.className = 'btn btn-danger';
                         deleteBtn.textContent = 'Excluir';
                         deleteBtn.dataset.id = sc.id;
                         deleteBtn.addEventListener('click', async (e) => {
                             e.stopPropagation();
-                            if (confirm("Tem certeza que deseja excluir este cenário customizado?")) {
+                            if (confirm("Tem certeza que deseja excluir permanentemente este cenário?")) {
                                 try {
                                     await deleteDoc(doc(db, "roleta_cenarios", sc.id));
+                                    showToast('Cenário excluído com sucesso!');
                                     loadScenarios();
-                                } catch (error) { console.error("Erro ao excluir:", error); }
+                                } catch (error) {
+                                    console.error("Erro ao excluir cenário:", error);
+                                    showToast('Erro ao excluir cenário', 'error');
+                                }
                             }
                         });
                         actionsDiv.appendChild(deleteBtn);
@@ -215,12 +540,22 @@
                     const content = document.createElement('div');
                     content.id = `${isCustom ? 'custom' : 'default'}-${index}`;
                     content.className = 'accordion-content';
-                    content.innerHTML = `<p>${sc.descricao}</p>`;
+                    
+                    const descParagraph = document.createElement('p');
+                    descParagraph.textContent = sc.descricao;
+                    
+                    const valuesDiv = document.createElement('div');
+                    valuesDiv.className = 'scenario-values';
+                    valuesDiv.textContent = `Faixa de valores: R$ ${sc.valorMin.toFixed(2)} - R$ ${sc.valorMax.toFixed(2)}`;
+                    
+                    content.appendChild(descParagraph);
+                    content.appendChild(valuesDiv);
 
                     item.appendChild(header);
                     item.appendChild(content);
                     containerEl.appendChild(item);
 
+                    // Evento para abrir/fechar o acordeão
                     header.addEventListener('click', () => {
                         const isActive = content.classList.contains('active');
                         document.querySelectorAll('.accordion-content.active').forEach(activeContent => {
@@ -235,46 +570,139 @@
                 });
             };
 
+            // Carregar cenários do Firestore
             async function loadScenarios() {
-                const defaultQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "default"), orderBy("titulo"));
-                const customQuery = query(collection(db, "roleta_cenarios"), where("tipo", "==", "custom"), where("professorId", "==", currentUser.uid), orderBy("criadoEm", "desc"));
+                const defaultQuery = query(
+                    collection(db, "roleta_cenarios"), 
+                    where("tipo", "==", "default"), 
+                    orderBy("titulo")
+                );
+                
+                const customQuery = query(
+                    collection(db, "roleta_cenarios"), 
+                    where("tipo", "==", "custom"), 
+                    where("professorId", "==", currentUser.uid), 
+                    orderBy("criadoEm", "desc")
+                );
 
                 try {
-                    const [defaultSnapshot, customSnapshot] = await Promise.all([getDocs(defaultQuery), getDocs(customQuery)]);
+                    const [defaultSnapshot, customSnapshot] = await Promise.all([
+                        getDocs(defaultQuery), 
+                        getDocs(customQuery)
+                    ]);
 
-                    const defaultScenarios = defaultSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    const defaultScenarios = defaultSnapshot.docs.map(doc => ({ 
+                        id: doc.id, 
+                        ...doc.data() 
+                    }));
+                    
+                    const customScenarios = customSnapshot.docs.map(doc => ({ 
+                        id: doc.id, 
+                        ...doc.data(),
+                        criadoEm: doc.data().criadoEm?.toDate() || new Date()
+                    }));
+
                     renderAccordion(defaultAccordion, defaultScenarios, false);
-
-                    const customScenarios = customSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderAccordion(customAccordion, customScenarios, true);
                 } catch (error) {
                     console.error("Erro ao carregar cenários:", error);
-                    defaultAccordion.innerHTML = `<p>Ocorreu um erro ao carregar os cenários. Verifique os índices e regras do Firestore.</p>`;
+                    showToast('Erro ao carregar cenários', 'error');
+                    defaultAccordion.innerHTML = `<p>Ocorreu um erro ao carregar os cenários. Tente recarregar a página.</p>`;
                 }
             }
 
+            // Formulário para adicionar novo cenário
             addForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const newScenario = {
-                    titulo: document.getElementById('sc-title').value,
-                    descricao: document.getElementById('sc-desc').value,
-                    valorMin: parseFloat(document.getElementById('sc-min').value),
-                    valorMax: parseFloat(document.getElementById('sc-max').value),
-                    tipo: 'custom',
-                    professorId: currentUser.uid,
-                    criadoEm: serverTimestamp()
-                };
-
-                if (newScenario.valorMin > newScenario.valorMax) {
-                    alert('O valor mínimo não pode ser maior que o valor máximo.');
+                
+                const title = document.getElementById('sc-title').value.trim();
+                const desc = document.getElementById('sc-desc').value.trim();
+                const minValue = parseFloat(document.getElementById('sc-min').value);
+                const maxValue = parseFloat(document.getElementById('sc-max').value);
+                
+                // Validações
+                if (!title || !desc || isNaN(minValue) || isNaN(maxValue)) {
+                    showToast('Preencha todos os campos obrigatórios', 'warning');
+                    return;
+                }
+                
+                if (minValue > maxValue) {
+                    showToast('O valor mínimo não pode ser maior que o valor máximo', 'warning');
+                    return;
+                }
+                
+                if (!desc.includes('[VALOR]')) {
+                    showToast('A descrição deve conter a tag [VALOR] para indicar onde o valor será inserido', 'warning');
                     return;
                 }
 
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'inline-block';
+
                 try {
-                    await addDoc(collection(db, "roleta_cenarios"), newScenario);
+                    await addDoc(collection(db, "roleta_cenarios"), {
+                        titulo: title,
+                        descricao: desc,
+                        valorMin: minValue,
+                        valorMax: maxValue,
+                        tipo: 'custom',
+                        professorId: currentUser.uid,
+                        criadoEm: serverTimestamp()
+                    });
+                    
                     addForm.reset();
+                    showToast('Cenário adicionado com sucesso!');
                     loadScenarios();
-                } catch (error) { console.error("Erro ao adicionar cenário:", error); alert("Ocorreu um erro ao salvar o cenário."); }
+                } catch (error) {
+                    console.error("Erro ao adicionar cenário:", error);
+                    showToast('Erro ao adicionar cenário', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'inline-block';
+                    btnLoading.style.display = 'none';
+                }
+            });
+
+            // Exportar cenários para CSV
+            document.getElementById('btn-export').addEventListener('click', async () => {
+                try {
+                    const q = query(
+                        collection(db, "roleta_cenarios"), 
+                        where("professorId", "==", currentUser.uid),
+                        orderBy("criadoEm", "desc")
+                    );
+                    
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (querySnapshot.empty) {
+                        showToast('Nenhum cenário para exportar', 'warning');
+                        return;
+                    }
+                    
+                    let csv = 'Título,Descrição,Valor Mínimo,Valor Máximo,Data Criação\n';
+                    
+                    querySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const date = data.criadoEm ? data.criadoEm.toDate().toLocaleString() : 'N/A';
+                        csv += `"${data.titulo}","${data.descricao}",${data.valorMin},${data.valorMax},"${date}"\n`;
+                    });
+                    
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `cenarios_roleta_${new Date().toISOString().slice(0,10)}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    showToast('Cenários exportados com sucesso!');
+                } catch (error) {
+                    console.error("Erro ao exportar cenários:", error);
+                    showToast('Erro ao exportar cenários', 'error');
+                }
             });
 
             // Lógica para as seções colapsáveis
@@ -289,10 +717,7 @@
                 });
             });
 
-            // Para começar com a seção customizada recolhida
-            document.getElementById('custom-section').classList.add('collapsed');
-            document.querySelector('[data-target="default-section"] .section-toggle-icon').classList.add('rotate');
-
+            // Carregar os cenários ao inicializar
             loadScenarios();
         }
     </script>

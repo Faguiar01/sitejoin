@@ -5,49 +5,247 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Biblioteca - Join Xperience</title>
     <style>
-        :root { --cor-primaria: #0052CC; --cor-sucesso: #28a745; --cor-perigo: #dc3545; --cor-texto: #333; --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-cinza-escuro: #343a40; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--cor-fundo); display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; box-sizing: border-box; }
-        header.main-header { background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        header.main-header .logo-container { display: flex; align-items: center; text-decoration: none; color: var(--cor-texto); font-weight: 600; }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        header.main-header nav a { color: var(--cor-primaria); text-decoration: none; font-weight: 500; padding: 8px 16px; border: 1px solid var(--cor-primaria); border-radius: 8px; }
-        main { flex: 1; }
-        .page-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; background-color: #e9ecef; }
-        .page-header h1 { margin: 0; font-size: 2.2em; }
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; text-decoration: none; font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
-        .btn-primary { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .btn-success { background-color: var(--cor-sucesso); color: var(--cor-branco); }
-        .btn-danger { background-color: var(--cor-perigo); color: var(--cor-branco); }
-        .btn:hover:not(:disabled) { opacity: 0.85; }
-        .content-wrapper { display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 30px; }
-        @media (min-width: 992px) { .content-wrapper { grid-template-columns: 400px 1fr; } }
-        .form-container, .list-container { background-color: var(--cor-branco); padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        h2 { margin-top: 0; border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; box-sizing: border-box; font-family: inherit; }
-        .form-group textarea { resize: vertical; min-height: 100px; }
-        #resource-list { list-style-type: none; padding: 0; }
-        .resource-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
-        .resource-item:last-child { border-bottom: none; }
-        .resource-item span { font-weight: 500; }
-        .resource-item .category-badge { background-color: #6c757d; color: white; padding: 5px 10px; font-size: 0.8em; border-radius: 12px; margin-left: 10px; }
-        #loading-message, #empty-message, #access-denied { text-align: center; padding: 40px; font-size: 1.2em; color: #666; }
-        footer.main-footer { background-color: var(--cor-cinza-escuro); color: var(--cor-branco); padding: 20px; text-align: center; margin-top: auto; }
+        :root { 
+            --cor-primaria: #0052CC; 
+            --cor-sucesso: #28a745; 
+            --cor-perigo: #dc3545; 
+            --cor-texto: #333; 
+            --cor-fundo: #f4f7f6; 
+            --cor-branco: #fff; 
+            --cor-cinza-escuro: #343a40;
+            --cor-aviso: #ffc107;
+        }
+        body { 
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--cor-fundo); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        header.main-header { 
+            background-color: var(--cor-branco); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        }
+        header.main-header .logo-container { 
+            display: flex; 
+            align-items: center; 
+            text-decoration: none; 
+            color: var(--cor-texto); 
+            font-weight: 600; 
+        }
+        header.main-header .logo-container img { 
+            height: 50px; 
+            margin-right: 15px; 
+        }
+        header.main-header nav a { 
+            color: var(--cor-primaria); 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 8px 16px; 
+            border: 1px solid var(--cor-primaria); 
+            border-radius: 8px; 
+            margin-left: 10px;
+        }
+        main { 
+            flex: 1; 
+        }
+        .page-header { 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #ddd; 
+            background-color: #e9ecef; 
+        }
+        .page-header h1 { 
+            margin: 0; 
+            font-size: 2.2em; 
+        }
+        .btn { 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            border: none; 
+            text-decoration: none; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+        }
+        .btn-primary { 
+            background-color: var(--cor-primaria); 
+            color: var(--cor-branco); 
+        }
+        .btn-success { 
+            background-color: var(--cor-sucesso); 
+            color: var(--cor-branco); 
+        }
+        .btn-danger { 
+            background-color: var(--cor-perigo); 
+            color: var(--cor-branco); 
+        }
+        .btn-warning {
+            background-color: var(--cor-aviso);
+            color: var(--cor-texto);
+        }
+        .btn:hover:not(:disabled) { 
+            opacity: 0.85; 
+        }
+        .content-wrapper { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 30px; 
+            margin-top: 30px; 
+        }
+        @media (min-width: 992px) { 
+            .content-wrapper { 
+                grid-template-columns: 400px 1fr; 
+            } 
+        }
+        .form-container, .list-container { 
+            background-color: var(--cor-branco); 
+            padding: 25px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+        }
+        h2 { 
+            margin-top: 0; 
+            border-bottom: 2px solid var(--cor-primaria); 
+            padding-bottom: 10px; 
+        }
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+        }
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            font-size: 1em; 
+            box-sizing: border-box; 
+            font-family: inherit; 
+        }
+        .form-group textarea { 
+            resize: vertical; 
+            min-height: 100px; 
+        }
+        #resource-list { 
+            list-style-type: none; 
+            padding: 0; 
+        }
+        .resource-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px; 
+            border-bottom: 1px solid #eee; 
+            transition: background-color 0.2s;
+        }
+        .resource-item:hover {
+            background-color: #f8f9fa;
+        }
+        .resource-item:last-child { 
+            border-bottom: none; 
+        }
+        .resource-item span { 
+            font-weight: 500; 
+        }
+        .category-badge { 
+            background-color: #6c757d; 
+            color: white; 
+            padding: 5px 10px; 
+            font-size: 0.8em; 
+            border-radius: 12px; 
+            margin-left: 10px; 
+        }
+        .badge-manual { background-color: #17a2b8; }
+        .badge-video { background-color: #dc3545; }
+        .badge-podcast { background-color: #28a745; }
+        #loading-message, #empty-message, #access-denied { 
+            text-align: center; 
+            padding: 40px; 
+            font-size: 1.2em; 
+            color: #666; 
+        }
+        footer.main-footer { 
+            background-color: var(--cor-cinza-escuro); 
+            color: var(--cor-branco); 
+            padding: 20px; 
+            text-align: center; 
+            margin-top: auto; 
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: var(--cor-sucesso);
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,.3);
+            border-radius: 50%;
+            border-top-color: var(--cor-primaria);
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .resource-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
     <header class="main-header">
-        <a href="../index.html" class="logo-container"><img src="../JOIN.png" alt="Logo Join Xperience"><span>Join Xperience</span></a>
-        <nav><a href="#" id="logout-button">Sair</a></nav>
+        <a href="../index.html" class="logo-container">
+            <img src="../JOIN.png" alt="Logo Join Xperience">
+            <span>Join Xperience (Admin)</span>
+        </a>
+        <nav>
+            <a href="index.html" class="btn btn-primary">Voltar ao Painel</a>
+            <a href="#" id="logout-button" class="btn btn-danger">Sair</a>
+        </nav>
     </header>
 
     <main class="container">
         <div id="page-content" style="display: none;">
             <div class="page-header">
                 <h1>Gerenciar Biblioteca</h1>
-                <div><a href="professor.html" class="btn btn-primary">Voltar ao Painel</a></div>
+                <div>
+                    <button id="btn-export" class="btn btn-warning">Exportar Dados</button>
+                </div>
             </div>
 
             <div class="content-wrapper">
@@ -55,26 +253,30 @@
                     <h2>Adicionar Novo Recurso</h2>
                     <form id="add-resource-form">
                         <div class="form-group">
-                            <label for="res-title">Título</label>
-                            <input type="text" id="res-title" required>
+                            <label for="res-title">Título*</label>
+                            <input type="text" id="res-title" required maxlength="100">
                         </div>
                         <div class="form-group">
-                            <label for="res-desc">Descrição</label>
-                            <textarea id="res-desc" rows="4" required></textarea>
+                            <label for="res-desc">Descrição*</label>
+                            <textarea id="res-desc" rows="4" required maxlength="500"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="res-link">Link (URL ou código de incorporação)</label>
-                            <input type="text" id="res-link" required>
+                            <label for="res-link">Link (URL ou código de incorporação)*</label>
+                            <input type="url" id="res-link" required>
                         </div>
                         <div class="form-group">
-                            <label for="res-category">Categoria</label>
+                            <label for="res-category">Categoria*</label>
                             <select id="res-category" required>
+                                <option value="">Selecione uma categoria</option>
                                 <option value="manual">Manual ou Apostila</option>
                                 <option value="video">Vídeo</option>
                                 <option value="podcast">Podcast</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-success" style="width: 100%;">Adicionar à Biblioteca</button>
+                        <button type="submit" class="btn btn-success" style="width: 100%;">
+                            <span id="btn-text">Adicionar à Biblioteca</span>
+                            <span id="btn-loading" class="loading" style="display:none;"></span>
+                        </button>
                     </form>
                 </div>
                 <div class="list-container">
@@ -92,39 +294,70 @@
         </div>
     </main>
 
-    <footer class="main-footer"><p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p></footer>
+    <div class="toast" id="toast"></div>
+
+    <footer class="main-footer">
+        <p>© 2025 JOIN XPERIENCE - Todos os direitos reservados</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp, query, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            collection, 
+            addDoc, 
+            serverTimestamp, 
+            query, 
+            orderBy, 
+            getDocs, 
+            deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
+        // Configuração do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
+            apiKey: "AIzaSyAXtFYlng57P0C0p-b4TFuYucG1bn4NKAk",
             authDomain: "joinxperience-site.firebaseapp.com",
             projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
+            storageBucket: "joinxperience-site.firebasestorage.app",
             messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
+            appId: "1:140037739806:web:322493d72ca6149abce5bf",
             measurementId: "G-V4SRK0FNBN"
         };
 
+        // Inicialização do Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Elementos da página
         const pageContent = document.getElementById('page-content');
         const accessDenied = document.getElementById('access-denied');
+        const addForm = document.getElementById('add-resource-form');
+        const resourceList = document.getElementById('resource-list');
+        const toast = document.getElementById('toast');
 
+        // Verificação de autenticação e permissões
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const userDocRef = doc(db, "usuarios", user.uid);
-                const userDoc = await getDoc(userDocRef);
-
-                if (userDoc.exists() && userDoc.data().isAdmin === true) {
-                    pageContent.style.display = 'block';
-                    initializeAdminPage();
-                } else {
+                try {
+                    const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+                    if (userDoc.exists() && userDoc.data().isAdmin) {
+                        pageContent.style.display = 'block';
+                        initializeAdminPage();
+                    } else {
+                        accessDenied.style.display = 'block';
+                        showToast('Acesso negado: apenas administradores podem acessar esta página', 'error');
+                    }
+                } catch (error) {
+                    console.error("Erro ao verificar permissões:", error);
+                    showToast('Erro ao verificar permissões', 'error');
                     accessDenied.style.display = 'block';
                 }
             } else {
@@ -132,46 +365,56 @@
             }
         });
 
+        // Logout
         document.getElementById('logout-button').addEventListener('click', (e) => {
             e.preventDefault();
-            signOut(auth).then(() => { window.location.href = '../index.html'; });
+            signOut(auth).then(() => {
+                window.location.href = '../index.html';
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+                showToast('Erro ao fazer logout', 'error');
+            });
         });
 
+        // Função para mostrar notificações
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.style.backgroundColor = type === 'error' ? 'var(--cor-perigo)' : 
+                                         type === 'warning' ? 'var(--cor-aviso)' : 'var(--cor-sucesso)';
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Inicializar a página de administração
         function initializeAdminPage() {
-            const addForm = document.getElementById('add-resource-form');
-            const resourceList = document.getElementById('resource-list');
+            // Carregar recursos
+            loadResources();
 
-            async function loadResources() {
-                resourceList.innerHTML = '<li id="loading-message">Carregando recursos...</li>';
-                const q = query(collection(db, "biblioteca_recursos"), orderBy("criadoEm", "desc"));
-                const querySnapshot = await getDocs(q);
-
-                resourceList.innerHTML = '';
-                if (querySnapshot.empty) {
-                    resourceList.innerHTML = '<li id="empty-message">Nenhum recurso cadastrado ainda.</li>';
-                } else {
-                    querySnapshot.forEach(doc => {
-                        const resource = doc.data();
-                        const li = document.createElement('li');
-                        li.className = 'resource-item';
-                        li.innerHTML = `
-                            <div>
-                                <span>${resource.titulo}</span>
-                                <span class="category-badge">${resource.categoria}</span>
-                            </div>
-                            <button class="btn btn-danger btn-sm" data-id="${doc.id}">Excluir</button>
-                        `;
-                        resourceList.appendChild(li);
-                    });
-                }
-            }
-
+            // Formulário de adição
             addForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const title = document.getElementById('res-title').value;
-                const desc = document.getElementById('res-desc').value;
-                const link = document.getElementById('res-link').value;
+                
+                const title = document.getElementById('res-title').value.trim();
+                const desc = document.getElementById('res-desc').value.trim();
+                const link = document.getElementById('res-link').value.trim();
                 const category = document.getElementById('res-category').value;
+                
+                // Validação
+                if (!title || !desc || !link || !category) {
+                    showToast('Preencha todos os campos obrigatórios', 'warning');
+                    return;
+                }
+
+                const btnText = document.getElementById('btn-text');
+                const btnLoading = document.getElementById('btn-loading');
+                const submitBtn = addForm.querySelector('button[type="submit"]');
+                
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'inline-block';
 
                 try {
                     await addDoc(collection(db, "biblioteca_recursos"), {
@@ -181,30 +424,127 @@
                         categoria: category,
                         criadoEm: serverTimestamp()
                     });
+                    
                     addForm.reset();
+                    showToast('Recurso adicionado com sucesso!');
                     loadResources();
                 } catch (error) {
                     console.error("Erro ao adicionar recurso: ", error);
-                    alert("Ocorreu um erro ao salvar o recurso.");
+                    showToast('Erro ao adicionar recurso', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'inline-block';
+                    btnLoading.style.display = 'none';
                 }
             });
 
+            // Exportar dados
+            document.getElementById('btn-export').addEventListener('click', async () => {
+                try {
+                    const q = query(collection(db, "biblioteca_recursos"), orderBy("criadoEm", "desc"));
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (querySnapshot.empty) {
+                        showToast('Nenhum recurso para exportar', 'warning');
+                        return;
+                    }
+                    
+                    let csv = 'Título,Descrição,Categoria,Link,Data\n';
+                    
+                    querySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const date = data.criadoEm ? data.criadoEm.toDate().toLocaleString() : 'N/A';
+                        csv += `"${data.titulo}","${data.descricao}","${data.categoria}","${data.link}","${date}"\n`;
+                    });
+                    
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `recursos_biblioteca_${new Date().toISOString().slice(0,10)}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    showToast('Dados exportados com sucesso!');
+                } catch (error) {
+                    console.error("Erro ao exportar dados:", error);
+                    showToast('Erro ao exportar dados', 'error');
+                }
+            });
+
+            // Listener para exclusão
             resourceList.addEventListener('click', async (e) => {
                 if (e.target.classList.contains('btn-danger')) {
                     const docId = e.target.dataset.id;
-                    if (confirm("Tem certeza de que deseja excluir este recurso?")) {
+                    
+                    if (confirm("Tem certeza de que deseja excluir este recurso permanentemente?")) {
                         try {
                             await deleteDoc(doc(db, "biblioteca_recursos", docId));
+                            showToast('Recurso excluído com sucesso!');
                             loadResources();
                         } catch (error) {
                             console.error("Erro ao excluir recurso: ", error);
-                            alert("Ocorreu um erro ao excluir o recurso.");
+                            showToast('Erro ao excluir recurso', 'error');
                         }
                     }
                 }
             });
+        }
 
-            loadResources();
+        // Carregar recursos da biblioteca
+        async function loadResources() {
+            resourceList.innerHTML = '<li id="loading-message">Carregando recursos...</li>';
+            
+            try {
+                const q = query(collection(db, "biblioteca_recursos"), orderBy("criadoEm", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                resourceList.innerHTML = '';
+                
+                if (querySnapshot.empty) {
+                    resourceList.innerHTML = '<li id="empty-message">Nenhum recurso cadastrado ainda.</li>';
+                } else {
+                    querySnapshot.forEach(doc => {
+                        const resource = doc.data();
+                        const li = document.createElement('li');
+                        li.className = 'resource-item';
+                        
+                        // Determinar a classe do badge baseado na categoria
+                        let badgeClass = '';
+                        if (resource.categoria === 'manual') badgeClass = 'badge-manual';
+                        else if (resource.categoria === 'video') badgeClass = 'badge-video';
+                        else if (resource.categoria === 'podcast') badgeClass = 'badge-podcast';
+                        
+                        li.innerHTML = `
+                            <div>
+                                <span>${resource.titulo}</span>
+                                <span class="category-badge ${badgeClass}">${getCategoryName(resource.categoria)}</span>
+                            </div>
+                            <div class="resource-actions">
+                                <a href="${resource.link}" target="_blank" class="btn btn-primary btn-sm">Ver</a>
+                                <button class="btn btn-danger btn-sm" data-id="${doc.id}">Excluir</button>
+                            </div>
+                        `;
+                        resourceList.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error("Erro ao carregar recursos:", error);
+                resourceList.innerHTML = '<li id="empty-message">Erro ao carregar recursos. Tente recarregar a página.</li>';
+                showToast('Erro ao carregar recursos', 'error');
+            }
+        }
+
+        // Obter nome amigável para a categoria
+        function getCategoryName(category) {
+            switch(category) {
+                case 'manual': return 'Manual';
+                case 'video': return 'Vídeo';
+                case 'podcast': return 'Podcast';
+                default: return category;
+            }
         }
     </script>
 </body>
