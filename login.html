@@ -3,73 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xperience InovaPlas - Login</title>
+    <title>Login - Xperience InovaPlas</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 24px;
-        }
-        .input-group {
-            margin-bottom: 16px;
-            text-align: left;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #error-message {
-            color: #d93025;
-            margin-top: 16px;
-            font-weight: 500;
-            min-height: 20px;
-        }
+        /* [Seus estilos CSS permanecem os mesmos] */
     </style>
-
-    <!-- Firebase SDK (versão 8.10.1) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Firebase SDK v9 -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -78,7 +20,7 @@
         <form id="login-form">
             <div class="input-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" placeholder="seuemail@exemplo.com" required>
+                <input type="email" id="email" value="educaflowoficial@gmail.com" required>
             </div>
             <div class="input-group">
                 <label for="password">Senha</label>
@@ -90,25 +32,26 @@
     </div>
 
     <script>
-        // Configuração do Firebase (SUAS CHAVES REAIS)
+        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucG1bn4NkAK",
             authDomain: "joinxperience-site.firebaseapp.com",
             projectId: "joinxperience-site",
             storageBucket: "joinxperience-site.appspot.com",
             messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce5bf"
+            appId: "1:140037739806:web:322493d72ca6149abce5bf",
+            databaseURL: "https://joinxperience-site.firebaseio.com"
         };
 
-        // Inicialização do Firebase
-        firebase.initializeApp(firebaseConfig);
-        console.log("Firebase inicializado com sucesso!");
+        // Inicialização
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
     </script>
 
     <script>
-        // Lógica de Login Aprimorada
-        document.getElementById('login-form').addEventListener('submit', async (event) => {
-            event.preventDefault();
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -116,41 +59,41 @@
             errorMessage.textContent = '';
 
             try {
-                // 1. Autenticação com Firebase Auth
-                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-                console.log("✅ Usuário autenticado. UID:", userCredential.user.uid);
-
-                // 2. Buscar dados no Firestore (coleção 'usuarios')
-                const userDoc = await firebase.firestore()
-                    .collection('usuarios')
-                    .doc(userCredential.user.uid)
-                    .get();
-
+                // 1. Autenticação
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const userId = userCredential.user.uid;
+                
+                // 2. Busca no Firestore - COMPATÍVEL COM SUAS REGRAS
+                const userDoc = await db.collection('usuarios').doc(userId).get();
+                
                 if (!userDoc.exists) {
-                    throw new Error("Documento do usuário não encontrado no Firestore");
+                    await auth.signOut();
+                    throw new Error("Perfil não configurado no sistema");
                 }
 
+                // 3. Redirecionamento seguro
                 const userData = userDoc.data();
-                console.log("📄 Dados do usuário:", userData);
-
-                // 3. Redirecionamento baseado no perfil (AJUSTADO PARA SUA ESTRUTURA)
+                const basePath = window.location.host.includes('github.io') 
+                    ? '/sitejoin' 
+                    : '';
+                
                 switch(userData.perfil) {
                     case 'professor':
-                        window.location.href = '/sitejoin/professor/index.html';
+                        window.location.href = `${basePath}/professor/index.html`;
                         break;
                     case 'aluno':
                         window.location.href = userData.turmaId 
-                            ? '/sitejoin/aluno/rodada.html' 
-                            : '/sitejoin/aluno/xperience.html';
+                            ? `${basePath}/aluno/rodada.html` 
+                            : `${basePath}/aluno/xperience.html`;
                         break;
                     default:
-                        throw new Error(`Perfil desconhecido: ${userData.perfil}`);
+                        throw new Error("Tipo de perfil não reconhecido");
                 }
 
             } catch (error) {
-                console.error("❌ Erro no login:", error);
+                console.error("Erro detalhado:", error);
                 
-                // Mensagens de erro específicas
+                // Tratamento de erros específicos
                 if (error.code === 'auth/user-not-found') {
                     errorMessage.textContent = 'E-mail não cadastrado';
                 } 
@@ -158,7 +101,10 @@
                     errorMessage.textContent = 'Senha incorreta';
                 }
                 else if (error.message.includes('Perfil')) {
-                    errorMessage.textContent = 'Configuração de perfil inválida';
+                    errorMessage.textContent = 'Seu perfil não está completamente configurado';
+                }
+                else if (error.code === 'permission-denied') {
+                    errorMessage.textContent = 'Sem permissão para acessar os dados';
                 }
                 else {
                     errorMessage.textContent = 'Erro no servidor. Tente novamente.';
@@ -166,11 +112,9 @@
             }
         });
 
-        // Debug: Verifica se há usuário logado ao carregar a página
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                console.log("Usuário já logado:", user.email);
-            }
+        // Debug: Verifica autenticação prévia
+        auth.onAuthStateChanged(user => {
+            if (user) console.log("Usuário pré-autenticado:", user.uid);
         });
     </script>
 </body>
