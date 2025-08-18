@@ -1,121 +1,36 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Xperience InovaPlas</title>
-    <style>
-        /* [Seus estilos CSS permanecem os mesmos] */
-    </style>
-    
-    <!-- Firebase SDK v9 -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <title>Login</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 </head>
 <body>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="senha" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
 
-    <div class="login-container">
-        <h1>Xperience InovaPlas</h1>
-        <form id="login-form">
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" value="educaflowoficial@gmail.com" required>
-            </div>
-            <div class="input-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" placeholder="Sua senha" required>
-            </div>
-            <button type="submit">Entrar</button>
-            <p id="error-message"></p>
-        </form>
-    </div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "SUA_CHAVE_AQUI",
+      authDomain: "joinxperience-site.firebaseapp.com",
+      projectId: "joinxperience-site"
+    };
+    firebase.initializeApp(firebaseConfig);
 
-    <script>
-        // Configuração do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucG1bn4NkAK",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce5bf",
-            databaseURL: "https://joinxperience-site.firebaseio.com"
-        };
-
-        // Inicialização
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-    </script>
-
-    <script>
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('error-message');
-            errorMessage.textContent = '';
-
-            try {
-                // 1. Autenticação
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const userId = userCredential.user.uid;
-                
-                // 2. Busca no Firestore - COMPATÍVEL COM SUAS REGRAS
-                const userDoc = await db.collection('usuarios').doc(userId).get();
-                
-                if (!userDoc.exists) {
-                    await auth.signOut();
-                    throw new Error("Perfil não configurado no sistema");
-                }
-
-                // 3. Redirecionamento seguro
-                const userData = userDoc.data();
-                const basePath = window.location.host.includes('github.io') 
-                    ? '/sitejoin' 
-                    : '';
-                
-                switch(userData.perfil) {
-                    case 'professor':
-                        window.location.href = `${basePath}/professor/index.html`;
-                        break;
-                    case 'aluno':
-                        window.location.href = userData.turmaId 
-                            ? `${basePath}/aluno/rodada.html` 
-                            : `${basePath}/aluno/xperience.html`;
-                        break;
-                    default:
-                        throw new Error("Tipo de perfil não reconhecido");
-                }
-
-            } catch (error) {
-                console.error("Erro detalhado:", error);
-                
-                // Tratamento de erros específicos
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage.textContent = 'E-mail não cadastrado';
-                } 
-                else if (error.code === 'auth/wrong-password') {
-                    errorMessage.textContent = 'Senha incorreta';
-                }
-                else if (error.message.includes('Perfil')) {
-                    errorMessage.textContent = 'Seu perfil não está completamente configurado';
-                }
-                else if (error.code === 'permission-denied') {
-                    errorMessage.textContent = 'Sem permissão para acessar os dados';
-                }
-                else {
-                    errorMessage.textContent = 'Erro no servidor. Tente novamente.';
-                }
-            }
+    function login() {
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+      
+      firebase.auth().signInWithEmailAndPassword(email, senha)
+        .then(() => {
+          alert("Login feito!");
+          window.location.href = "professor.html";
+        })
+        .catch(error => {
+          alert("Erro: " + error.message);
         });
-
-        // Debug: Verifica autenticação prévia
-        auth.onAuthStateChanged(user => {
-            if (user) console.log("Usuário pré-autenticado:", user.uid);
-        });
-    </script>
+    }
+  </script>
 </body>
 </html>
