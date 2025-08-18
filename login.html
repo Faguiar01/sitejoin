@@ -203,7 +203,25 @@
                         if (!userData.turmaId) {
                             window.location.href = `${baseUrl}/aluno/xperience.html`;
                         } else {
-                            window.location.href = `${baseUrl}/aluno/rodada${userData.rodadaAtual || 1}.html`;
+                            // FIX: Corrected the redirection logic for student rounds
+                            const rodada = userData.rodadaAtual || 1;
+                            let destino = '';
+                            switch (rodada) {
+                                case 1:
+                                    destino = 'rodada1-nivelamento.html';
+                                    break;
+                                case 2:
+                                    destino = 'rodada2-fundacao.html';
+                                    break;
+                                case 3:
+                                    destino = 'rodada3-operacoes.html';
+                                    break;
+                                default:
+                                    // Fallback to the waiting room if round is unknown
+                                    destino = 'xperience.html';
+                                    break;
+                            }
+                            window.location.href = `${baseUrl}/aluno/${destino}`;
                         }
                     }
                 } else {
