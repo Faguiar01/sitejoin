@@ -1,69 +1,175 @@
-// Adicione um 'event listener' ao formulário de login
-document.getElementById('login-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Impede o recarregamento da página
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xperience InovaPlas - Login</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 24px;
+        }
+        .input-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #error-message {
+            color: #d93025;
+            margin-top: 16px;
+            font-weight: 500;
+            min-height: 20px;
+        }
+    </style>
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errorMessage = document.getElementById('error-message');
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
 
-    // Autenticar com o Firebase
-    firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // O login foi bem-sucedido, agora vamos buscar os dados do utilizador no Firestore
-            const user = userCredential.user;
-            
-            // Referência ao documento do utilizador no Firestore
-            const userDocRef = firebase.firestore().collection('users').doc(user.uid);
+    <div class="login-container">
+        <h1>Xperience InovaPlas</h1>
+        <form id="login-form">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="seuemail@exemplo.com" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" placeholder="Sua senha" required>
+            </div>
+            <button type="submit">Entrar</button>
+            <p id="error-message"></p>
+        </form>
+    </div>
 
-            userDocRef.get().then((doc) => {
-                if (doc.exists) {
-                    // O documento do utilizador foi encontrado
-                    const userData = doc.data();
+    <script>
+        // --- COLOQUE AS SUAS CHAVES DE CONFIGURAÇÃO DO FIREBASE AQUI ---
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
 
-                    // --- INÍCIO DA LÓGICA DE REDIRECIONAMENTO ---
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    
+    <script>
+        // --- LÓGICA DE LOGIN E REDIRECIONAMENTO ---
+        
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o recarregamento da página
 
-                    if (userData.profile === 'professor') {
-                        // 1. Se o perfil for 'professor', redireciona para a página do professor
-                        console.log('Utilizador é um professor. Redirecionando...');
-                        window.location.href = 'professor/professor.html'; // Ajuste o caminho se necessário
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = ''; // Limpa erros anteriores
 
-                    } else if (userData.profile === 'aluno') {
-                        // 2. Se o perfil for 'aluno', verifica se ele tem uma turma
-                        console.log('Utilizador é um aluno. Verificando turma...');
-                        
-                        if (userData.turmaId) {
-                            // 2.1. Aluno JÁ TEM uma turma.
-                            // Lógica futura: redirecionar para a rodada correta.
-                            // Por agora, podemos redirecioná-lo para uma página padrão de jogo.
-                            console.log('Aluno tem turmaId. Redirecionando para o jogo...');
-                            // Exemplo: window.location.href = `aluno/rodada${userData.rodadaAtual}.html`;
-                            window.location.href = 'aluno/dashboard.html'; // Crie uma página de dashboard ou rodada inicial
+            // Autenticar com o Firebase Auth
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Login bem-sucedido, agora busca dados no Firestore
+                    const user = userCredential.user;
+                    const userDocRef = firebase.firestore().collection('users').doc(user.uid);
 
+                    return userDocRef.get(); // Retorna a promessa para encadear
+                })
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+
+                        // --- INÍCIO DA LÓGICA DE REDIRECIONAMENTO ---
+                        if (userData.profile === 'professor') {
+                            console.log('Utilizador é um professor. Redirecionando...');
+                            window.location.href = 'professor/professor.html'; // Ajuste o caminho se necessário
+
+                        } else if (userData.profile === 'aluno') {
+                            console.log('Utilizador é um aluno. Verificando turma...');
+                            
+                            // A verificação crucial: o campo 'turmaId' existe e não é nulo/vazio?
+                            if (userData.turmaId) {
+                                console.log(`Aluno tem turmaId (${userData.turmaId}). Redirecionando para o jogo...`);
+                                // Lógica futura: redirecionar para a rodada correta.
+                                // Ex: window.location.href = `aluno/rodada${userData.rodadaAtual}.html`;
+                                // Por agora, mandamos para uma página de "início de jogo".
+                                window.location.href = 'aluno/dashboard.html'; // Mude para a sua página de rodada inicial
+
+                            } else {
+                                // Aluno NÃO TEM uma turma. Redireciona para a sala de espera.
+                                console.log('Aluno sem turmaId. Redirecionando para a sala de espera...');
+                                window.location.href = 'aluno/xperience.html'; // ESTE É O CAMINHO CORRETO
+                            }
                         } else {
-                            // 2.2. Aluno NÃO TEM uma turma. Redireciona para a sala de espera.
-                            console.log('Aluno sem turmaId. Redirecionando para a sala de espera...');
-                            window.location.href = 'aluno/xperience.html'; // A PÁGINA DE ESPERA CORRETA
+                            errorMessage.textContent = 'Perfil de utilizador desconhecido.';
+                            firebase.auth().signOut();
                         }
-                    } else {
-                        // Caso o perfil não seja nem 'aluno' nem 'professor'
-                        errorMessage.textContent = 'Perfil de utilizador desconhecido.';
-                        firebase.auth().signOut(); // Desconecta para segurança
-                    }
-                    // --- FIM DA LÓGICA DE REDIRECIONAMENTO ---
+                        // --- FIM DA LÓGICA DE REDIRECIONAMENTO ---
 
-                } else {
-                    // Erro crítico: utilizador autenticado mas sem dados no Firestore
-                    errorMessage.textContent = 'Erro: Não foi possível encontrar os dados do utilizador.';
-                    firebase.auth().signOut();
-                }
-            }).catch((error) => {
-                errorMessage.textContent = 'Erro ao aceder à base de dados: ' + error.message;
-                firebase.auth().signOut();
-            });
-        })
-        .catch((error) => {
-            // Trata erros de login (senha errada, utilizador não encontrado, etc.)
-            errorMessage.textContent = 'Email ou senha inválidos. Por favor, tente novamente.';
-            console.error('Erro de login:', error);
+                    } else {
+                        errorMessage.textContent = 'Erro: Não foi possível encontrar os dados do utilizador.';
+                        firebase.auth().signOut();
+                    }
+                })
+                .catch((error) => {
+                    // Trata erros de login (senha errada, etc.) ou de busca no Firestore
+                    console.error('Erro no processo de login:', error);
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                        errorMessage.textContent = 'Email ou senha inválidos.';
+                    } else {
+                        errorMessage.textContent = 'Ocorreu um erro. Tente novamente.';
+                    }
+                });
         });
-});
+    </script>
+
+</body>
+</html>
