@@ -194,91 +194,89 @@
     </main>
 
     <script type="module">
-        // FIX: Changed to a relative path to resolve the module specifier error.
-        import { auth, db } from './assets/js/firebase-init.js';
-        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    // FIX: Changed to a relative path to resolve the module specifier error.
+    import { auth, db } from './assets/js/firebase-init.js';
+    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        // --- Funções Utilitárias (de form-utils.js) ---
+    // --- Funções Utilitárias (de form-utils.js) ---
+    function toggleButtonState(button, isLoading) {
+        const btnText = button.querySelector('.btn-text');
+        const spinner = button.querySelector('.spinner');
+        if (isLoading) {
+            button.disabled = true;
+            btnText.classList.add('hidden');
+            spinner.classList.remove('hidden');
+        } else {
+            button.disabled = false;
+            btnText.classList.remove('hidden');
+            spinner.classList.add('hidden');
+        }
+    }
+
+    // --- Lógica Principal do Formulário ---
+    const cadastroForm = document.getElementById("cadastro-form");
+    const submitButton = cadastroForm.querySelector('button[type="submit"]');
+
+    cadastroForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
         
-        /**
-         * Mostra ou esconde o spinner e o texto do botão.
-         * @param {HTMLButtonElement} button - O botão a ser modificado.
-         * @param {boolean} isLoading - True se deve mostrar o spinner, false caso contrário.
-         */
-        function toggleButtonState(button, isLoading) {
-            const btnText = button.querySelector('.btn-text');
-            const spinner = button.querySelector('.spinner');
-            if (isLoading) {
-                button.disabled = true;
-                btnText.classList.add('hidden');
-                spinner.classList.remove('hidden');
-            } else {
-                button.disabled = false;
-                btnText.classList.remove('hidden');
-                spinner.classList.add('hidden');
-            }
-        }
-
-        // --- Lógica Principal do Formulário ---
-
-        const cadastroForm = document.getElementById("cadastro-form");
-        const submitButton = cadastroForm.querySelector('button[type="submit"]');
-
-        cadastroForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
+        try {
+            toggleButtonState(submitButton, true);
             
-            try {
-                toggleButtonState(submitButton, true); // Ativa o spinner
-                
-                const nome = document.getElementById("nome").value.trim();
-                const email = document.getElementById("email").value.trim();
-                const senha = document.getElementById("senha").value;
-                const perfil = document.querySelector('input[name="perfil"]:checked').value;
+            const nome = document.getElementById("nome").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const senha = document.getElementById("senha").value;
+            const perfil = document.querySelector('input[name="perfil"]:checked').value;
 
-                // 1. Cria a autenticação do utilizador
-                const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-                const user = userCredential.user;
+            // 1. Cria a autenticação do utilizador
+            const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+            const user = userCredential.user;
 
-                // 2. Prepara os dados para o Firestore
-                const userData = {
-                    nome: nome,
-                    email: email,
-                    perfil: perfil,
-                    uid: user.uid,
-                };
-                
-                if (perfil === 'aluno') {
-                    userData.turmaId = null;
-                    userData.rodadaAtual = 1;
-                }
-
-                // 3. Guarda no Firestore
-                await setDoc(doc(db, "usuarios", user.uid), userData);
-
-                alert("Registo realizado com sucesso! A redirecionar para o login...");
-                setTimeout(() => {
-                    // FIX: Changed to relative path
-                    window.location.href = './login.html';
-                }, 1500);
-
-            } catch (error) {
-                console.error("Erro no registo:", error);
-                handleAuthError(error);
-                toggleButtonState(submitButton, false); // Desativa o spinner em caso de erro
-            }
-        });
-
-        // Função para tratar erros de autenticação de forma amigável
-        function handleAuthError(error) {
-            const errorMessages = {
-                'auth/email-already-in-use': 'Este e-mail já está registado.',
-                'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.',
-                'auth/invalid-email': 'Por favor, insira um e-mail válido.',
+            // 2. Prepara os dados para o Firestore
+            const userData = {
+                nome: nome,
+                email: email,
+                profile: perfil, // Mudei para "profile" para manter consistência com o login
+                uid: user.uid,
             };
-            const message = errorMessages[error.code] || 'Ocorreu um erro durante o registo.';
-            alert(message);
+            
+            if (perfil === 'aluno') {
+                userData.turmaId = null; // Aluno começa sem turma
+            }
+
+            // 3. Guarda no Firestore (coleção "users")
+            await setDoc(doc(db, "users", user.uid), userData);
+
+            // --- INÍCIO DA CORREÇÃO ---
+            // 4. Redireciona para o local correto com base no perfil
+            
+            console.log(`Registo bem-sucedido para ${perfil}. A redirecionar...`);
+
+            if (perfil === 'aluno') {
+                // Se for aluno, vai para a sala de espera
+                window.location.href = './aluno/xperience.html';
+            } else if (perfil === 'professor') {
+                // Se for professor, vai para o dashboard do professor
+                window.location.href = './professor/professor.html';
+            }
+            // --- FIM DA CORREÇÃO ---
+
+        } catch (error) {
+            console.error("Erro no registo:", error);
+            handleAuthError(error);
+            toggleButtonState(submitButton, false);
         }
-    </script>
-</body>
-</html>
+    });
+
+    // Função para tratar erros de autenticação de forma amigável
+    function handleAuthError(error) {
+        const errorMessages = {
+            'auth/email-already-in-use': 'Este e-mail já está registado.',
+            'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.',
+            'auth/invalid-email': 'Por favor, insira um e-mail válido.',
+        };
+        const message = errorMessages[error.code] || 'Ocorreu um erro durante o registo.';
+        alert(message);
+    }
+</script>
