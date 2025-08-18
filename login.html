@@ -1,259 +1,69 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Aceda à sua conta no Join Xperience - Plataforma de simulação empresarial gamificada">
-    <title>Login - Join Xperience</title>
-    
-    <link rel="preconnect" href="https://www.gstatic.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="icon" href="https://faguiar01.github.io/sitejoin/assets/images/favicon.ico" type="image/x-icon">
+// Adicione um 'event listener' ao formulário de login
+document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Impede o recarregamento da página
 
-    <style>
-        :root { 
-            --cor-primaria: #0052CC; --cor-secundaria: #FF4400; --cor-texto: #333; 
-            --cor-fundo: #f4f7f6; --cor-branco: #fff; --cor-erro: #dc3545;
-        }
-        body { 
-            margin: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--cor-fundo); 
-            color: var(--cor-texto);
-            display: flex;
-            flex-direction: column; 
-            min-height: 100vh; 
-            visibility: hidden; /* Começa invisível para evitar "piscar" */
-        }
-        header.main-header { 
-            background-color: var(--cor-branco); padding: 1rem 2rem; display: flex; 
-            justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-            width: 100%; box-sizing: border-box;
-        }
-        header.main-header .logo-container { 
-            display: flex; align-items: center; text-decoration: none; 
-            color: var(--cor-texto); font-weight: 600; 
-        }
-        header.main-header .logo-container img { height: 50px; margin-right: 15px; }
-        .btn {
-            display: inline-block; padding: 10px 24px; border-radius: 8px;
-            border: 1px solid transparent; text-decoration: none; font-weight: bold;
-            text-align: center; cursor: pointer; transition: all 0.3s ease;
-        }
-        .btn-outline {
-            border-color: var(--cor-primaria); color: var(--cor-primaria); background-color: transparent;
-        }
-        .btn-outline:hover { background-color: var(--cor-primaria); color: var(--cor-branco); }
-        .auth-container { 
-            flex: 1; display: flex; justify-content: center; 
-            align-items: center; padding: 40px 20px; 
-        }
-        .auth-card { 
-            background-color: var(--cor-branco); padding: 40px; border-radius: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 450px; 
-        }
-        .auth-card h1 { text-align: center; font-size: 2em; margin-top: 0; margin-bottom: 30px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-        .form-group input { 
-            width: 100%; padding: 12px; border: 1px solid #ccc; 
-            border-radius: 8px; font-size: 1em; box-sizing: border-box; 
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .form-group input:focus {
-            border-color: var(--cor-primaria);
-            box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
-            outline: none;
-        }
-        .auth-links { text-align: center; margin-top: 20px; }
-        .auth-links a { 
-            color: var(--cor-primaria); text-decoration: none; display: block; 
-            margin-top: 10px; font-size: 0.9em;
-        }
-        .btn-primary { 
-            background-color: var(--cor-primaria); color: var(--cor-branco); display: flex;
-            justify-content: center; align-items: center; width: 100%; font-size: 1.1em;
-        }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%;
-            border-top-color: #fff; width: 20px; height: 20px;
-            animation: spin 1s ease-in-out infinite;
-        }
-        .hidden { display: none; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .error-message {
-            color: var(--cor-erro); font-size: 0.9em; margin-top: 5px; min-height: 1em;
-        }
-    </style>
-</head>
-<body>
-    <header class="main-header">
-        <a href="https://faguiar01.github.io/sitejoin/index.html" class="logo-container">
-            <img src="https://faguiar01.github.io/sitejoin/assets/images/JOIN.png" alt="Join Xperience" loading="lazy" width="120" height="50">
-        </a>
-        <nav>
-            <a href="https://faguiar01.github.io/sitejoin/cadastro.html" class="btn btn-outline">Criar conta</a>
-        </nav>
-    </header>
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const errorMessage = document.getElementById('error-message');
 
-    <main class="auth-container">
-        <div class="auth-card">
-            <h1>Aceda à sua conta</h1>
+    // Autenticar com o Firebase
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // O login foi bem-sucedido, agora vamos buscar os dados do utilizador no Firestore
+            const user = userCredential.user;
             
-            <form id="loginForm" novalidate>
-                <div class="form-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" required autocomplete="username">
-                    <div id="emailError" class="error-message" aria-live="polite"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" required minlength="6" autocomplete="current-password">
-                    <div id="passwordError" class="error-message" aria-live="polite"></div>
-                </div>
-                
-                <button type="submit" class="btn btn-primary" id="loginBtn">
-                    <span class="btn-text">Entrar</span>
-                    <span class="spinner hidden"></span>
-                </button>
-                
-                <div class="auth-links">
-                    <a href="https://faguiar01.github.io/sitejoin/cadastro.html">Não tem uma conta? Registe-se</a>
-                    <a href="https://faguiar01.github.io/sitejoin/recuperar-senha.html">Esqueceu a sua senha?</a>
-                </div>
-            </form>
-        </div>
-    </main>
+            // Referência ao documento do utilizador no Firestore
+            const userDocRef = firebase.firestore().collection('users').doc(user.uid);
 
-    <script type="module">
-        // Importa as funções necessárias do SDK do Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+            userDocRef.get().then((doc) => {
+                if (doc.exists) {
+                    // O documento do utilizador foi encontrado
+                    const userData = doc.data();
 
-        // --- CÓDIGO DE INICIALIZAÇÃO DO FIREBASE (integrado para maior robustez) ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyAXtFYlnq57POCOp-b4TFuYucGlbn4NkAk",
-            authDomain: "joinxperience-site.firebaseapp.com",
-            projectId: "joinxperience-site",
-            storageBucket: "joinxperience-site.appspot.com",
-            messagingSenderId: "140037739806",
-            appId: "1:140037739806:web:322493d72ca6149abce50f",
-            measurementId: "G-V4SRK0FNBN"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+                    // --- INÍCIO DA LÓGICA DE REDIRECIONAMENTO ---
 
-        // --- Funções Utilitárias ---
-        function toggleButtonState(button, isLoading) {
-            const btnText = button.querySelector('.btn-text');
-            const spinner = button.querySelector('.spinner');
-            button.disabled = isLoading;
-            btnText.style.display = isLoading ? 'none' : '';
-            spinner.style.display = isLoading ? '' : 'none';
-        }
+                    if (userData.profile === 'professor') {
+                        // 1. Se o perfil for 'professor', redireciona para a página do professor
+                        console.log('Utilizador é um professor. Redirecionando...');
+                        window.location.href = 'professor/professor.html'; // Ajuste o caminho se necessário
 
-        // --- Lógica Principal ---
-        const loginForm = document.getElementById('loginForm');
-        const loginBtn = document.getElementById('loginBtn');
-        const emailError = document.getElementById('emailError');
-        const passwordError = document.getElementById('passwordError');
+                    } else if (userData.profile === 'aluno') {
+                        // 2. Se o perfil for 'aluno', verifica se ele tem uma turma
+                        console.log('Utilizador é um aluno. Verificando turma...');
+                        
+                        if (userData.turmaId) {
+                            // 2.1. Aluno JÁ TEM uma turma.
+                            // Lógica futura: redirecionar para a rodada correta.
+                            // Por agora, podemos redirecioná-lo para uma página padrão de jogo.
+                            console.log('Aluno tem turmaId. Redirecionando para o jogo...');
+                            // Exemplo: window.location.href = `aluno/rodada${userData.rodadaAtual}.html`;
+                            window.location.href = 'aluno/dashboard.html'; // Crie uma página de dashboard ou rodada inicial
 
-        // Verifica se o utilizador já está autenticado
-        const unsub = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                checkUserProfile(user.uid);
-            } else {
-                document.body.style.visibility = 'visible';
-                unsub();
-            }
-        });
-
-        // Envio do formulário
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            toggleButtonState(loginBtn, true);
-            
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            try {
-                await setPersistence(auth, browserLocalPersistence);
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                handleLoginError(error);
-                toggleButtonState(loginBtn, false);
-            }
-        });
-
-        async function checkUserProfile(uid) {
-            try {
-                const userDocRef = doc(db, "usuarios", uid);
-                const userDocSnap = await getDoc(userDocRef);
-
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    const baseUrl = 'https://faguiar01.github.io/sitejoin';
-                    if (userData.perfil === 'professor') {
-                        window.location.href = `${baseUrl}/professor/professor.html`;
-                    } else if (userData.perfil === 'aluno') {
-                        if (!userData.turmaId) {
-                            window.location.href = `${baseUrl}/aluno/xperience.html`;
                         } else {
-                            // FIX: Corrected the redirection logic for student rounds
-                            const rodada = userData.rodadaAtual || 1;
-                            let destino = '';
-                            switch (rodada) {
-                                case 1:
-                                    destino = 'rodada1-nivelamento.html';
-                                    break;
-                                case 2:
-                                    destino = 'rodada2-fundacao.html';
-                                    break;
-                                case 3:
-                                    destino = 'rodada3-operacoes.html';
-                                    break;
-                                default:
-                                    // Fallback to the waiting room if round is unknown
-                                    destino = 'xperience.html';
-                                    break;
-                            }
-                            window.location.href = `${baseUrl}/aluno/${destino}`;
+                            // 2.2. Aluno NÃO TEM uma turma. Redireciona para a sala de espera.
+                            console.log('Aluno sem turmaId. Redirecionando para a sala de espera...');
+                            window.location.href = 'aluno/xperience.html'; // A PÁGINA DE ESPERA CORRETA
                         }
+                    } else {
+                        // Caso o perfil não seja nem 'aluno' nem 'professor'
+                        errorMessage.textContent = 'Perfil de utilizador desconhecido.';
+                        firebase.auth().signOut(); // Desconecta para segurança
                     }
-                } else {
-                    alert("Utilizador autenticado, mas não foram encontrados dados de perfil.");
-                    auth.signOut();
-                }
-            } catch (error) {
-                console.error('Erro ao verificar perfil:', error);
-                alert('Ocorreu um erro ao verificar o seu perfil.');
-            }
-        }
+                    // --- FIM DA LÓGICA DE REDIRECIONAMENTO ---
 
-        function handleLoginError(error) {
-            emailError.textContent = '';
-            passwordError.textContent = '';
-            
-            switch(error.code) {
-                case 'auth/invalid-email':
-                case 'auth/user-not-found':
-                    emailError.textContent = 'Nenhuma conta encontrada com este e-mail.';
-                    break;
-                case 'auth/wrong-password':
-                    passwordError.textContent = 'Senha incorreta.';
-                    break;
-                case 'auth/too-many-requests':
-                    alert('Muitas tentativas de login. Tente novamente mais tarde.');
-                    break;
-                default:
-                    alert('Ocorreu um erro ao fazer login.');
-                    console.error('Erro de login:', error);
-            }
-        }
-    </script>
-</body>
-</html>
+                } else {
+                    // Erro crítico: utilizador autenticado mas sem dados no Firestore
+                    errorMessage.textContent = 'Erro: Não foi possível encontrar os dados do utilizador.';
+                    firebase.auth().signOut();
+                }
+            }).catch((error) => {
+                errorMessage.textContent = 'Erro ao aceder à base de dados: ' + error.message;
+                firebase.auth().signOut();
+            });
+        })
+        .catch((error) => {
+            // Trata erros de login (senha errada, utilizador não encontrado, etc.)
+            errorMessage.textContent = 'Email ou senha inválidos. Por favor, tente novamente.';
+            console.error('Erro de login:', error);
+        });
+});
